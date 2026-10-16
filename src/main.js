@@ -1697,4 +1697,6 @@ class GameApp {
   }
 }
 
-new GameApp();
+FoodSpriteAtlas.init().then(() => {
+  new GameApp();
+});
