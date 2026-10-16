@@ -747,12 +747,6 @@ const SCENE_THEMES = {
   }
 };
 
-const SHOP_DECORS = [
-  { id: 'maneki', name: '金運招財白貓', icon: '🐱', cost: 400, bonusText: '營收 +10%' },
-  { id: 'matcha', name: '宇治抹茶石臼', icon: '🍵', cost: 650, bonusText: '營收 +10%' },
-  { id: 'sakura', name: '春日櫻花盆栽', icon: '🌸', cost: 900, bonusText: '營收 +10%' }
-];
-
 const MAP_MILESTONES = [
   { stars: 15, coins: 300, diam: 30, voucher: 1, title: '15★ 銅之寶箱' },
   { stars: 35, coins: 600, diam: 60, voucher: 2, title: '35★ 銀之寶箱' },
