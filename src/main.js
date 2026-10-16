@@ -2,6 +2,9 @@ import { ITEM_DEFS } from './config/items.js';
 import { GUIDE_DATA } from './config/guides.js';
 import { SHELF_THEMES } from './config/shelfThemes.js';
 import { generateLevelConfig } from './logic/levelGen.js';
+import { SHOP_DECORS } from './config/decors.js';
+import { MAP_MILESTONES } from './config/milestones.js';
+import { SFX } from './audio/sfx.js';
 
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
