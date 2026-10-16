@@ -1,4 +1,7 @@
 import { ITEM_DEFS } from './config/items.js';
+import { GUIDE_DATA } from './config/guides.js';
+import { SHELF_THEMES } from './config/shelfThemes.js';
+import { generateLevelConfig } from './logic/levelGen.js';
 
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
