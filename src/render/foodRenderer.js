@@ -39,14 +39,15 @@ export class CozyFoodRenderer {
     ctx.fillText(`❄️×${hp}`, 0, -box/2 + 5.5);
     ctx.restore();
   }
-  static drawFood(ctx, typeId, cx, cy, w, h, opts = {}) {
+   static drawFood(ctx, typeId, cx, cy, w, h, opts = {}) {
     const atlas = getActiveTheme().spriteAtlas;
-    atlas.init();
-    const { isBack = false, scaleX = 1, scaleY = 1, lift = 0, iceHp = 0 } = opts;
     const sprite = atlas.cache[typeId] || atlas.cache['onigiri'];
+    if (!sprite) return;
+    const { isBack = false, scaleX = 1, scaleY = 1, lift = 0, iceHp = 0 } = opts;
     const baseSize = Math.min(w * 1.14, h * 0.92);
     ctx.save();
     ctx.translate(cx, cy);
+    ...
     if (isBack) {
       ctx.scale(0.75, 0.75);
       ctx.globalAlpha = 0.52;
