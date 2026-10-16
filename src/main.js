@@ -8,6 +8,8 @@ import { SFX } from './audio/sfx.js';
 import { AnimeMascot } from './render/mascot.js';
 import { GameState } from './state/GameState.js';
 import { SCENE_THEMES } from './config/sceneThemes.js';
+import { SPRITE_RES, SPRITE_DPR, FoodSpriteAtlas } from './render/spriteAtlas.js';
+import { CozyFoodRenderer } from './render/foodRenderer.js';
 
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
