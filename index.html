@@ -80,8 +80,8 @@
       <div class="relative w-full py-3 px-4 anime-panel rounded-3xl flex items-center justify-center gap-3 mb-3">
         <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF85A1] to-[#FF9F68] anime-border flex items-center justify-center text-white text-2xl font-black shadow-inner shrink-0">星</div>
         <div class="flex flex-col items-start leading-none">
-          <span class="text-3xl font-black text-white anime-stroke tracking-wider">家有貨物!</span>
-          <span class="text-[11px] font-black text-[#8C583A] tracking-wider mt-1">手作和食與療癒商店街物語</span>
+          <span id="txt-title" class="text-3xl font-black text-white anime-stroke tracking-wider">家有貨物!</span>
+          <span id="txt-subtitle" class="text-[11px] font-black text-[#8C583A] tracking-wider mt-1">手作和食與療癒商店街物語</span>
         </div>
         <div class="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-[#A8E6CF] text-[#4A3326] font-black text-[10px] rounded-full anime-border rotate-3 shadow-sm">
           無體力暢玩 ✦
@@ -170,7 +170,7 @@
       <button id="btn-enter-lobby" class="anime-btn w-full py-3.5 bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFBC6B] text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 relative overflow-hidden">
         <span class="absolute top-1 inset-x-4 h-1.5 bg-white/40 rounded-full"></span>
         <span>🏪</span>
-        <span class="anime-stroke-sm tracking-wider">自動門開啟・進入店鋪</span>
+        <span id="txt-enter-button" class="anime-stroke-sm tracking-wider">自動門開啟・進入店鋪</span>
       </button>
     </div>
   </section>
@@ -325,7 +325,7 @@
         <div class="bg-white/90 backdrop-blur-xs rounded-2xl px-2.5 py-1 anime-border shadow-sm flex items-center gap-2">
           <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] anime-border flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
           <div>
-            <div class="text-[9px] font-black text-[#8C583A] leading-none">星野和風マルシェ・總店</div>
+            <div id="txt-lobby-store" class="text-[9px] font-black text-[#8C583A] leading-none">星野和風マルシェ・總店</div>
             <div class="text-xs font-black text-[#4A3326] mt-0.5">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
           </div>
         </div>
@@ -353,7 +353,7 @@
       <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
         <div class="w-full max-w-[360px] bg-white/95 backdrop-blur-xs rounded-2xl px-3 py-1.5 anime-border shadow-md mb-1 relative">
           <div class="flex items-center justify-between mb-0.5">
-            <span class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-[#4A3326]">✦ 看板娘・星野葵</span>
+            <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-[#4A3326]">✦ 看板娘・星野葵</span>
             <span class="text-[9px] font-black text-[#3B6E4C]">💬 點擊小葵或吧台料理互動</span>
           </div>
           <p id="lobby-speech-text" class="text-[11px] font-black text-[#4A3326] leading-snug">
