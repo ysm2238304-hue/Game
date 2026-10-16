@@ -2068,4 +2068,486 @@ class GameApp {
       this.spawnParticles(appRect.width * 0.5, appRect.height * 0.45, '#FFD166', 24);
       this.showTopToast('🔥 大繁盛 FEVER!!', '全店顧客歡呼打賞 +80 金幣!!', `${def.name} ✦`);
     } else {
-      const cheers = ['✦ 絕品三連完售!!', '✦ 手作旬味大好評!!', '✦ 商店
+      const cheers = ['✦ 絕品三連完售!!', '✦ 手作旬味大好評!!', '✦ 商店街大繁盛!!', '✦ 顧客大滿足!!'];
+      this.showTopToast(`COMBO ×${this.combo}`, cheers[(this.combo - 1) % cheers.length], `${def.name} ✦`);
+    }
+    this.setMascotMood('star', `「太棒了店長！『${def.label}』達成 ${this.combo} 連擊完售✦」`);
+
+    setTimeout(() => {
+      this.spawnParticles(centerX, centerY, '#FFF3B0', 16);
+      const coinBox = document.getElementById('hud-coin-box').getBoundingClientRect();
+      const tx = (coinBox.left - appRect.left) + coinBox.width / 2;
+      const ty = (coinBox.top  - appRect.top)  + coinBox.height / 2;
+      this.spawnFlyer(typeId, centerX, centerY, tx, ty, () => {
+        const mult = 1 + this.getTotalCoinBonusPct() / 100;
+        const bonusCoin = Math.round(18 * this.combo * mult) + feverBonusCoins;
+        GameState.coins += bonusCoin;
+        this.renderHUD();
+      }, 280);
+    }, 120);
+
+    const ord = this.activeOrders.find(o => o.id === typeId);
+    if (ord && ord.done < ord.req) { ord.done += 3; this.renderOrders(); }
+    if (GameState.quests[1]) GameState.quests[1].cur += 1;
+    GameState.save();
+    this.updateClearProgress();
+    setTimeout(() => this.checkMatches(), 230);
+  }
+
+  damageNearbyIce(matchedShelfIdx) {
+    const range = 1 + Math.floor((GameState.upgrades.cold - 1) / 1);
+    let cracked = false;
+    this.shelves.forEach(sh => {
+      if (Math.abs(sh.shelfIdx - matchedShelfIdx) <= range) {
+        sh.slots.forEach(sl => {
+          if (sl.iceHp > 0) {
+            sl.iceHp = Math.max(0, sl.iceHp - 1);
+            this.jellyBounce(sl);
+            cracked = true;
+          }
+        });
+      }
+    });
+    if (cracked) SFX.iceCrack();
+  }
+
+  checkWinOrLose() {
+    const remainingItems = this.updateClearProgress();
+    if (remainingItems === 0) {
+      SFX.win();
+      GameState.unlockedLevel = Math.max(GameState.unlockedLevel, this.curLevel + 1);
+      const star3Threshold = GameState.direction === 'rush' ? 4 : 7;
+      const star2Threshold = GameState.direction === 'rush' ? 1 : 3;
+      const stars = this.moves >= star3Threshold ? 3 : (this.moves >= star2Threshold ? 2 : 1);
+      GameState.stars[this.curLevel] = Math.max(GameState.stars[this.curLevel] || 0, stars);
+
+      const orderAllDone = this.activeOrders.every(o => o.done >= o.req);
+      let baseCoins = 180 + this.curLevel * 20 + (orderAllDone ? 90 : 0);
+      baseCoins = Math.round(baseCoins * (1 + this.getTotalCoinBonusPct() / 100));
+      const diamReward = GameState.direction === 'tycoon' ? 24 : 12;
+
+      GameState.coins += baseCoins;
+      GameState.diamonds += diamReward;
+      GameState.stampCount = Math.min(5, (GameState.stampCount || 0) + 1);
+      if (GameState.quests[0]) GameState.quests[0].cur += 1;
+      GameState.save();
+
+      this.renderHUD();
+      this.renderRoadmap();
+      this.renderQuests();
+      this.showTopToast('✦ 本日完售 ✦', '全店手作料理一掃而空！', '大繁盛達成 🎊');
+
+      setTimeout(() => {
+        document.getElementById('settle-badge').innerText = '✦ 本日營業圓滿達成 ✦';
+        document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('star', false);
+        document.getElementById('settle-title').innerText = '大繁盛！完美完售！';
+        document.getElementById('settle-stars').innerText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+        document.getElementById('settle-desc').innerText = orderAllDone
+          ? '全木櫃完售＋顧客指定點單達成！獲得特別營業獎金與自治會印章！'
+          : '所有木櫃和食皆已結帳完畢！顧客滿意離開店鋪♪';
+        document.getElementById('settle-coin-text').innerText = `🪙 +${baseCoins}`;
+        document.getElementById('settle-diam-text').innerText = `💎 +${diamReward}`;
+        document.getElementById('btn-settle-action').innerText = '下一營業日 ➔';
+        document.getElementById('modal-settle').classList.remove('hidden');
+      }, 360);
+      return;
+    }
+    if (this.moves <= 0) {
+      SFX.fail();
+      document.getElementById('settle-badge').innerText = '本日打烊時間到';
+      document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('worry', false);
+      document.getElementById('settle-title').innerText = '營業步數耗盡💦';
+      document.getElementById('settle-stars').innerText = '☆☆☆';
+      document.getElementById('settle-desc').innerText = '別氣餒店長！無體力限制，善用竹編手提籃與秘技再挑戰一次吧！';
+      document.getElementById('settle-coin-text').innerText = '🪙 +30 (出勤津貼)';
+      document.getElementById('settle-diam-text').innerText = '💎 +0';
+      GameState.coins += 30;
+      GameState.save();
+      this.renderHUD();
+      document.getElementById('btn-settle-action').innerText = '立即重試本關 ↻';
+      document.getElementById('modal-settle').classList.remove('hidden');
+    }
+  }
+
+  useTool(type) {
+    if (GameState.boosters[type] <= 0) {
+      this.setMascotMood('worry', '「秘技庫存不足！回大廳前往福引轉蛋亭補充吧♪」');
+      return;
+    }
+    if (type === 'shuffle') {
+      const openSlots = [];
+      this.shelves.forEach(sh => sh.slots.forEach(sl => {
+        if (sl.queue.length > 0 && sl.iceHp === 0) openSlots.push(sl);
+      }));
+      if (openSlots.length < 2) return;
+      GameState.boosters.shuffle--;
+      const pool = openSlots.map(s => s.queue[0]).sort(() => Math.random() - 0.5);
+      openSlots.forEach((s, i) => { s.queue[0] = pool[i]; this.jellyBounce(s); });
+      SFX.swap();
+      this.showTopToast('🔀 全櫃重整', '所有木櫃前排料理已重新擺盤！', '擺盤煥然一新 ✦');
+      this.setMascotMood('happy', '「全木櫃前排料理重新擺盤完畢！」');
+    } else if (type === 'hammer') {
+      GameState.boosters.hammer--;
+      this.shelves.forEach(sh => sh.slots.forEach(sl => {
+        if (sl.iceHp > 0) { sl.iceHp = 0; this.jellyBounce(sl); }
+      }));
+      SFX.iceCrack();
+      this.eliminateOneFullTriplet('「暖茶融霜奉上！全店結霜融化＋直接完售一組料理！」');
+    } else if (type === 'magnet') {
+      GameState.boosters.magnet--;
+      this.eliminateOneFullTriplet('「極速盛合發動！瞬間集齊 3 份同款和食完售！」', true);
+    }
+    if (GameState.quests[2]) GameState.quests[2].cur += 1;
+    GameState.save();
+    this.renderHUD();
+    this.renderQuests();
+    this.checkMatches();
+  }
+
+  eliminateOneFullTriplet(speechMsg, preferOrder = false) {
+    const locations = {};
+    this.shelves.forEach(sh => sh.slots.forEach(sl => {
+      sl.queue.forEach((item, qIdx) => {
+        locations[item] = locations[item] || [];
+        locations[item].push({ kind: 'shelf', slot: sl, qIdx });
+      });
+    }));
+    this.cartSlots.forEach((id, idx) => {
+      if (id) {
+        locations[id] = locations[id] || [];
+        locations[id].push({ kind: 'cart', cartIdx: idx });
+      }
+    });
+    const candidates = Object.keys(locations).filter(k => locations[k].length >= 3);
+    if (candidates.length === 0) return;
+    let chosenType = candidates[0];
+    if (preferOrder) {
+      const orderMatch = candidates.find(k => this.activeOrders.some(o => o.id === k && o.done < o.req));
+      if (orderMatch) chosenType = orderMatch;
+    }
+    const def = ITEM_DEFS.find(d => d.id === chosenType) || ITEM_DEFS[0];
+    const targets = locations[chosenType].slice(0, 3);
+    const appRect = this.appRect || this.appEl.getBoundingClientRect();
+    const cRect = this.canvas.getBoundingClientRect();
+    const coinBox = document.getElementById('hud-coin-box').getBoundingClientRect();
+    const targetAppX = (coinBox.left - appRect.left) + coinBox.width / 2;
+    const targetAppY = (coinBox.top  - appRect.top)  + coinBox.height / 2;
+    targets.sort((a, b) => (b.qIdx || 0) - (a.qIdx || 0)).forEach(loc => {
+      let sx = appRect.width / 2, sy = appRect.height / 2;
+      if (loc.kind === 'shelf') {
+        sx = (cRect.left - appRect.left) + loc.slot.x + loc.slot.w / 2;
+        sy = (cRect.top  - appRect.top)  + loc.slot.y + loc.slot.h / 2;
+        loc.slot.queue.splice(loc.qIdx, 1);
+        loc.slot.iceHp = 0;
+        this.jellyBounce(loc.slot);
+      } else if (loc.kind === 'cart') {
+        this.cartSlots[loc.cartIdx] = null;
+        this.renderCartUI();
+      }
+      this.spawnParticles(sx, sy, '#FFF3B0', 8);
+      this.spawnFlyer(chosenType, sx, sy, targetAppX, targetAppY, null, 240);
+    });
+    GameState.totalDishesCleared = (GameState.totalDishesCleared || 0) + 3;
+    this.customerCheerUntil = performance.now() + 1350;
+    this.showTopToast('✦ 秘技完售 ✦', '店長秘技瞬間湊齊三連完售！', `${def.name} ✦`);
+    setTimeout(() => {
+      SFX.bingo(this.combo + 1);
+      const ord = this.activeOrders.find(o => o.id === chosenType);
+      if (ord) ord.done += 3;
+      this.renderOrders();
+      this.updateClearProgress();
+      this.renderHUD();
+      this.checkWinOrLose();
+    }, 240);
+    this.setMascotMood('star', speechMsg);
+  }
+
+  triggerGacha() {
+    if (GameState.vouchers <= 0 && GameState.diamonds < 30) { SFX.cancel(); return; }
+    if (GameState.vouchers > 0) GameState.vouchers--;
+    else GameState.diamonds -= 30;
+    SFX.gacha();
+    const dial = document.getElementById('gacha-dial');
+    dial.style.transform = 'rotate(360deg)';
+    document.getElementById('gacha-dome').classList.add('gacha-shaking');
+    setTimeout(() => {
+      dial.style.transform = 'rotate(0deg)';
+      document.getElementById('gacha-dome').classList.remove('gacha-shaking');
+      const pool = [
+        { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '🥢', name: '極速盛合秘技 × 2', desc: '直接從全店集齊 3 份同款和食瞬間完售！', fn: () => GameState.boosters.magnet += 2 },
+        { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '💎', name: '璀璨星鑽禮盒 × 100', desc: '商店街自治會特別頒發的高額星鑽獎勵！', fn: () => GameState.diamonds += 100 },
+        { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🍵', name: '暖茶融霜秘技 × 2', desc: '瞬間融化全場結霜並完售一組料理！', fn: () => GameState.boosters.hammer += 2 },
+        { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🔀', name: '全櫃重整秘技 × 3', desc: '隨時重新調度所有木櫃上的料理位置！', fn: () => GameState.boosters.shuffle += 3 },
+        { special: false, rarity: '✦ 二番賞・營業資金 ✦', icon: '🪙', name: '店鋪營業資金 × 600', desc: '可用於職人木工坊升級收銀台與開運擺設！', fn: () => GameState.coins += 600 }
+      ];
+
+      let rew;
+      if ((GameState.gachaPity || 0) >= 5) {
+        const specials = pool.filter(p => p.special);
+        rew = specials[Math.floor(Math.random() * specials.length)];
+        GameState.gachaPity = 0;
+      } else {
+        rew = pool[Math.floor(Math.random() * pool.length)];
+        GameState.gachaPity = rew.special ? 0 : (GameState.gachaPity || 0) + 1;
+      }
+
+      rew.fn();
+      GameState.save();
+      this.renderHUD();
+      document.getElementById('gacha-rarity-badge').innerText = rew.rarity;
+      document.getElementById('gacha-reward-icon').innerText  = rew.icon;
+      document.getElementById('gacha-reward-name').innerText  = rew.name;
+      document.getElementById('gacha-reward-desc').innerText  = rew.desc;
+      document.getElementById('modal-gacha-reward').classList.remove('hidden');
+    }, 750);
+  }
+
+  buyUpgrade(type, baseCost) {
+    let finalCost = baseCost * GameState.upgrades[type];
+    if (GameState.direction === 'tycoon') finalCost = Math.floor(finalCost * 0.8);
+    if (GameState.coins < finalCost) { SFX.cancel(); return; }
+    SFX.win();
+    GameState.coins -= finalCost;
+    GameState.upgrades[type]++;
+    GameState.save();
+    this.renderHUD();
+  }
+
+  renderRoadmap() {
+    const container = document.getElementById('roadmap-nodes');
+    container.innerHTML = '';
+    let totalStars = 0;
+    Object.values(GameState.stars || {}).forEach(s => { totalStars += s; });
+    const starLabel = document.getElementById('map-total-stars');
+    if (starLabel) starLabel.innerText = totalStars;
+
+    const mileBar = document.getElementById('map-milestone-bar');
+    if (mileBar) {
+      mileBar.innerHTML = '';
+      MAP_MILESTONES.forEach(ms => {
+        const claimed = !!(GameState.milestonesClaimed && GameState.milestonesClaimed[ms.stars]);
+        const canClaim = totalStars >= ms.stars && !claimed;
+        const box = document.createElement('button');
+        box.className = `pop-btn rounded-xl p-1.5 border-2 border-[#4A3326] flex flex-col items-center text-center ${
+          claimed ? 'bg-[#D8F3DC]' : (canClaim ? 'bg-[#FFF3B0] animate-bounce' : 'bg-[#FFF8EC]')
+        }`;
+        box.innerHTML = `
+          <div class="text-base leading-none">${claimed ? '🎊' : (canClaim ? '🎁' : '📦')}</div>
+          <div class="text-[9px] font-black text-[#4A3326] mt-0.5">${ms.title}</div>
+          <div class="text-[8px] font-bold text-[#D94E67]">${claimed ? '已領取' : `💎${ms.diam} 🎫${ms.voucher}`}</div>
+        `;
+        if (canClaim) {
+          box.onclick = () => {
+            SFX.win();
+            GameState.milestonesClaimed[ms.stars] = true;
+            GameState.coins += ms.coins;
+            GameState.diamonds += ms.diam;
+            GameState.vouchers += ms.voucher;
+            GameState.save();
+            this.renderRoadmap();
+            this.renderHUD();
+          };
+        }
+        mileBar.appendChild(box);
+      });
+    }
+
+    for (let lv = 1; lv <= 60; lv++) {
+      const unlocked = lv <= GameState.unlockedLevel;
+      const isCur = lv === GameState.unlockedLevel;
+      const stars = GameState.stars[lv] || 0;
+      const node = document.createElement('button');
+      node.className = `pop-btn h-14 rounded-2xl flex flex-col items-center justify-center font-black anime-border shadow-sm ${
+        isCur ? 'bg-[#FF85A1] text-white scale-105' :
+        unlocked ? 'bg-white text-[#4A3326]' :
+        'bg-[#EAD7C0]/70 text-[#8C583A]/60 opacity-70'
+      }`;
+      node.innerHTML = `
+        <span class="text-xs leading-none">第 ${lv} 店</span>
+        <span class="text-[10px] mt-1 ${isCur ? 'text-[#FFF3B0]' : 'text-[#FF9F1C]'}">
+          ${unlocked ? ('★'.repeat(stars) + '☆'.repeat(3 - stars)) : '🔒'}
+        </span>
+      `;
+      if (unlocked) node.onclick = () => { this.startLevel(lv); this.navigateTo('view-game'); };
+      container.appendChild(node);
+    }
+  }
+
+  renderStampCard() {
+    const slotBox = document.getElementById('stamp-card-slots');
+    if (!slotBox) return;
+    slotBox.innerHTML = '';
+    const count = Math.min(5, GameState.stampCount || 0);
+    for (let i = 1; i <= 5; i++) {
+      const stamped = i <= count;
+      const cell = document.createElement('div');
+      cell.className = `h-11 rounded-xl border-2 border-[#4A3326] flex items-center justify-center ${
+        stamped ? 'bg-[#FFE5EC]' : 'bg-white/90'
+      }`;
+      cell.innerHTML = stamped
+        ? `<div class="w-8 h-8 rounded-full border-2 border-[#D94E67] bg-[#FF85A1] text-white font-black text-xs flex items-center justify-center -rotate-12 shadow-xs">濟</div>`
+        : `<span class="text-[10px] font-black text-[#8C583A]/50">印${i}</span>`;
+      slotBox.appendChild(cell);
+    }
+    const claimBtn = document.getElementById('btn-claim-stamp-card');
+    if (claimBtn) {
+      claimBtn.innerText = count >= 5 ? '🎁 立即領 💎50!' : `集章 ${count}/5 (領💎50)`;
+      claimBtn.className = `anime-btn px-2.5 py-1 text-[10px] font-black rounded-xl ${
+        count >= 5 ? 'bg-[#A8E6CF] text-[#4A3326] animate-bounce' : 'bg-[#FF85A1] text-white'
+      }`;
+    }
+  }
+
+  renderQuests() {
+    const box = document.getElementById('quests-container');
+    box.innerHTML = '';
+    GameState.quests.forEach(q => {
+      const can = q.cur >= q.target && !q.claimed;
+      const row = document.createElement('div');
+      row.className = 'anime-panel p-2.5 rounded-2xl flex items-center justify-between gap-2';
+      row.innerHTML = `
+        <div>
+          <h4 class="font-black text-xs text-[#4A3326]">${q.desc}</h4>
+          <p class="text-[10px] text-[#D94E67] font-black mt-0.5">達成度: ${Math.min(q.cur, q.target)}/${q.target} • 獎金 🪙${q.coins} 💎${q.diam}</p>
+        </div>
+        <button class="anime-btn px-3 py-1.5 rounded-xl font-black text-xs shrink-0 ${
+          q.claimed ? 'bg-slate-100 text-slate-400' :
+          can ? 'bg-[#A8E6CF] text-[#4A3326]' :
+          'bg-[#FFF3D6] text-[#8C583A]'
+        }">${q.claimed ? '💮 已核定' : (can ? '蓋章領取!' : '營業中')}</button>
+      `;
+      const btn = row.querySelector('button');
+      if (can) {
+        btn.onclick = () => {
+          SFX.win();
+          q.claimed = true;
+          GameState.coins += q.coins;
+          GameState.diamonds += q.diam;
+          GameState.stampCount = Math.min(5, (GameState.stampCount || 0) + 1);
+          GameState.save();
+          this.renderHUD();
+          this.renderQuests();
+        };
+      }
+      box.appendChild(row);
+    });
+    this.renderStampCard();
+  }
+
+  startLoop() {
+    const loop = (now) => {
+      const isGameView = this.currentView === 'view-game';
+      const hasFX = this.flyers.length > 0 || this.particles.length > 0 || this.dragging;
+      if (isGameView || hasFX) {
+        if (isGameView) this.drawShelvesCanvas(now);
+        this.drawFXCanvas(now);
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  drawShelvesCanvas(now = performance.now()) {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    if (this.shelfStatic) {
+      this.ctx.drawImage(this.shelfStatic, 0, 0, this.width, this.height);
+    }
+    const ctx = this.ctx;
+    this.shelves.forEach(sh => {
+      sh.slots.forEach(slot => {
+        const depthCount = slot.queue.length;
+        for (let d = 0; d < Math.min(depthCount, 4); d++) {
+          ctx.fillStyle = d === 0 ? '#6BA368' : '#FF85A1';
+          ctx.beginPath();
+          ctx.arc(slot.x + slot.w / 2 - 6 + d * 4.2, slot.y + 4, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (slot.queue.length > 1) {
+          CozyFoodRenderer.drawFood(ctx, slot.queue[1], slot.x + slot.w / 2 + 2, slot.y + slot.h / 2 - 4, slot.w, slot.h, { isBack: true });
+        }
+        const isDraggingThis = this.dragging && this.dragging.sourceType === 'shelf' && this.dragging.fromSlot === slot;
+        if (slot.queue.length > 0 && !isDraggingThis) {
+          CozyFoodRenderer.drawFood(ctx, slot.queue[0], slot.x + slot.w / 2, slot.y + slot.h / 2 + 2, slot.w, slot.h, {
+            isBack: false,
+            scaleX: slot.scaleX || 1,
+            scaleY: slot.scaleY || 1,
+            iceHp: slot.iceHp || 0
+          });
+        }
+      });
+    });
+
+    this.drawBottomCustomers(ctx, now);
+    if (this.dragging) this.paintDropIndicator();
+  }
+
+  paintDropIndicator() {
+    const cRect = this.canvas.getBoundingClientRect();
+    const canvasX = this.dragPointer.clientX - cRect.left;
+    const canvasY = this.dragPointer.clientY - cRect.top;
+    for (const sh of this.shelves) {
+      for (const slot of sh.slots) {
+        if (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
+            canvasY >= slot.y && canvasY <= slot.y + slot.h) {
+          const ctx = this.ctx;
+          ctx.save();
+          if (slot.iceHp > 0) {
+            ctx.strokeStyle = 'rgba(220,90,90,0.85)';
+            ctx.fillStyle = 'rgba(220,90,90,0.14)';
+          } else {
+            ctx.strokeStyle = '#FF85A1';
+            ctx.fillStyle = 'rgba(255,133,161,0.16)';
+          }
+          ctx.lineWidth = 2.5;
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.roundRect(slot.x + 1, slot.y + 1, slot.w - 2, slot.h - 2, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+          return;
+        }
+      }
+    }
+  }
+
+  drawFXCanvas(now) {
+    const appRect = this.appRect || this.appEl.getBoundingClientRect();
+    this.fxCtx.clearRect(0, 0, appRect.width, appRect.height);
+    for (let i = this.flyers.length - 1; i >= 0; i--) {
+      const f = this.flyers[i];
+      const t = Math.min(1, (now - f.startTime) / f.duration);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const curX = f.sx + (f.tx - f.sx) * ease;
+      const curY = f.sy + (f.ty - f.sy) * ease - Math.sin(t * Math.PI) * 24;
+      const scale = 1 - t * 0.22;
+      CozyFoodRenderer.drawFood(this.fxCtx, f.typeId, curX, curY, 64 * scale, 64 * scale, { isBack: false });
+      if (t >= 1) {
+        if (f.onComplete) f.onComplete();
+        this.flyers.splice(i, 1);
+      }
+    }
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.alpha -= 0.028;
+      if (p.alpha <= 0) { this.particles.splice(i, 1); continue; }
+      const sp = FoodSpriteAtlas.getSparkle(p.color);
+      const sz = (16 / sp.radius) * p.size;
+      this.fxCtx.globalAlpha = Math.max(0, p.alpha);
+      this.fxCtx.drawImage(sp.cvs, p.x - sz / 2, p.y - sz / 2, sz, sz);
+      this.fxCtx.globalAlpha = 1;
+    }
+    if (this.dragging) {
+      const px = this.dragPointer.x;
+      const py = this.dragPointer.y;
+      this.fxCtx.save();
+      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 74, 74, {
+        isBack: false, scaleX: 1.15, scaleY: 1.15, lift: 14
+      });
+      this.fxCtx.restore();
+    }
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => { new GameApp(); });
