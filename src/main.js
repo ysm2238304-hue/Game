@@ -1534,7 +1534,7 @@ class GameApp {
     this.curLevel = lvId;
     this.combo = 0;
     this.fever = 0;
-    const cfg = generateLevelConfig(lvId);
+    const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
     this.moves = cfg.moves;
     this.totalLevelItems = cfg.totalItems;
     this.activeOrders = cfg.orders;
