@@ -1,7 +1,3 @@
-// ============================================================
-// 📦 src/themes/taiwan/text.js — 台灣主題 UI 文字
-// ============================================================
-
 export const TEXT = {
   storeStatus: '台灣夜市 • 營業中',
   title: '夜市人生!',
@@ -11,6 +7,14 @@ export const TEXT = {
   lobbyMascotName: '✦ 看板娘・小玉',
   lobbyMascotTag: '本日現做小吃上架',
   lobbySpeech: '「歡迎來逛夜市！今天有蚵仔煎、珍珠奶茶和碳烤玉米喔～」',
+  navMapTitle: '夜市巡禮',
+  navMapSub: '分店地圖與褒賞',
+  navGachaTitle: '夜市抽獎攤',
+  navGachaSub: '祈願抽取秘寶',
+  navShopTitle: '攤位改造所',
+  navShopSub: '改造與開運擺設',
+  navQuestsTitle: '攤商公會',
+  navQuestsSub: '集章卡與小吃圖鑑',
   soundOn: '🔊 音效: 開啟',
   soundOff: '🔇 音效: 關閉'
 };
