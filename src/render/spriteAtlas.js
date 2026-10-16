@@ -434,4 +434,104 @@ export const FoodSpriteAtlas = {
           ctx.beginPath(); ctx.arc(sx, 8, 6, -0.8, 0.8); ctx.stroke();
         });
         this.drawJellyGloss(ctx, -12, -14, 10, 3, -0.2);
-        this.drawKawaiiSparkle(ctx, -32, -
+        this.drawKawaiiSparkle(ctx, -32, -24, 6);
+        this.drawKawaiiSparkle(ctx, 32, 24, 6);
+        break;
+      }
+      case 'daifuku': {
+        this.drawFluffyRice(ctx, 0, 8, 34, 22, 14, '#A3D99B', LINE);
+        ctx.fillStyle = '#FFFDF7'; ctx.strokeStyle = LINE; ctx.lineWidth = 2.4;
+        ctx.beginPath(); ctx.ellipse(0, -6, 18, 9, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        const berryG = ctx.createRadialGradient(-4, -20, 2, 0, -18, 16);
+        berryG.addColorStop(0, '#FF8FA3'); berryG.addColorStop(1, '#E63946');
+        ctx.fillStyle = berryG;
+        ctx.beginPath();
+        ctx.moveTo(0, -34);
+        ctx.quadraticCurveTo(18, -18, 12, -4);
+        ctx.quadraticCurveTo(0, 0, -12, -4);
+        ctx.quadraticCurveTo(-18, -18, 0, -34);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        this.drawJellyGloss(ctx, -5, -20, 4.5, 2.2, -0.5);
+        this.drawKawaiiSparkle(ctx, -28, -18, 6);
+        this.drawKawaiiSparkle(ctx, 28, -14, 6);
+        break;
+      }
+      case 'pudding': {
+        ctx.fillStyle = '#E0F4FF'; ctx.strokeStyle = LINE; ctx.lineWidth = 2.6;
+        ctx.beginPath(); ctx.ellipse(0, 18, 42, 12, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#FFE169';
+        ctx.beginPath();
+        ctx.moveTo(-30, 16);
+        ctx.quadraticCurveTo(-24, -18, -18, -20);
+        ctx.lineTo(18, -20);
+        ctx.quadraticCurveTo(24, -18, 30, 16);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#7F3F18';
+        ctx.beginPath();
+        ctx.moveTo(-21, -12);
+        ctx.quadraticCurveTo(-18, -22, 0, -22);
+        ctx.quadraticCurveTo(18, -22, 21, -12);
+        ctx.quadraticCurveTo(12, -4, 6, -12);
+        ctx.quadraticCurveTo(0, -3, -6, -12);
+        ctx.quadraticCurveTo(-12, -4, -21, -12);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        this.drawFluffyRice(ctx, 0, -25, 11, 6, 8, '#FFFDF7', LINE);
+        ctx.fillStyle = '#E63946';
+        ctx.beginPath(); ctx.arc(0, -34, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        this.drawKawaiiSparkle(ctx, -28, -22, 6);
+        this.drawKawaiiSparkle(ctx, 30, -14, 5.5);
+        break;
+      }
+      case 'cake': {
+        ctx.fillStyle = '#FFE8A3'; ctx.strokeStyle = LINE; ctx.lineWidth = 2.8;
+        ctx.beginPath(); ctx.roundRect(-32, -14, 64, 36, 8); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#FFFDF7'; ctx.fillRect(-30, 1, 60, 8);
+        ctx.fillStyle = '#FF85A1';
+        [-18, 0, 18].forEach(cx => { ctx.beginPath(); ctx.arc(cx, 5, 4, 0, Math.PI * 2); ctx.fill(); });
+        this.drawFluffyRice(ctx, 0, -16, 34, 10, 12, '#FFFDF7', LINE);
+        ctx.fillStyle = '#E63946';
+        ctx.beginPath(); ctx.ellipse(0, -30, 11, 12, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        this.drawJellyGloss(ctx, -4, -33, 4, 2, -0.4);
+        this.drawKawaiiSparkle(ctx, -30, -28, 6);
+        this.drawKawaiiSparkle(ctx, 30, -24, 6);
+        break;
+      }
+      case 'oden': {
+        ctx.strokeStyle = '#C88A55'; ctx.lineWidth = 3.5;
+        ctx.beginPath(); ctx.moveTo(-28, 28); ctx.lineTo(28, -32); ctx.stroke();
+        ctx.strokeStyle = LINE; ctx.lineWidth = 2.8;
+        ctx.fillStyle = '#FFF3D1';
+        ctx.beginPath(); ctx.roundRect(-24, 4, 28, 20, 8); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#9E9A95';
+        ctx.beginPath(); ctx.moveTo(-18, 4); ctx.lineTo(18, 4); ctx.lineTo(0, -20); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#E09F5A';
+        ctx.beginPath(); ctx.ellipse(14, -20, 14, 9, -0.6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        this.drawKawaiiSparkle(ctx, -28, -16, 6);
+        this.drawKawaiiSparkle(ctx, 30, 10, 6);
+        break;
+      }
+      case 'boba': {
+        const cupG = ctx.createLinearGradient(0, -30, 0, 26);
+        cupG.addColorStop(0, '#FFFDF7'); cupG.addColorStop(0.55, '#95D5B2'); cupG.addColorStop(1, '#52B788');
+        ctx.fillStyle = cupG; ctx.strokeStyle = LINE; ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        ctx.moveTo(-26, -24); ctx.lineTo(26, -24); ctx.lineTo(20, 26);
+        ctx.quadraticCurveTo(0, 31, -20, 26);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        [[-10,20],[0,22],[10,20],[-6,12],[6,12]].forEach(([px, py]) => {
+          ctx.fillStyle = '#4A2C18';
+          ctx.beginPath(); ctx.arc(px, py, 4.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF3B0';
+          ctx.beginPath(); ctx.arc(px - 1.5, py - 1.5, 1.4, 0, Math.PI * 2); ctx.fill();
+        });
+        this.drawFluffyRice(ctx, 0, -24, 26, 9, 12, '#FFFDF7', LINE);
+        ctx.fillStyle = '#FF85A1'; ctx.strokeStyle = LINE;
+        ctx.beginPath(); ctx.roundRect(4, -44, 9, 22, 3); ctx.fill(); ctx.stroke();
+        this.drawKawaiiSparkle(ctx, -28, -10, 6);
+        this.drawKawaiiSparkle(ctx, 28, 2, 6);
+        break;
+      }
+    }
+    ctx.restore();
+  }
+};
