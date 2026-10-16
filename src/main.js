@@ -31,7 +31,7 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
 class GameApp {
   constructor() {
     GameState.load();
-    FoodSpriteAtlas.init();
+    FoodSpriteAtlas.init().then(() => this.rebuildShelfStaticLayer());
     this.canvas = document.getElementById('shelf-canvas');
     this.ctx = this.canvas.getContext('2d');
     this.fxCanvas = document.getElementById('fx-canvas');
