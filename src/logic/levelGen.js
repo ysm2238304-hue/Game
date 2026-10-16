@@ -23,7 +23,7 @@
 //   3. 加訂單      → orderCount 從 3 改 4
 // ============================================================
 
-import { ITEM_DEFS } from '../config/items.js';
+import { getActiveTheme } from '../themes/index.js';
 
 function mulberry32(a) {
   return function () {
@@ -35,6 +35,7 @@ function mulberry32(a) {
 }
 
 export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
+  const ITEM_DEFS = getActiveTheme().items;
   const rng = mulberry32(levelId * 9137 + 101);
   const cols = 3;
   const rows = 3;
