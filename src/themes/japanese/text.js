@@ -1,7 +1,3 @@
-// ============================================================
-// 📦 src/themes/japanese/text.js — 日式主題 UI 文字
-// ============================================================
-
 export const TEXT = {
   storeStatus: '星野便利 • 24H 營業中',
   title: '家有貨物!',
@@ -11,6 +7,14 @@ export const TEXT = {
   lobbyMascotName: '✦ 看板娘・星野葵',
   lobbyMascotTag: '本日旬味新鮮上架',
   lobbySpeech: '「歡迎回來店長！今天有笹葉厚燒玉子、花見糰子與鮭魚卵軍艦唷♪」',
+  navMapTitle: '商店街巡禮',
+  navMapSub: '分店地圖與褒賞',
+  navGachaTitle: '福引轉蛋亭',
+  navGachaSub: '祈願抽取秘寶',
+  navShopTitle: '職人設備工坊',
+  navShopSub: '改造與開運擺設',
+  navQuestsTitle: '店長室委託',
+  navQuestsSub: '集章卡與料理圖鑑',
   soundOn: '🔊 音效: 開啟',
   soundOff: '🔇 音效: 關閉'
 };
