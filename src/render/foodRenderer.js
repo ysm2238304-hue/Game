@@ -22,7 +22,7 @@
 //   2. 陰影更明顯     → 改 rgba(74,51,38,0.22) 的 0.22
 // ============================================================
 
-import { FoodSpriteAtlas } from './spriteAtlas.js';
+import { getActiveTheme } from '../themes/index.js';
 
 export class CozyFoodRenderer {
   static drawIceOverlay(ctx, size, hp) {
