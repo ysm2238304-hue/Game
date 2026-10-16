@@ -1,15 +1,18 @@
-import { ITEM_DEFS } from './config/items.js';
-import { GUIDE_DATA } from './config/guides.js';
-import { SHELF_THEMES } from './config/shelfThemes.js';
+import { getActiveTheme } from './themes/index.js';
 import { generateLevelConfig } from './logic/levelGen.js';
-import { SHOP_DECORS } from './config/decors.js';
-import { MAP_MILESTONES } from './config/milestones.js';
 import { SFX } from './audio/sfx.js';
-import { AnimeMascot } from './render/mascot.js';
 import { GameState } from './state/GameState.js';
-import { SCENE_THEMES } from './config/sceneThemes.js';
-import { SPRITE_RES, SPRITE_DPR, FoodSpriteAtlas } from './render/spriteAtlas.js';
 import { CozyFoodRenderer } from './render/foodRenderer.js';
+
+const theme = getActiveTheme();
+const ITEM_DEFS = theme.items;
+const GUIDE_DATA = theme.guides;
+const SHELF_THEMES = theme.shelfThemes;
+const SHOP_DECORS = theme.decors;
+const MAP_MILESTONES = theme.milestones;
+const AnimeMascot = theme.mascot;
+const SCENE_THEMES = theme.scenes;
+const FoodSpriteAtlas = theme.spriteAtlas;
 
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
