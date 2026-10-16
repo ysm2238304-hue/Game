@@ -10,18 +10,31 @@ const THEMES = {
   taiwan
 };
 
-// 從 URL ?theme=taiwan 讀取，沒指定就用 japanese
 const urlParams = new URLSearchParams(window.location.search);
 const urlTheme = urlParams.get('theme');
-let activeThemeId = (urlTheme && THEMES[urlTheme]) ? urlTheme : 'japanese';
+const savedTheme = localStorage.getItem('activeTheme');
+
+let activeThemeId =
+  (urlTheme && THEMES[urlTheme]) ? urlTheme :
+  (savedTheme && THEMES[savedTheme]) ? savedTheme :
+  'japanese';
+
+if (urlTheme && THEMES[urlTheme]) {
+  localStorage.setItem('activeTheme', urlTheme);
+}
 
 export function getActiveTheme() {
   return THEMES[activeThemeId];
 }
 
+export function getActiveThemeId() {
+  return activeThemeId;
+}
+
 export function setActiveTheme(id) {
   if (THEMES[id]) {
     activeThemeId = id;
+    localStorage.setItem('activeTheme', id);
     return true;
   }
   return false;
@@ -33,8 +46,4 @@ export function getAllThemes() {
 
 export function getThemeById(id) {
   return THEMES[id] || null;
-}
-
-export function getActiveThemeId() {
-  return activeThemeId;
 }
