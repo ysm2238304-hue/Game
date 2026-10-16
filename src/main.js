@@ -662,50 +662,6 @@ const SCENE_THEMES = {
   }
 };
 
-const GameState = {
-  unlockedLevel: 1,
-  coins: 1200, diamonds: 200, vouchers: 8,
-  direction: 'rush', stars: {},
-  totalDishesCleared: 12,
-  gachaPity: 0,
-  stampCount: 2,
-  milestonesClaimed: {},
-  decorsUnlocked: { maneki: false, matcha: false, sakura: false },
-  upgrades: { register: 1, shelf: 1, cold: 1 },
-  boosters: { shuffle: 3, hammer: 2, magnet: 2 },
-  quests: [
-    { id: 'q1', desc: '完成 2 次木櫃和食全數完售', cur: 0, target: 2, claimed: false, coins: 200, diam: 20 },
-    { id: 'q2', desc: '累計達成 6 次料理三連完售', cur: 0, target: 6, claimed: false, coins: 250, diam: 25 },
-    { id: 'q3', desc: '在營業中施展 1 次店長秘技', cur: 0, target: 1, claimed: false, coins: 150, diam: 15 }
-  ],
-  load() {
-    try {
-      const data = localStorage.getItem('HoshinoWashoku_Save_v7');
-      if (data) {
-        const parsed = JSON.parse(data);
-        Object.assign(this, parsed);
-        this.milestonesClaimed = parsed.milestonesClaimed || {};
-        this.decorsUnlocked = parsed.decorsUnlocked || { maneki: false, matcha: false, sakura: false };
-      }
-    } catch (e) {}
-  },
-  save() {
-    try {
-      localStorage.setItem('HoshinoWashoku_Save_v7', JSON.stringify({
-        unlockedLevel: this.unlockedLevel,
-        coins: this.coins, diamonds: this.diamonds, vouchers: this.vouchers,
-        direction: this.direction, stars: this.stars,
-        totalDishesCleared: this.totalDishesCleared,
-        gachaPity: this.gachaPity,
-        stampCount: this.stampCount,
-        milestonesClaimed: this.milestonesClaimed,
-        decorsUnlocked: this.decorsUnlocked,
-        upgrades: this.upgrades, boosters: this.boosters, quests: this.quests
-      }));
-    } catch (e) {}
-  }
-};
-
 class GameApp {
   constructor() {
     GameState.load();
