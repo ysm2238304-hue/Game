@@ -1,4 +1,4 @@
-import { getActiveTheme } from './themes/index.js';
+import { getActiveTheme, getActiveThemeId, setActiveTheme, getAllThemes } from './themes/index.js';
 import { generateLevelConfig } from './logic/levelGen.js';
 import { SFX } from './audio/sfx.js';
 import { GameState } from './state/GameState.js';
