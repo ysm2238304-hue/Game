@@ -5,6 +5,9 @@ import { generateLevelConfig } from './logic/levelGen.js';
 import { SHOP_DECORS } from './config/decors.js';
 import { MAP_MILESTONES } from './config/milestones.js';
 import { SFX } from './audio/sfx.js';
+import { AnimeMascot } from './render/mascot.js';
+import { GameState } from './state/GameState.js';
+import { SCENE_THEMES } from './config/sceneThemes.js';
 
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
