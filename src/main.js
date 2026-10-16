@@ -863,42 +863,6 @@ const GameState = {
   }
 };
 
-function generateLevelConfig(levelId) {
-  const rng = mulberry32(levelId * 9137 + 101);
-  const cols = 3;
-  const rows = 3;
-  const shelfCount = 9;
-  const totalSlots = shelfCount * 3;
-  const depthPerSlot = levelId >= 21 ? 4 : (levelId >= 8 ? 3 : 2);
-  const rawCapacity = totalSlots * depthPerSlot;
-  const totalItems = Math.floor((rawCapacity - 3) / 3) * 3;
-  const matchTriplets = totalItems / 3;
-
-  const pool = [...ITEM_DEFS];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  const varietyCount = Math.min(pool.length, 6 + Math.floor(levelId / 2));
-  const chosenTypes = [];
-  for (let i = 0; i < matchTriplets; i++) chosenTypes.push(pool[i % varietyCount].id);
-
-  const itemPool = [];
-  chosenTypes.forEach(t => itemPool.push(t, t, t));
-  for (let i = itemPool.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [itemPool[i], itemPool[j]] = [itemPool[j], itemPool[i]];
-  }
-
-  const iceCount = Math.min(shelfCount - 2, Math.floor((levelId + 1) / 2));
-  const moves = 24 + matchTriplets * 2 + (GameState.upgrades.shelf - 1) * 2;
-  const uniqueTypes = [...new Set(chosenTypes)];
-  const orderCount = levelId >= 10 ? 3 : 2;
-  const orders = uniqueTypes.slice(0, orderCount).map(id => ({ id, req: 3, done: 0 }));
-
-  return { levelId, rows, cols, shelfCount, depthPerSlot, itemPool, totalItems, iceCount, moves, orders };
-}
-
 class GameApp {
   constructor() {
     GameState.load();
