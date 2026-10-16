@@ -40,9 +40,10 @@ export class CozyFoodRenderer {
     ctx.restore();
   }
   static drawFood(ctx, typeId, cx, cy, w, h, opts = {}) {
-    FoodSpriteAtlas.init();
+    const atlas = getActiveTheme().spriteAtlas;
+    atlas.init();
     const { isBack = false, scaleX = 1, scaleY = 1, lift = 0, iceHp = 0 } = opts;
-    const sprite = FoodSpriteAtlas.cache[typeId] || FoodSpriteAtlas.cache['onigiri'];
+    const sprite = atlas.cache[typeId] || atlas.cache['onigiri'];
     const baseSize = Math.min(w * 1.14, h * 0.92);
     ctx.save();
     ctx.translate(cx, cy);
