@@ -74,6 +74,7 @@ class GameApp {
     ];
     this.lobbyLineIdx = 0;
 
+    this.applyThemeText();
     this.initMascots();
     this.initCartSlots();
     this.bindEvents();
@@ -87,6 +88,35 @@ class GameApp {
     this.startLoop();
   }
 
+   applyThemeText() {
+    const txt = theme.text || {};
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el && value) el.innerText = value;
+    };
+    setText('txt-store-status',   txt.storeStatus);
+    setText('txt-title',          txt.title);
+    setText('txt-subtitle',       txt.subtitle);
+    setText('txt-enter-button',   txt.enterButton);
+    setText('txt-lobby-store',    txt.lobbyStoreName);
+    setText('txt-mascot-name',    txt.lobbyMascotName);
+    setText('txt-mascot-tag',     txt.lobbyMascotTag);
+    setText('txt-nav-map-title',  txt.navMapTitle);
+    setText('txt-nav-map-sub',    txt.navMapSub);
+    setText('txt-nav-gacha-title', txt.navGachaTitle);
+    setText('txt-nav-gacha-sub',  txt.navGachaSub);
+    setText('txt-nav-shop-title', txt.navShopTitle);
+    setText('txt-nav-shop-sub',   txt.navShopSub);
+    setText('txt-nav-quests-title', txt.navQuestsTitle);
+    setText('txt-nav-quests-sub', txt.navQuestsSub);
+    // 大廳對話（保留在寫死的位置，用 theme 覆寫）
+    const speechEl = document.getElementById('lobby-speech-text');
+    if (speechEl && txt.lobbySpeech) speechEl.innerText = txt.lobbySpeech;
+    // SFX 按鈕
+    const sfxBtn = document.getElementById('btn-toggle-sfx');
+    if (sfxBtn && txt.soundOn) sfxBtn.innerText = txt.soundOn;
+  }
+  
   initMascots() {
     document.getElementById('lobby-mascot-svg').innerHTML = AnimeMascot.renderSVG('happy', false);
     document.getElementById('map-mascot-holder').innerHTML = AnimeMascot.renderSVG('star', false);
