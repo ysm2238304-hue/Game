@@ -1,23 +1,19 @@
 // ============================================================
 // 🎯 src/themes/index.js — 主題管理器
 // ============================================================
-//
-// 職責：
-//   1. 註冊所有主題
-//   2. 提供「當前主題」讀取
-//   3. 提供「切換主題」介面
-//
-// 之後加新主題：import 進來，放進 THEMES
-// ============================================================
 
 import { japanese } from './japanese/index.js';
+import { taiwan } from './taiwan/index.js';
 
 const THEMES = {
-  japanese
-  // 之後加：taiwan, french, fantasy...
+  japanese,
+  taiwan
 };
 
-let activeThemeId = 'japanese';
+// 從 URL ?theme=taiwan 讀取，沒指定就用 japanese
+const urlParams = new URLSearchParams(window.location.search);
+const urlTheme = urlParams.get('theme');
+let activeThemeId = (urlTheme && THEMES[urlTheme]) ? urlTheme : 'japanese';
 
 export function getActiveTheme() {
   return THEMES[activeThemeId];
@@ -37,4 +33,8 @@ export function getAllThemes() {
 
 export function getThemeById(id) {
   return THEMES[id] || null;
+}
+
+export function getActiveThemeId() {
+  return activeThemeId;
 }
