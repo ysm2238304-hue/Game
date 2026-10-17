@@ -5,7 +5,6 @@ import { BGM } from './audio/bgm.js'; //
 
 import { GameState } from './state/GameState.js';
 import { CozyFoodRenderer } from './render/foodRenderer.js';
-import { BGM } from './audio/bgm.js'; //
 const theme = getActiveTheme();
 const ITEM_DEFS = theme.items;
 const GUIDE_DATA = theme.guides;
