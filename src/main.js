@@ -992,6 +992,7 @@ class GameApp {
 
     document.getElementById('btn-enter-lobby').onclick = () => {
       SFX.tap();
+      BGM.play(); // 👈 在這裡觸發音樂播放（符合 iOS 手勢解鎖）
       document.getElementById('view-title').classList.add('hidden');
       this.renderHUD();
     };
@@ -1003,6 +1004,22 @@ class GameApp {
     };
     document.getElementById('btn-toggle-sfx').onclick = () => { SFX.toggle(); updateSfxButtons(); };
     document.getElementById('btn-hud-sfx').onclick    = () => { SFX.toggle(); updateSfxButtons(); };
+
+    // 👇👇👇 新增的 BGM 與簽到事件 👇👇👇
+    const bgmBtn = document.getElementById('btn-hud-bgm');
+    if (bgmBtn) {
+      bgmBtn.onclick = () => {
+        const on = BGM.toggle();
+        bgmBtn.innerText = on ? '🎵' : '🔇';
+      };
+      bgmBtn.innerText = BGM.enabled ? '🎵' : '🔇';
+    }
+
+    const checkInBtn = document.getElementById('btn-do-checkin');
+    if (checkInBtn) {
+      checkInBtn.onclick = () => this.handleCheckIn();
+    }
+    // 👆👆👆 新增結束 👆👆👆
 
     const themeBtn = document.getElementById('btn-theme-toggle');
     if (themeBtn) {
