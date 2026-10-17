@@ -9,9 +9,9 @@
   "theme_color": "#FF85A1",
   "icons": [
     {
-      "src": "https://ysm2238304-hue.github.io/Game/assets/mascot/icon180.jpg?v=888",
+      "src": "./assets/mascot/icon180.png?v=999",
       "sizes": "180x180",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
