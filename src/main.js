@@ -354,14 +354,18 @@ class GameApp {
     if (!this.shelves.length) return;
     const cols = 3;
     const rows = 3;
-    const padX = 7, gapX = 6, gapY = 10;
+    
+    // 1. 將左右邊距與格子間距縮小 (原本是 7, 6, 10，現在改為 3, 4, 6)
+    const padX = 3, gapX = 4, gapY = 6;
 
     this.topSceneH    = Math.max(46, Math.min(60, this.height * 0.13));
     this.bottomSceneH = Math.max(54, Math.min(70, this.height * 0.15));
 
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
     const availH = this.height - this.topSceneH - this.bottomSceneH - gapY * (rows - 1) - 8;
-    const maxIdealShelfH = Math.min(98, shelfW * 0.78);
+    
+    // 2. 放大貨架高度上限 (原本 98，現在提高到 130)
+    const maxIdealShelfH = Math.min(130, shelfW * 0.95); 
     const shelfH = Math.max(66, Math.min(availH / rows, maxIdealShelfH));
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
