@@ -7,10 +7,9 @@ const PRECACHE_ASSETS = [
   './src/styles/main.css',
   './assets/mascot/icon180.png',
   './assets/mascot/aoi-happy.png'
-  // 若有其他核心圖片，請確認皆加上 ./assets/ 前綴
 ];
 
-// 1. 安裝階段：容錯預載入資源，並立即接管
+// 1. 安裝階段：容錯預載入資源，單一圖片缺漏不會導致整個 SW 崩潰
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -20,14 +19,14 @@ self.addEventListener('install', (event) => {
       );
       results.forEach((res, idx) => {
         if (res.status === 'rejected') {
-          console.warn(`[SW] 預載入失敗 (略過): ${PRECACHE_ASSETS[idx]}`, res.reason);
+          console.warn(`[SW] 預載入略過: ${PRECACHE_ASSETS[idx]}`, res.reason);
         }
       });
     })
   );
 });
 
-// 2. 啟動階段：自動清除舊版號的快取
+// 2. 啟動階段：自動清除舊版號（如 v1）的快取
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -40,14 +39,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. 攔截請求：程式碼走「網路優先」，圖片素材走「快取優先」
+// 3. 攔截請求：HTML/JS/CSS 走「網路優先」，圖片音效走「快取優先」
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-
-  // 忽略非 http/https 請求（例如 chrome-extension）
   if (!url.protocol.startsWith('http')) return;
 
   const isAsset =
@@ -69,7 +66,7 @@ self.addEventListener('fetch', (event) => {
       })
     );
   } else {
-    // HTML / JS / CSS：Network First (網路優先，確保遊戲更新即時生效)
+    // 程式碼與頁面：Network First (網路優先，離線才用快取)
     event.respondWith(
       fetch(request)
         .then((networkResponse) => {
