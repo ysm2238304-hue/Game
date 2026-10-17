@@ -112,6 +112,9 @@ export const GameState = {
           claimed: Boolean(found.claimed)
         };
       });
+      this.lastCheckIn = parsed.lastCheckIn || null;
+      this.checkInStreak = safeInt(parsed.checkInStreak, 0);
+      this.hasCheckedInToday = Boolean(parsed.hasCheckedInToday);
     } catch (err) {
       console.warn('[GameState] 讀取存檔失敗，已自動回退至預設狀態:', err);
     }
