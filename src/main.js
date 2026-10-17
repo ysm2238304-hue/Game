@@ -308,17 +308,24 @@ class GameApp {
   initCanvasSize() {
     this.width  = this.stageContainer.clientWidth  || 360;
     this.height = this.stageContainer.clientHeight || 440;
+    
+    // 處理 Retina 螢幕的高清畫質
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
+    
     this.canvas.width  = this.width  * dpr;
     this.canvas.height = this.height * dpr;
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
+    
     this.appRect = this.appEl.getBoundingClientRect();
+    
+    // 特效畫布也要跟著放大
     this.fxCanvas.width  = this.appRect.width  * dpr;
     this.fxCanvas.height = this.appRect.height * dpr;
     this.fxCtx.setTransform(1, 0, 0, 1, 0, 0);
     this.fxCtx.scale(dpr, dpr);
+    
     this.recalcShelvesLayout();
     this.rebuildShelfStaticLayer();
   }
