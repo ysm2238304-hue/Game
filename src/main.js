@@ -28,10 +28,18 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
   };
 }
 
+// 註冊 Service Worker，確保 PWA 離線快取與版本自動更新生效
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
+      console.warn('[SW] 註冊略過:', err);
+    });
+  });
+}
+
 class GameApp {
   constructor() {
     GameState.load();
-    FoodSpriteAtlas.init().then(() => this.rebuildShelfStaticLayer());
     this.canvas = document.getElementById('shelf-canvas');
     this.ctx = this.canvas.getContext('2d');
     this.fxCanvas = document.getElementById('fx-canvas');
@@ -41,6 +49,10 @@ class GameApp {
 
     this.currentView = 'view-lobby';
     this.isTransitioning = false;
+    this.isLevelSettled = false;
+    this.isDrawingGacha = false;
+    this.fxNeedsClear = false;
+
     this.curLevel = GameState.unlockedLevel;
     this.shelves = [];
     this.cartSlots = [];
@@ -78,6 +90,7 @@ class GameApp {
     this.initMascots();
     this.initCartSlots();
     this.bindEvents();
+    this.syncDailyClaimState();
     this.renderLobbyShowcase();
     this.renderShopDecors();
     this.renderEncyclopedia();
@@ -88,35 +101,34 @@ class GameApp {
     this.startLoop();
   }
 
-   applyThemeText() {
+  applyThemeText() {
     const txt = theme.text || {};
     const setText = (id, value) => {
       const el = document.getElementById(id);
       if (el && value) el.innerText = value;
     };
-    setText('txt-store-status',   txt.storeStatus);
-    setText('txt-title',          txt.title);
-    setText('txt-subtitle',       txt.subtitle);
-    setText('txt-enter-button',   txt.enterButton);
-    setText('txt-lobby-store',    txt.lobbyStoreName);
-    setText('txt-mascot-name',    txt.lobbyMascotName);
-    setText('txt-mascot-tag',     txt.lobbyMascotTag);
-    setText('txt-nav-map-title',  txt.navMapTitle);
-    setText('txt-nav-map-sub',    txt.navMapSub);
+    setText('txt-store-status',    txt.storeStatus);
+    setText('txt-title',           txt.title);
+    setText('txt-subtitle',        txt.subtitle);
+    setText('txt-enter-button',    txt.enterButton);
+    setText('txt-lobby-store',     txt.lobbyStoreName);
+    setText('txt-mascot-name',     txt.lobbyMascotName);
+    setText('txt-mascot-tag',      txt.lobbyMascotTag);
+    setText('txt-nav-map-title',   txt.navMapTitle);
+    setText('txt-nav-map-sub',     txt.navMapSub);
     setText('txt-nav-gacha-title', txt.navGachaTitle);
-    setText('txt-nav-gacha-sub',  txt.navGachaSub);
-    setText('txt-nav-shop-title', txt.navShopTitle);
-    setText('txt-nav-shop-sub',   txt.navShopSub);
+    setText('txt-nav-gacha-sub',   txt.navGachaSub);
+    setText('txt-nav-shop-title',  txt.navShopTitle);
+    setText('txt-nav-shop-sub',    txt.navShopSub);
     setText('txt-nav-quests-title', txt.navQuestsTitle);
-    setText('txt-nav-quests-sub', txt.navQuestsSub);
-    // 大廳對話（保留在寫死的位置，用 theme 覆寫）
+    setText('txt-nav-quests-sub',  txt.navQuestsSub);
+
     const speechEl = document.getElementById('lobby-speech-text');
     if (speechEl && txt.lobbySpeech) speechEl.innerText = txt.lobbySpeech;
-    // SFX 按鈕
     const sfxBtn = document.getElementById('btn-toggle-sfx');
-    if (sfxBtn && txt.soundOn) sfxBtn.innerText = txt.soundOn;
+    if (sfxBtn && txt.soundOn) sfxBtn.innerText = SFX.enabled ? txt.soundOn : '🔇 音效: 關閉';
   }
-  
+
   initMascots() {
     document.getElementById('lobby-mascot-svg').innerHTML = AnimeMascot.renderSVG('happy', false);
     document.getElementById('map-mascot-holder').innerHTML = AnimeMascot.renderSVG('star', false);
@@ -128,6 +140,19 @@ class GameApp {
     const faceBox = document.getElementById('hud-mascot-face');
     if (faceBox) faceBox.innerHTML = AnimeMascot.renderSVG(mood, true);
     if (speechText) document.getElementById('mascot-speech').innerText = speechText;
+  }
+
+  syncDailyClaimState() {
+    const btn = document.getElementById('btn-daily-claim');
+    if (!btn) return;
+    const todayKey = new Date().toDateString();
+    try {
+      if (localStorage.getItem('hoshino_daily_claim_date') === todayKey) {
+        btn.innerText = '✔ 今日出勤獎金已領取';
+        btn.disabled = true;
+        btn.classList.add('opacity-60');
+      }
+    } catch (_) {}
   }
 
   renderLobbyShowcase() {
@@ -244,20 +269,20 @@ class GameApp {
     if (this.isTransitioning || targetViewId === this.currentView) return;
     this.isTransitioning = true;
     SFX.shutter();
-    const theme = SCENE_THEMES[targetViewId] || SCENE_THEMES['view-lobby'];
+    const sceneTheme = SCENE_THEMES[targetViewId] || SCENE_THEMES['view-lobby'];
     const transEl  = document.getElementById('scene-transition');
     const backdrop = document.getElementById('trans-backdrop');
     const stage    = document.getElementById('trans-visual-stage');
     stage.innerHTML = `
       <div class="w-full max-w-xs anime-panel rounded-3xl p-4 flex flex-col items-center text-center transform transition-all duration-300 scale-95 opacity-0" id="trans-card-inner">
-        <span class="px-3 py-0.5 rounded-full bg-gradient-to-r ${theme.accent} text-white text-[9px] font-black tracking-wider border border-[#4A3326] mb-2">${theme.tag}</span>
-        ${theme.renderVisual()}
+        <span class="px-3 py-0.5 rounded-full bg-gradient-to-r ${sceneTheme.accent} text-white text-[9px] font-black tracking-wider border border-[#4A3326] mb-2">${sceneTheme.tag}</span>
+        ${sceneTheme.renderVisual()}
         <h3 class="text-lg font-black text-[#4A3326] mt-3 flex items-center gap-1.5">
-          <span>${theme.icon}</span><span>${theme.title}</span>
+          <span>${sceneTheme.icon}</span><span>${sceneTheme.title}</span>
         </h3>
         <div class="w-full mt-2 p-2.5 rounded-2xl bg-[#FFF3D6] anime-border flex items-center gap-2 text-left">
           <div class="w-10 h-10 rounded-xl bg-white border border-[#4A3326] shrink-0 overflow-hidden">${AnimeMascot.renderSVG('star', true)}</div>
-          <p class="text-[11px] font-bold text-[#4A3326] leading-snug">${theme.tip}</p>
+          <p class="text-[11px] font-bold text-[#4A3326] leading-snug">${sceneTheme.tip}</p>
         </div>
       </div>`;
     transEl.classList.remove('hidden');
@@ -269,7 +294,7 @@ class GameApp {
     });
     setTimeout(() => {
       Object.values(SCENE_THEMES).forEach(t => this.appEl.classList.remove(t.bgClass));
-      this.appEl.classList.add(theme.bgClass);
+      this.appEl.classList.add(sceneTheme.bgClass);
       document.querySelectorAll('.view-panel').forEach(p => { p.classList.add('hidden'); p.classList.remove('flex'); });
       const targetEl = document.getElementById(targetViewId);
       if (targetEl) { targetEl.classList.remove('hidden'); targetEl.classList.add('flex'); }
@@ -306,26 +331,21 @@ class GameApp {
   }
 
   initCanvasSize() {
-    this.width  = this.stageContainer.clientWidth  || 360;
-    this.height = this.stageContainer.clientHeight || 440;
-    
-    // 處理 Retina 螢幕的高清畫質
+    const cw = this.stageContainer.clientWidth;
+    const ch = this.stageContainer.clientHeight;
+    this.width  = cw > 0 ? cw : 360;
+    this.height = ch > 0 ? ch : 440;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
-    
-    this.canvas.width  = this.width  * dpr;
-    this.canvas.height = this.height * dpr;
+    this.canvas.width  = Math.round(this.width  * dpr);
+    this.canvas.height = Math.round(this.height * dpr);
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
-    
     this.appRect = this.appEl.getBoundingClientRect();
-    
-    // 特效畫布也要跟著放大
-    this.fxCanvas.width  = this.appRect.width  * dpr;
-    this.fxCanvas.height = this.appRect.height * dpr;
+    this.fxCanvas.width  = Math.round(this.appRect.width  * dpr);
+    this.fxCanvas.height = Math.round(this.appRect.height * dpr);
     this.fxCtx.setTransform(1, 0, 0, 1, 0, 0);
     this.fxCtx.scale(dpr, dpr);
-    
     this.recalcShelvesLayout();
     this.rebuildShelfStaticLayer();
   }
@@ -471,7 +491,7 @@ class GameApp {
   }
 
   paintShelfFrame(ctx, sh) {
-    const theme = sh.theme || SHELF_THEMES[0];
+    const shelfTheme = sh.theme || SHELF_THEMES[0];
 
     const lampX = sh.x + sh.w / 2;
     const lampY = sh.y - 4;
@@ -542,11 +562,11 @@ class GameApp {
     ctx.fillStyle = '#D94E67';
     ctx.font = '900 6.5px "M PLUS Rounded 1c", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(theme.price || '¥200', tagX + tagW / 2, tagY + 6.5);
+    ctx.fillText(shelfTheme.price || '¥200', tagX + tagW / 2, tagY + 6.5);
 
     const topBarG = ctx.createLinearGradient(sh.x, 0, sh.x + sh.w, 0);
-    topBarG.addColorStop(0, theme.strip[0]);
-    topBarG.addColorStop(1, theme.strip[1]);
+    topBarG.addColorStop(0, shelfTheme.strip[0]);
+    topBarG.addColorStop(1, shelfTheme.strip[1]);
     ctx.fillStyle = topBarG;
     ctx.beginPath();
     ctx.roundRect(sh.x + 2, sh.y + 1.5, sh.w - 4, 11.5, [8, 8, 2, 2]);
@@ -554,7 +574,7 @@ class GameApp {
     ctx.fillStyle = '#FFFDF7';
     ctx.font = '900 7.5px "M PLUS Rounded 1c", sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`✦ ${theme.tag}`, sh.x + 6, sh.y + 10);
+    ctx.fillText(`✦ ${shelfTheme.tag}`, sh.x + 6, sh.y + 10);
   }
 
   drawBottomCustomers(ctx, now) {
@@ -734,6 +754,7 @@ class GameApp {
 
   startLevel(lvId) {
     this.curLevel = lvId;
+    this.isLevelSettled = false;
     this.combo = 0;
     this.fever = 0;
     const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
@@ -743,6 +764,7 @@ class GameApp {
     document.getElementById('label-moves').innerText = this.moves;
     document.getElementById('label-shelves-count').innerText = `9 座檜木櫃 (${cfg.depthPerSlot}層)`;
     document.getElementById('top-combo-toast').classList.add('hidden');
+    document.getElementById('moves-badge').classList.remove('animate-pulse');
     const feverBar = document.getElementById('fever-progress-bar');
     if (feverBar) feverBar.style.width = '0%';
 
@@ -860,6 +882,27 @@ class GameApp {
 
   bindEvents() {
     window.addEventListener('resize', () => this.initCanvasSize());
+
+    // 監聽舞台容器尺寸變化，解決隱藏狀態切換至顯示時 Canvas 尺寸為 0 的問題
+    if (typeof ResizeObserver !== 'undefined' && this.stageContainer) {
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+            this.initCanvasSize();
+          }
+        }
+      });
+      ro.observe(this.stageContainer);
+    }
+
+    // 針對 iOS Safari 上滑關閉或切換背景時立即自動存檔
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        GameState.save();
+      }
+    });
+    window.addEventListener('pagehide', () => GameState.save());
+
     document.addEventListener('touchmove', (e) => {
       if (!e.target.closest('.allow-scroll-y') && !e.target.closest('.allow-scroll-x')) {
         e.preventDefault();
@@ -893,7 +936,7 @@ class GameApp {
         setTimeout(() => location.reload(), 300);
       };
     }
-    
+
     document.getElementById('lobby-mascot-touch').onclick = () => {
       SFX.tap();
       this.lobbyLineIdx = (this.lobbyLineIdx + 1) % this.lobbyLines.length;
@@ -950,6 +993,7 @@ class GameApp {
     };
 
     this.canvas.addEventListener('pointerdown', (e) => {
+      if (this.dragging || this.isLevelSettled) return;
       const rect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - rect.left;
       const canvasY = e.clientY - rect.top;
@@ -965,7 +1009,15 @@ class GameApp {
               return;
             }
             const { appX, appY } = getAppCoords(e.clientX, e.clientY);
-            this.beginShelfDrag({ slot, shelf: sh, startX: e.clientX, startY: e.clientY, appX, appY });
+            this.beginShelfDrag({
+              pointerId: e.pointerId,
+              slot,
+              shelf: sh,
+              startX: e.clientX,
+              startY: e.clientY,
+              appX,
+              appY
+            });
             return;
           }
         }
@@ -973,18 +1025,21 @@ class GameApp {
     });
 
     window.addEventListener('pointermove', (e) => {
-      if (!this.dragging) return;
+      if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
       const { appX, appY } = getAppCoords(e.clientX, e.clientY);
       this.dragPointer = { x: appX, y: appY, clientX: e.clientX, clientY: e.clientY };
     });
 
-    window.addEventListener('pointerup', (e) => { if (this.dragging) this.handleDrop(e); });
-    window.addEventListener('pointercancel', () => {
-      if (this.dragging) {
-        const drag = this.dragging;
-        this.dragging = null;
-        this.cancelDragReturn(drag);
-      }
+    window.addEventListener('pointerup', (e) => {
+      if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
+      this.handleDrop(e);
+    });
+
+    window.addEventListener('pointercancel', (e) => {
+      if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
+      const drag = this.dragging;
+      this.dragging = null;
+      this.cancelDragReturn(drag);
     });
 
     document.getElementById('btn-tool-shuffle').onclick = () => this.useTool('shuffle');
@@ -1007,11 +1062,15 @@ class GameApp {
     };
 
     document.getElementById('btn-daily-claim').onclick = () => {
+      const btn = document.getElementById('btn-daily-claim');
+      if (btn.disabled) return;
       SFX.win();
       GameState.diamonds += 50;
       GameState.save();
+      try {
+        localStorage.setItem('hoshino_daily_claim_date', new Date().toDateString());
+      } catch (_) {}
       this.renderHUD();
-      const btn = document.getElementById('btn-daily-claim');
       btn.innerText = '✔ 今日出勤獎金已領取';
       btn.disabled = true;
       btn.classList.add('opacity-60');
@@ -1045,6 +1104,7 @@ class GameApp {
     const originAppX = (cRect.left - appRect.left) + cand.slot.x + cand.slot.w / 2;
     const originAppY = (cRect.top  - appRect.top)  + cand.slot.y + cand.slot.h / 2;
     this.dragging = {
+      pointerId: cand.pointerId,
       sourceType: 'shelf',
       fromSlot: cand.slot, fromShelf: cand.shelf,
       typeId: cand.slot.queue[0],
@@ -1054,6 +1114,7 @@ class GameApp {
   }
 
   beginCartDrag(cartIdx, e) {
+    if (this.dragging || this.isLevelSettled) return;
     const typeId = this.cartSlots[cartIdx];
     if (!typeId) return;
     SFX.pick();
@@ -1062,12 +1123,19 @@ class GameApp {
     const sRect  = slotEl.getBoundingClientRect();
     const originAppX = (sRect.left - appRect.left) + sRect.width / 2;
     const originAppY = (sRect.top  - appRect.top)  + sRect.height / 2;
-    this.dragging = { sourceType: 'cart', cartIdx, typeId, originAppX, originAppY };
+    this.dragging = {
+      pointerId: e.pointerId,
+      sourceType: 'cart',
+      cartIdx,
+      typeId,
+      originAppX,
+      originAppY
+    };
     this.dragPointer = { x: e.clientX - appRect.left, y: e.clientY - appRect.top, clientX: e.clientX, clientY: e.clientY };
     this.renderCartUI();
   }
 
-  handleDrop(e) {
+  handleDrop() {
     const drag = this.dragging;
     this.dragging = null;
     const cx = this.dragPointer.clientX;
@@ -1174,6 +1242,7 @@ class GameApp {
   }
 
   checkMatches() {
+    if (this.isLevelSettled) return;
     for (const sh of this.shelves) {
       const [s0, s1, s2] = sh.slots;
       const f0 = s0.queue[0], f1 = s1.queue[0], f2 = s2.queue[0];
@@ -1266,8 +1335,10 @@ class GameApp {
   }
 
   checkWinOrLose() {
+    if (this.isLevelSettled) return;
     const remainingItems = this.updateClearProgress();
     if (remainingItems === 0) {
+      this.isLevelSettled = true;
       SFX.win();
       GameState.unlockedLevel = Math.max(GameState.unlockedLevel, this.curLevel + 1);
       const star3Threshold = GameState.direction === 'rush' ? 4 : 7;
@@ -1307,6 +1378,7 @@ class GameApp {
       return;
     }
     if (this.moves <= 0) {
+      this.isLevelSettled = true;
       SFX.fail();
       document.getElementById('settle-badge').innerText = '本日打烊時間到';
       document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('worry', false);
@@ -1324,6 +1396,7 @@ class GameApp {
   }
 
   useTool(type) {
+    if (this.isLevelSettled) return;
     if (GameState.boosters[type] <= 0) {
       this.setMascotMood('worry', '「秘技庫存不足！回大廳前往福引轉蛋亭補充吧♪」');
       return;
@@ -1417,16 +1490,23 @@ class GameApp {
   }
 
   triggerGacha() {
+    if (this.isDrawingGacha) return;
     if (GameState.vouchers <= 0 && GameState.diamonds < 30) { SFX.cancel(); return; }
+    this.isDrawingGacha = true;
     if (GameState.vouchers > 0) GameState.vouchers--;
     else GameState.diamonds -= 30;
     SFX.gacha();
     const dial = document.getElementById('gacha-dial');
+    const drawBtn = document.getElementById('btn-draw-gacha');
+    if (drawBtn) drawBtn.disabled = true;
     dial.style.transform = 'rotate(360deg)';
     document.getElementById('gacha-dome').classList.add('gacha-shaking');
     setTimeout(() => {
       dial.style.transform = 'rotate(0deg)';
       document.getElementById('gacha-dome').classList.remove('gacha-shaking');
+      if (drawBtn) drawBtn.disabled = false;
+      this.isDrawingGacha = false;
+
       const pool = [
         { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '🥢', name: '極速盛合秘技 × 2', desc: '直接從全店集齊 3 份同款和食瞬間完售！', fn: () => GameState.boosters.magnet += 2 },
         { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '💎', name: '璀璨星鑽禮盒 × 100', desc: '商店街自治會特別頒發的高額星鑽獎勵！', fn: () => GameState.diamonds += 100 },
@@ -1591,10 +1671,17 @@ class GameApp {
   startLoop() {
     const loop = (now) => {
       const isGameView = this.currentView === 'view-game';
-      const hasFX = this.flyers.length > 0 || this.particles.length > 0 || this.dragging;
-      if (isGameView || hasFX) {
-        if (isGameView) this.drawShelvesCanvas(now);
+      const hasFX = this.flyers.length > 0 || this.particles.length > 0 || Boolean(this.dragging);
+      if (isGameView) {
+        this.drawShelvesCanvas(now);
+      }
+      if (hasFX) {
+        this.fxNeedsClear = true;
         this.drawFXCanvas(now);
+      } else if (this.fxNeedsClear) {
+        const appRect = this.appRect || this.appEl.getBoundingClientRect();
+        this.fxCtx.clearRect(0, 0, appRect.width, appRect.height);
+        this.fxNeedsClear = false;
       }
       requestAnimationFrame(loop);
     };
