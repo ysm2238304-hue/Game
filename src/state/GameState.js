@@ -63,4 +63,27 @@ export const GameState = {
       }));
     } catch (e) {}
   }
-};
+}; // 👈 GameState 物件到這裡結束
+
+// ==========================================
+// 🛡️ iOS 可靠自動存檔機制 (直接貼在 GameState 結尾下方)
+// ==========================================
+
+// 當玩家切換 App、鎖定螢幕或上滑關閉時，立刻觸發存檔
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    GameState.save();
+    console.log('[存檔] 玩家切換背景，已自動儲存進度');
+  }
+});
+
+// 針對 iOS Safari 的 pagehide 補充防護
+window.addEventListener('pagehide', () => {
+  GameState.save();
+});
+
+// (選用) 避免玩家不小心按到上一頁離開遊戲
+// window.addEventListener('beforeunload', (e) => {
+//   e.preventDefault();
+//   e.returnValue = '';
+// });
