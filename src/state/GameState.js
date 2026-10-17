@@ -137,6 +137,10 @@ export const GameState = {
         upgrades: this.upgrades,
         boosters: this.boosters,
         quests: this.quests,
+        lastCheckIn: this.lastCheckIn,
+        checkInStreak: this.checkInStreak,
+        hasCheckedInToday: this.hasCheckedInToday,
+        
         lastSavedAt: Date.now()
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
