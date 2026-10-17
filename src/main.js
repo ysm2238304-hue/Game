@@ -156,6 +156,90 @@ class GameApp {
       }
     } catch (_) {}
   }
+    // 啟動時檢查是否今天未簽到（在歡迎頁前彈出）
+  checkShowCheckInOnStartup() {
+    const today = new Date().toDateString();
+    if (GameState.lastCheckIn !== today) {
+      setTimeout(() => {
+        this.renderCheckInGrid();
+        document.getElementById('modal-checkin').classList.remove('hidden');
+      }, 500);
+    }
+  }
+
+  // 渲染日式繪馬網格 UI
+  renderCheckInGrid() {
+    const grid = document.getElementById('checkin-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const rewards = [
+      { day: 1, coins: 100, diam: 0 }, { day: 2, coins: 150, diam: 5 }, 
+      { day: 3, coins: 200, diam: 10 }, { day: 4, coins: 250, diam: 10 }, 
+      { day: 5, coins: 300, diam: 15 }, { day: 6, coins: 400, diam: 20 }, 
+      { day: 7, coins: 500, diam: 50, isBig: true }
+    ];
+
+    let currentStreak = GameState.checkInStreak || 0;
+    if (!GameState.hasCheckedInToday) currentStreak += 1;
+    if (currentStreak > 7) currentStreak = 1;
+
+    rewards.forEach((r) => {
+      const isToday = r.day === currentStreak;
+      const isPast = r.day < currentStreak;
+      const colSpan = r.isBig ? 'col-span-2' : 'col-span-1';
+      
+      const box = document.createElement('div');
+      box.className = `relative flex flex-col items-center justify-center p-1.5 text-center ${colSpan} ${isToday && !GameState.hasCheckedInToday ? 'animate-bounce z-10' : ''}`;
+
+      box.innerHTML = `
+        <div class="absolute inset-0 border-2 border-[#4A3326] rounded-t-lg rounded-b-2xl shadow-sm ${isPast ? 'bg-[#EAD7C0]' : isToday ? 'bg-[#FFF3B0]' : 'bg-[#FFFDF7]'}"></div>
+        <div class="absolute -top-1.5 w-3 h-3 rounded-full border-2 border-[#4A3326] ${isPast ? 'bg-[#4A3326]' : 'bg-[#D94E67]'}"></div>
+        
+        <span class="text-[9px] font-black text-[#8C583A] relative z-10 mt-1">第 ${r.day} 天</span>
+        <div class="my-0.5 flex gap-1 relative z-10 flex-wrap justify-center">
+          ${r.coins > 0 ? `<span class="text-[10px] font-black text-[#D94E67]">🪙${r.coins}</span>` : ''}
+          ${r.diam > 0 ? `<span class="text-[10px] font-black text-[#36698A]">💎${r.diam}</span>` : ''}
+        </div>
+        ${isPast ? `<div class="absolute inset-0 bg-[#4A3326]/20 rounded-t-lg rounded-b-2xl flex items-center justify-center"><span class="text-[#D94E67] font-black text-lg border-2 border-[#D94E67] rounded-md px-1 transform -rotate-12 opacity-80 bg-[#FFFDF7]/80">参</span></div>` : ''}
+      `;
+      grid.appendChild(box);
+    });
+  }
+
+  // 點擊領取簽到
+  handleCheckIn() {
+    if (GameState.hasCheckedInToday) return;
+    SFX.win();
+    const today = new Date().toDateString();
+    
+    if (GameState.checkInStreak >= 7) GameState.checkInStreak = 1;
+    else GameState.checkInStreak = (GameState.checkInStreak || 0) + 1;
+    
+    GameState.lastCheckIn = today;
+    GameState.hasCheckedInToday = true;
+    
+    const rewards = [
+      { coins: 100, diam: 0 }, { coins: 150, diam: 5 }, { coins: 200, diam: 10 },
+      { coins: 250, diam: 10 }, { coins: 300, diam: 15 }, { coins: 400, diam: 20 },
+      { coins: 500, diam: 50 }
+    ];
+    const currentReward = rewards[GameState.checkInStreak - 1];
+    
+    GameState.coins += currentReward.coins;
+    GameState.diamonds += currentReward.diam;
+    GameState.save();
+    
+    this.renderCheckInGrid();
+    this.renderHUD();
+    
+    document.getElementById('btn-do-checkin').innerText = '✔ 今日參拜已完成';
+    document.getElementById('btn-do-checkin').classList.add('opacity-50');
+    
+    setTimeout(() => {
+      document.getElementById('modal-checkin').classList.add('hidden');
+    }, 1000);
+  }
 
   renderLobbyShowcase() {
     const container = document.getElementById('lobby-daily-specials');
