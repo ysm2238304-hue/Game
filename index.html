@@ -76,22 +76,22 @@
     <canvas id="fx-canvas" class="pointer-events-none absolute inset-0 z-50 w-full h-full"></canvas>
 
     <!-- 場景轉場層 -->
-    <div id="scene-transition" class="pointer-events-none fixed inset-0 z-[60] hidden flex items-center justify-center overflow-hidden">
-      <div id="trans-backdrop" class="absolute inset-0 bg-[#FFF8EC]/95 transition-opacity duration-200 opacity-0"></div>
-      <div id="trans-visual-stage" class="relative z-10 w-full max-w-md h-full flex flex-col items-center justify-center p-5"></div>
-    </div>
+  <div id="scene-transition" class="pointer-events-none fixed inset-0 z-[60] hidden flex items-center justify-center overflow-hidden">
+    <div id="trans-backdrop" class="absolute inset-0 bg-[#FFF8EC] transition-opacity duration-200 opacity-0"></div>
+    <div id="trans-visual-stage" class="relative z-10 w-full max-w-md h-full flex flex-col items-center justify-center p-5"></div>
+  </div>
 
-    <!-- ============================================================
-         扉頁：星野便利超商主視覺
-         ============================================================ -->
-    <section id="view-title" class="absolute inset-0 z-50 scene-bg-lobby flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
-      <div class="absolute top-0 inset-x-0 h-3.5 noren-stripes border-b-2 border-[#4A3326]"></div>
+  <!-- ============================================================
+       扉頁：星野便利超商主視覺
+       ============================================================ -->
+  <section id="view-title" class="absolute inset-0 z-50 scene-bg-lobby flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
+    <div class="absolute top-0 inset-x-0 h-3.5 noren-stripes border-b-2 border-[#4A3326]"></div>
 
-      <div class="w-full flex justify-between items-center z-10 pt-3 shrink-0">
-        <div class="flex items-center gap-1.5 px-3 py-1 bg-white/95 rounded-full anime-border shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span id="txt-store-status" class="text-[11px] font-black text-[#4A3326] tracking-wider">星野便利 • 24H 營業中</span>
-        </div>
+    <div class="w-full flex justify-between items-center z-10 pt-3 shrink-0">
+      <div class="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full anime-border shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        <span id="txt-store-status" class="text-[11px] font-black text-[#4A3326] tracking-wider">星野便利 • 24H 營業中</span>
+      </div>
         <button id="btn-toggle-sfx" class="anime-btn px-3 py-1 bg-[#FFE5EC] rounded-full text-xs font-black text-[#4A3326]">
           🔊 音效: 開啟
         </button>
@@ -192,17 +192,16 @@
       </div>
 
       <div class="w-full max-w-[340px] flex flex-col pb-1 z-10 shrink-0">
-        <button id="btn-enter-lobby" class="anime-btn w-full py-3.5 bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFBC6B] text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 relative overflow-hidden">
-          <span class="absolute top-1 inset-x-4 h-1.5 bg-white/40 rounded-full"></span>
-          <span>🏪</span>
-          <span id="txt-enter-button" class="anime-stroke-sm tracking-wider">自動門開啟・進入店鋪</span>
-        </button>
-      </div>
-    </section>
+      <button id="btn-enter-lobby" class="anime-btn w-full py-3.5 bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFBC6B] text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 relative overflow-hidden">
+        <span>🏪</span>
+        <span id="txt-enter-button" class="anime-stroke-sm tracking-wider">自動門開啟・進入店鋪</span>
+      </button>
+    </div>
+  </section>
 
-    <!-- 頂部資源列 -->
-    <header id="top-resource-bar" class="z-30 px-3 pb-1.5 safe-top bg-[#FFF8EC]/95 border-b-2 border-[#4A3326] text-[#4A3326] flex items-center justify-between gap-2 shrink-0 shadow-sm">
-      <div class="flex-1 grid grid-cols-3 gap-2">
+  <!-- 頂部資源列 -->
+  <header id="top-resource-bar" class="z-30 px-3 pb-1.5 safe-top bg-[#FFF8EC] border-b-2 border-[#4A3326] text-[#4A3326] flex items-center justify-between gap-2 shrink-0 shadow-sm">
+    <div class="flex-1 grid grid-cols-3 gap-2">
         <div id="hud-coin-box" class="flex items-center justify-between bg-[#FFE8B6] px-2.5 py-1 rounded-full anime-border transition-transform">
           <span class="text-xs leading-none">🪙</span>
           <span id="res-coins" class="text-xs font-black text-[#4A3326] leading-none">1,200</span>
@@ -338,72 +337,72 @@
           </svg>
         </div>
         <div class="lantern-deco" style="top:7%; right:3%; animation-delay:-2.4s;">
-          <svg width="26" height="38" viewBox="0 0 24 34">
-            <line x1="12" y1="0" x2="12" y2="6" stroke="#4A3326" stroke-width="1.5"/>
-            <ellipse cx="12" cy="18" rx="9" ry="12" fill="#FF85A1" stroke="#4A3326" stroke-width="2"/>
-            <line x1="12" y1="8" x2="12" y2="28" stroke="#FFF3B0" stroke-width="1.2" opacity="0.8"/>
-          </svg>
+        <svg width="26" height="38" viewBox="0 0 24 34">
+          <line x1="12" y1="0" x2="12" y2="6" stroke="#4A3326" stroke-width="1.5"/>
+          <ellipse cx="12" cy="18" rx="9" ry="12" fill="#FF85A1" stroke="#4A3326" stroke-width="2"/>
+          <line x1="12" y1="8" x2="12" y2="28" stroke="#FFF3B0" stroke-width="1.2" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0">
+      <div class="flex items-center justify-between gap-2">
+        <div class="bg-white rounded-2xl px-2.5 py-1 anime-border shadow-sm flex items-center gap-2">
+          <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] anime-border flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
+          <div>
+            <div id="txt-lobby-store" class="text-[9px] font-black text-[#8C583A] leading-none">星野和風マルシェ・總店</div>
+            <div class="text-xs font-black text-[#4A3326] mt-0.5">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
+          </div>
         </div>
+
+        <button id="btn-lobby-skill" class="anime-btn px-2.5 py-1.5 bg-[#FFF3B0] text-[#4A3326] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0">
+          <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
+        </button>
       </div>
 
-      <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0">
-        <div class="flex items-center justify-between gap-2">
-          <div class="bg-white/90 backdrop-blur-xs rounded-2xl px-2.5 py-1 anime-border shadow-sm flex items-center gap-2">
-            <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] anime-border flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
-            <div>
-              <div id="txt-lobby-store" class="text-[9px] font-black text-[#8C583A] leading-none">星野和風マルシェ・總店</div>
-              <div class="text-xs font-black text-[#4A3326] mt-0.5">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
-            </div>
-          </div>
-
-          <button id="btn-lobby-skill" class="anime-btn px-2.5 py-1.5 bg-[#FFF3B0] text-[#4A3326] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0">
-            <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
-          </button>
+      <div class="bg-[#FFFDF7] rounded-full px-3 py-1 anime-border flex items-center justify-between gap-2 shadow-xs">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
+          <span id="lobby-rank-title" class="text-[10px] font-black text-[#4A3326]">街角和食小舖</span>
         </div>
-
-        <div class="bg-[#FFFDF7]/90 backdrop-blur-xs rounded-full px-3 py-1 anime-border flex items-center justify-between gap-2 shadow-xs">
-          <div class="flex items-center gap-1.5 shrink-0">
-            <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
-            <span id="lobby-rank-title" class="text-[10px] font-black text-[#4A3326]">街角和食小舖</span>
-          </div>
-          <div class="flex-1 h-2 bg-[#EAD7C0] rounded-full p-0.5 border border-[#4A3326] overflow-hidden">
-            <div id="lobby-rank-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFB86B] rounded-full transition-all duration-300" style="width: 35%"></div>
-          </div>
-          <div class="text-[9px] font-black text-[#D94E67] shrink-0">
-            完售 <span id="lobby-total-dishes">0</span> 皿
-          </div>
+        <div class="flex-1 h-2 bg-[#EAD7C0] rounded-full p-0.5 border border-[#4A3326] overflow-hidden">
+          <div id="lobby-rank-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFB86B] rounded-full transition-all duration-300" style="width: 35%"></div>
+        </div>
+        <div class="text-[9px] font-black text-[#D94E67] shrink-0">
+          完售 <span id="lobby-total-dishes">0</span> 皿
         </div>
       </div>
+    </div>
 
-      <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0">
-        <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
-          <div class="w-full max-w-[360px] bg-white/95 backdrop-blur-xs rounded-2xl px-3 py-1.5 anime-border shadow-md mb-1 relative">
-            <div class="flex items-center justify-between mb-0.5">
-              <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-[#4A3326]">✦ 看板娘・星野葵</span>
-              <span class="text-[9px] font-black text-[#3B6E4C]">💬 點擊小葵或吧台料理互動</span>
-            </div>
-            <p id="lobby-speech-text" class="text-[11px] font-black text-[#4A3326] leading-snug">
-            </p>
+    <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0">
+      <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
+        <div class="w-full max-w-[360px] bg-white rounded-2xl px-3 py-1.5 anime-border shadow-md mb-1 relative">
+          <div class="flex items-center justify-between mb-0.5">
+            <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-[#4A3326]">✦ 看板娘・星野葵</span>
+            <span class="text-[9px] font-black text-[#3B6E4C]">💬 點擊小葵或吧台料理互動</span>
           </div>
-
-          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-2 drop-shadow-md"></div>
+          <p id="lobby-speech-text" class="text-[11px] font-black text-[#4A3326] leading-snug">
+          </p>
         </div>
 
-        <div class="w-full bg-gradient-to-b from-white/85 to-[#FFF8EC]/95 backdrop-blur-xs rounded-2xl px-2.5 py-1.5 anime-border shadow-md mb-1.5 shrink-0">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-[10px] font-black text-[#D94E67] flex items-center gap-1">
-              <span>🔥</span><span>吧台冷藏玻璃罩 • 本日旬味 TOP 3</span>
-            </span>
-            <span class="text-[9px] font-bold text-[#8C583A]">點擊試吃鑑賞</span>
-          </div>
-          <div id="lobby-daily-specials" class="grid grid-cols-3 gap-1.5"></div>
-        </div>
+        <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-2 drop-shadow-md"></div>
       </div>
 
-      <div class="relative z-10 w-full px-3 pb-1.5 flex flex-col gap-1.5 shrink-0">
-        <button data-nav="view-game" class="scene-nav-btn anime-btn w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFB86B] text-white flex items-center justify-between relative overflow-hidden">
-          <span class="absolute top-1 inset-x-3 h-1.5 bg-white/35 rounded-full pointer-events-none"></span>
-          <div class="flex items-center gap-2.5">
+      <div class="w-full bg-gradient-to-b from-white to-[#FFF8EC] rounded-2xl px-2.5 py-1.5 anime-border shadow-md mb-1.5 shrink-0">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] font-black text-[#D94E67] flex items-center gap-1">
+            <span>🔥</span><span>吧台冷藏玻璃罩 • 本日旬味 TOP 3</span>
+          </span>
+          <span class="text-[9px] font-bold text-[#8C583A]">點擊試吃鑑賞</span>
+        </div>
+        <div id="lobby-daily-specials" class="grid grid-cols-3 gap-1.5"></div>
+      </div>
+    </div>
+
+    <div class="relative z-10 w-full px-3 pb-1.5 flex flex-col gap-1.5 shrink-0">
+      <button data-nav="view-game" class="scene-nav-btn anime-btn w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFB86B] text-white flex items-center justify-between relative overflow-hidden">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-white anime-border flex items-center justify-center text-xl shadow-sm shrink-0">🍱</div>
             <div class="w-10 h-10 rounded-xl bg-white/95 anime-border flex items-center justify-center text-xl shadow-sm shrink-0">🍱</div>
             <div class="flex flex-col items-start leading-tight">
               <span class="text-[9px] font-black text-[#FFF3B0] anime-stroke-sm tracking-wider">✦ OPEN COUNTER ✦</span>
