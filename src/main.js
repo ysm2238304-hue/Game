@@ -2,7 +2,6 @@ import { getActiveTheme, getActiveThemeId, setActiveTheme, getAllThemes } from '
 import { generateLevelConfig } from './logic/levelGen.js';
 import { SFX } from './audio/sfx.js';
 import { BGM } from './audio/bgm.js'; // 
-
 import { GameState } from './state/GameState.js';
 import { CozyFoodRenderer } from './render/foodRenderer.js';
 const theme = getActiveTheme();
