@@ -99,6 +99,7 @@ class GameApp {
     this.renderRoadmap();
     this.renderQuests();
     this.startLevel(this.curLevel);
+    this.checkShowCheckInOnStartup();
     this.startLoop();
   }
 
