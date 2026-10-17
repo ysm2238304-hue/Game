@@ -544,7 +544,7 @@ class GameApp {
     ctx.roundRect(innerX, sh.y + sh.h - 8, innerW, 6, [2, 2, 5, 5]);
     ctx.fill(); ctx.stroke();
 
-    const tagW = 24, tagH = 8.5;
+    const tagW = 28, tagH = 10;
     const tagX = sh.x + sh.w - tagW - 5;
     const tagY = sh.y + sh.h - 9.5;
     ctx.fillStyle = '#FFF3B0';
@@ -566,7 +566,7 @@ class GameApp {
     ctx.roundRect(sh.x + 2, sh.y + 1.5, sh.w - 4, 11.5, [8, 8, 2, 2]);
     ctx.fill();
     ctx.fillStyle = '#FFFDF7';
-    ctx.font = '900 7.5px "M PLUS Rounded 1c", sans-serif';
+    ctx.font = '900 8.5px "M PLUS Rounded 1c", sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(`✦ ${shelfTheme.tag}`, sh.x + 6, sh.y + 10);
   }
