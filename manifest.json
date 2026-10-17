@@ -9,9 +9,9 @@
   "theme_color": "#FF85A1",
   "icons": [
     {
-      "src": "./mascot/aoi-happy.png",
+      "src": "./mascot/apple-icon.jpg?v=3",
       "sizes": "1024x1024",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
