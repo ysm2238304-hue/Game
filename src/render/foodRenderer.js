@@ -60,7 +60,9 @@ export class CozyFoodRenderer {
     const scaleY = opts.scaleY || 1;
     const lift = opts.lift || 0;
     const iceHp = opts.iceHp || 0;
-    const baseSize = Math.min(w * 1.14, h * 0.92);
+    
+    // 放大圖示：將原本的 1.14 與 0.92 改為 1.45 與 1.15
+    const baseSize = Math.min(w * 1.45, h * 1.15);
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -93,4 +95,5 @@ export class CozyFoodRenderer {
     }
     ctx.restore();
   }
+
 }
