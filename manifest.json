@@ -9,8 +9,8 @@
   "theme_color": "#FF85A1",
   "icons": [
     {
-      "src": "https://ysm2238304-hue.github.io/Game/assets/mascot/icon-small.jpg?v=9999",
-      "sizes": "512x512",
+      "src": "https://ysm2238304-hue.github.io/Game/assets/mascot/icon180.jpg?v=888",
+      "sizes": "180x180",
       "type": "image/jpeg",
       "purpose": "any"
     }
