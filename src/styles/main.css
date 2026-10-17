@@ -276,3 +276,54 @@ html, body {
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .allow-scroll-y { touch-action: pan-y; -webkit-overflow-scrolling: touch; }
 .allow-scroll-x { touch-action: pan-x; -webkit-overflow-scrolling: touch; }
+/* ==========================================
+   📱 行動端 PWA 終極防護 (加入在檔案底部)
+   ========================================== */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+html, body {
+  /* 使用 dvh 避免 Safari 網址列伸縮導致底部按鈕被裁切 */
+  height: 100%;
+  min-height: 100dvh;
+  background-color: #EAD7C0;
+  
+  /* 防止 iOS 整頁上下拉動出現白底彈跳 (Rubber-banding) */
+  overscroll-behavior-y: none;
+  
+  /* 防止連續快速點擊時觸發 Safari 雙擊放大 */
+  touch-action: manipulation;
+  
+  /* 移除點擊時的灰色半透明閃爍框 */
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 防止玩家長按遊戲文字或按鈕時跳出「拷貝/查詢」選單 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* 允許輸入框（若有）正常選取文字 */
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* 防止圖片被長按拖曳或跳出「儲存影像」選單 */
+img {
+  -webkit-user-drag: none;
+  pointer-events: none; 
+}
+
+/* 頂部與底部安全區自動避開瀏海與橫條 */
+.app-header {
+  padding-top: max(0.75rem, var(--safe-top));
+}
+
+.app-bottom-nav {
+  padding-bottom: max(0.75rem, var(--safe-bottom));
+}
