@@ -62,7 +62,7 @@ export class CozyFoodRenderer {
     const iceHp = opts.iceHp || 0;
     
     // 放大圖示：將原本的 1.14 與 0.92 改為 1.45 與 1.15
-    const baseSize = Math.min(w * 1.45, h * 1.15);
+    const baseSize = Math.min(w * 1.4, h * 1.15);
 
     ctx.save();
     ctx.translate(cx, cy);
