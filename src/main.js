@@ -493,16 +493,6 @@ class GameApp {
   paintShelfFrame(ctx, sh) {
     const shelfTheme = sh.theme || SHELF_THEMES[0];
 
-    const lampX = sh.x + sh.w / 2;
-    const lampY = sh.y - 4;
-    const glow = ctx.createRadialGradient(lampX, lampY + 4, 2, lampX, lampY + 4, 34);
-    glow.addColorStop(0, 'rgba(255,243,176,0.5)');
-    glow.addColorStop(1, 'rgba(255,243,176,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(lampX, lampY + 4, 34, 0, Math.PI * 2);
-    ctx.fill();
-
     ctx.fillStyle = 'rgba(74,51,38,0.2)';
     ctx.beginPath();
     ctx.roundRect(sh.x, sh.y + 3, sh.w, sh.h, 11);
