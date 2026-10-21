@@ -75,9 +75,14 @@
 
     <canvas id="fx-canvas" class="pointer-events-none absolute inset-0 z-50 w-full h-full"></canvas>
 
-    <!-- 場景轉場層 -->
+  <!-- 場景轉場層 (專屬圖片背景版) -->
   <div id="scene-transition" class="pointer-events-none fixed inset-0 z-[60] hidden flex items-center justify-center overflow-hidden">
-    <div id="trans-backdrop" class="absolute inset-0 bg-[#FFF8EC] transition-opacity duration-200 opacity-0"></div>
+    <!-- 👇 這裡改成了圖片，並加上遮罩 -->
+    <div id="trans-backdrop" class="absolute inset-0 bg-cover bg-center transition-opacity duration-200 opacity-0" style="background-image: url('./assets/bg-transition.jpg');">
+      <!-- 讓圖片微暗的遮罩，確保中間的轉場卡片看得清楚 -->
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    </div>
+    
     <div id="trans-visual-stage" class="relative z-10 w-full max-w-md h-full flex flex-col items-center justify-center p-5"></div>
   </div>
 
