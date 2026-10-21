@@ -5,7 +5,7 @@
 export const TEXT = {
   // 扉頁
   storeStatus: '星野食堂 • 夜間營業中',
-  title: '家有貨物!',
+  title: '星野物語!',
   subtitle: '深夜手作和食與療癒商店街',
   enterButton: '推開木門・走入暖光',
   
