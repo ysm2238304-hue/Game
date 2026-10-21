@@ -220,12 +220,12 @@
       </div>
 
       <!-- 中央滿版人物舞台 -->
-      <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0">
+      <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0 pb-2">
         <!-- 看板娘點擊互動區 -->
-        <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
+        <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[160px]">
           
           <!-- 對話氣泡 -->
-          <div class="w-full max-w-[360px] bg-black/40 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/20 shadow-xl mb-1 relative">
+          <div class="w-full max-w-[360px] bg-black/40 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/20 shadow-xl mb-4 relative z-20">
             <div class="flex items-center justify-between mb-1">
               <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-white/30 shadow-sm">✦ 看板娘・星野葵</span>
               <span class="text-[9px] font-black text-white/70">💬 點擊小葵互動</span>
@@ -235,11 +235,11 @@
           </div>
 
           <!-- 放大版星野葵立繪 -->
-          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-2 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]"></div>
+          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-4 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]"></div>
         </div>
 
         <!-- 吧台冷藏玻璃罩 (本日旬味 TOP 3) -->
-        <div class="w-full bg-black/40 backdrop-blur-xl rounded-2xl px-3 py-2 border border-white/20 shadow-xl mb-1.5 shrink-0">
+        <div class="w-full bg-black/40 backdrop-blur-xl rounded-2xl px-3 py-2 border border-white/20 shadow-xl mb-1.5 shrink-0 relative z-20">
           <div class="flex items-center justify-between mb-1.5">
             <span class="text-[10px] font-black text-[#FF85A1] flex items-center gap-1 drop-shadow-sm">
               <span>🔥</span><span>吧台玻璃罩 • 深夜人氣 TOP 3</span>
@@ -576,8 +576,10 @@
         </div>
       </div>
 
+      <!-- 扭蛋機圖片展示區 -->
       <div class="relative w-full flex items-center justify-center my-auto z-10">
-        <!-- 轉蛋機本體保持原本的鮮豔色彩，但加上光暈 -->
+        
+        <!-- 左右兩側裝飾 (保留) -->
         <div class="flex flex-col items-center gap-2 mr-2">
           <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm -rotate-6">
             <div class="text-xs">⛩️</div>
@@ -585,26 +587,19 @@
           </div>
         </div>
 
-        <div class="relative flex flex-col items-center drop-shadow-2xl">
-          <div id="gacha-dome" class="w-40 h-40 rounded-full bg-gradient-to-b from-white/95 via-[#FFF9EE] to-[#FFE5EC] border-4 border-[#4A3326] shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden flex items-center justify-center">
-            <div class="absolute top-3 left-5 w-12 h-5 bg-white/90 rounded-full -rotate-30"></div>
-            <div class="relative w-32 h-28 flex flex-wrap items-center justify-center gap-1.5 pt-4">
-              <div class="w-10 h-10 rounded-full bg-[#FFF3B0] border border-[#4A3326] flex items-center justify-center text-[10px] font-black text-[#4A3326] animate-bounce">特賞</div>
-              <div class="w-8 h-8 rounded-full bg-[#FF85A1] border border-[#4A3326]"></div>
-              <div class="w-8 h-8 rounded-full bg-[#A8E6CF] border border-[#4A3326]"></div>
-              <div class="w-8 h-8 rounded-full bg-[#FFD194] border border-[#4A3326]"></div>
-            </div>
-          </div>
-          <div class="w-48 h-20 -mt-4 rounded-3xl bg-gradient-to-b from-[#FF85A1] to-[#E05780] border-4 border-[#4A3326] flex flex-col items-center justify-between p-2 relative z-10 shadow-2xl">
-            <div id="gacha-dial" class="w-10 h-10 rounded-full bg-[#FFF3B0] border border-[#4A3326] flex items-center justify-center cursor-pointer transition-transform duration-500 shadow">
-              <div class="w-6 h-2 bg-[#4A3326] rounded-full"></div>
-            </div>
-            <div class="w-24 h-5 bg-[#FFFDF7] rounded-xl border border-[#4A3326] flex items-center justify-center">
-              <span class="text-[9px] font-black text-[#4A3326]">✦ 福引出口 ✦</span>
-            </div>
+        <!-- 👇 扭蛋機本體 (換成圖片) 👇 -->
+        <div id="gacha-machine-wrapper" class="relative flex flex-col items-center drop-shadow-2xl transition-transform">
+          <img src="./assets/gacha-machine.png" class="w-56 h-auto object-contain" alt="扭蛋機">
+          
+          <!-- 掉落動畫專用容器 -->
+          <div id="gacha-ball-drop" class="absolute bottom-4 w-8 h-8 rounded-full bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border-2 border-[#4A3326] shadow-lg opacity-0 z-50 pointer-events-none">
+            <!-- 扭蛋上的白色高光 -->
+            <div class="absolute top-1 left-1 w-2 h-2 bg-white/60 rounded-full"></div>
           </div>
         </div>
+        <!-- 👆 替換結束 👆 -->
 
+        <!-- 右側裝飾 (保留) -->
         <div class="flex flex-col items-center gap-2 ml-2">
           <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm rotate-6">
             <div class="text-xs">🌸</div>
@@ -612,6 +607,10 @@
           </div>
         </div>
       </div>
+
+      <!-- 下方按鈕區 (保持不變，放在扭蛋機下方) -->
+      <div class="w-full flex flex-col items-center gap-1.5 z-10 shrink-0">
+        <!-- ... 原本的祈願值與按鈕 ... -->
 
       <div class="w-full flex flex-col items-center gap-1.5 z-10 shrink-0">
         <div class="w-full rounded-2xl px-3 py-1.5 bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-between gap-2 shadow-lg">
