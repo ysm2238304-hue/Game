@@ -28,12 +28,36 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
   };
 }
 
-// 註冊 Service Worker，確保 PWA 離線快取與版本自動更新生效
+// 註冊 Service Worker 並啟用自動更新機制
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch((err) => {
+    navigator.serviceWorker.register('./sw.js').then((registration) => {
+      // 每次載入檢查是否有新版本
+      registration.update();
+
+      // 如果發現新版本正在等待，強制它接管
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // 發現新版本，直接重新載入頁面套用（或用提示彈窗）
+            console.log('[SW] 發現新版本，準備自動更新！');
+            window.location.reload();
+          }
+        });
+      });
+    }).catch((err) => {
       console.warn('[SW] 註冊略過:', err);
     });
+  });
+
+  // 當新版 Service Worker 接管時，自動重新整理
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 
