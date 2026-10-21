@@ -209,7 +209,8 @@ class GameApp {
   // 點擊領取簽到
   handleCheckIn() {
     if (GameState.hasCheckedInToday) return;
-    SFX.win();
+    SFX.win(); // 👈 這裡原本應該是 SFX.win(); 被截斷了
+    
     const today = new Date().toDateString();
     
     if (GameState.checkInStreak >= 7) GameState.checkInStreak = 1;
@@ -232,14 +233,17 @@ class GameApp {
     this.renderCheckInGrid();
     this.renderHUD();
     
-    document.getElementById('btn-do-checkin').innerText = '✔ 今日參拜已完成';
-    document.getElementById('btn-do-checkin').classList.add('opacity-50');
+    const btn = document.getElementById('btn-do-checkin');
+    if (btn) {
+      btn.innerText = '✔ 今日參拜已完成';
+      btn.classList.add('opacity-50');
+    }
     
     setTimeout(() => {
       document.getElementById('modal-checkin').classList.add('hidden');
     }, 1000);
   }
-
+  
   renderLobbyShowcase() {
     const container = document.getElementById('lobby-daily-specials');
     if (!container) return;
@@ -983,11 +987,14 @@ class GameApp {
     window.addEventListener('pagehide', () => GameState.save());
 
     document.addEventListener('touchmove', (e) => {
+      // 👇 如果觸控目標在「簽到彈窗」內，直接放行，不阻止點擊
+      if (e.target.closest('#modal-checkin')) return; 
+      
       if (!e.target.closest('.allow-scroll-y') && !e.target.closest('.allow-scroll-x')) {
         e.preventDefault();
       }
     }, { passive: false });
-
+    
     document.getElementById('btn-enter-lobby').onclick = () => {
       SFX.tap();
       BGM.play(); // 👈 在這裡觸發音樂播放（符合 iOS 手勢解鎖）
