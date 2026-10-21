@@ -460,35 +460,38 @@
     </section>
 
     <!-- ============================================================
-         地圖 (#view-map)
+         地圖 (#view-map) - 毛玻璃版
          ============================================================ -->
-    <section id="view-map" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-hidden">
-      <div class="scene-layer scene-map-dusk"></div>
-
-      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-2 shrink-0">
-        <button data-nav="view-lobby" class="scene-nav-btn anime-btn px-3 py-1 bg-white text-[#4A3326] font-black text-xs rounded-xl flex items-center gap-1">
-          <span>◀</span> 返回大廳
-        </button>
-        <div class="text-center">
-          <div class="text-[9px] font-black text-[#8C583A] tracking-widest leading-none">✦ SHOTENGAI MAP ✦</div>
-          <h2 class="text-sm font-black text-[#4A3326] mt-0.5">和風商店街・巡禮地圖</h2>
-        </div>
-        <button data-guide="map" class="btn-open-guide anime-btn px-2.5 py-1 bg-[#A8E6CF] text-[#4A3326] font-black text-xs rounded-xl">？ 指南</button>
+    <section id="view-map" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-hidden text-white">
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+        <img src="./assets/bg-map.jpg" class="w-full h-full object-cover" alt="地圖背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
-      <div class="relative z-10 w-full rounded-2xl anime-panel overflow-hidden p-3 flex justify-between items-center mb-2 shrink-0 bg-gradient-to-r from-[#FFF3B0] via-[#FFE5B4] to-[#FFC6A8]">
+      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-2 shrink-0">
+        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl flex items-center gap-1">
+          <span>◀</span> 大廳
+        </button>
+        <div class="text-center">
+          <div class="text-[9px] font-black text-white/70 tracking-widest leading-none">✦ SHOTENGAI MAP ✦</div>
+          <h2 class="text-sm font-black text-white mt-0.5 drop-shadow-md">和風商店街・巡禮地圖</h2>
+        </div>
+        <button data-guide="map" class="btn-open-guide pop-btn px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl">？ 指南</button>
+      </div>
+
+      <div class="relative z-10 w-full rounded-2xl p-3 flex justify-between items-center mb-2 shrink-0 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl">
         <div class="z-10 flex flex-col gap-0.5 max-w-[220px]">
-          <span class="px-2 py-0.5 bg-[#4A3326] text-[#FFF3B0] font-black text-[9px] rounded-full w-max">🏮 商店街繁盛記</span>
-          <h3 class="text-xs font-black text-[#4A3326] leading-snug mt-0.5">拓展和食分店版圖！挑戰九宮格多層旬味完售與三星褒賞！</h3>
-          <button id="btn-daily-claim" class="anime-btn mt-1 px-2.5 py-1 bg-[#FF85A1] text-white font-black text-[11px] rounded-xl w-max">🎁 領取今日出勤獎金 💎50</button>
+          <span class="px-2 py-0.5 bg-[#FF85A1] text-white font-black text-[9px] rounded-full w-max">🏮 商店街繁盛記</span>
+          <h3 class="text-xs font-black text-white leading-snug mt-0.5">拓展和食分店版圖！挑戰九宮格多層旬味完售與三星褒賞！</h3>
+          <button id="btn-daily-claim" class="pop-btn mt-1 px-2.5 py-1 bg-gradient-to-r from-[#FF6B8B] to-[#FF9E7D] border border-white/30 text-white font-black text-[11px] rounded-xl w-max shadow-md">🎁 領取出勤獎金</button>
         </div>
         <div id="map-mascot-holder" class="w-20 h-20 mascot-breathe z-10 shrink-0"></div>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl px-3 py-2 mb-2 shrink-0 bg-[#FFFDF7]">
+      <div class="relative z-10 w-full rounded-2xl px-3 py-2 mb-2 shrink-0 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] font-black text-[#4A3326]">★ 累積營業星數褒賞</span>
-          <span class="text-[10px] font-black text-[#D94E67]">目前累積：<span id="map-total-stars">0</span> ★</span>
+          <span class="text-[10px] font-black text-white">★ 累積營業星數褒賞</span>
+          <span class="text-[10px] font-black text-[#FFD166]">目前累積：<span id="map-total-stars">0</span> ★</span>
         </div>
         <div id="map-milestone-bar" class="grid grid-cols-3 gap-2"></div>
       </div>
@@ -497,262 +500,257 @@
         <div id="roadmap-nodes" class="grid grid-cols-4 gap-2 py-1"></div>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl px-3 py-1.5 mt-1.5 shrink-0 bg-[#FFF3D6] flex items-center justify-between">
+      <div class="relative z-10 w-full rounded-2xl px-3 py-1.5 mt-1.5 shrink-0 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-between">
         <div class="flex items-center gap-1.5">
           <span class="text-sm">🚃</span>
-          <span class="text-[10px] font-black text-[#4A3326]">商店街通行手形：</span>
+          <span class="text-[10px] font-black text-white">商店街通行手形：</span>
         </div>
         <div class="flex items-center gap-1 text-[9px] font-black">
-          <span class="px-1.5 py-0.5 rounded bg-[#FF85A1] text-white border border-[#4A3326]">一番街</span>
+          <span class="px-1.5 py-0.5 rounded bg-[#FF85A1] text-white border border-white/30">一番街</span>
           <span>➔</span>
-          <span id="map-district-badge" class="px-1.5 py-0.5 rounded bg-white text-[#4A3326] border border-[#4A3326]">櫻花通 • 溫泉本町</span>
+          <span id="map-district-badge" class="px-1.5 py-0.5 rounded bg-white/20 text-white border border-white/30">櫻花通</span>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         轉蛋 (#view-gacha)
+         轉蛋 (#view-gacha) - 毛玻璃版
          ============================================================ -->
-    <section id="view-gacha" class="view-panel flex-1 relative hidden flex-col items-center justify-between px-3.5 py-2 safe-bottom text-[#4A3326] overflow-hidden">
-      <div class="scene-layer scene-gacha-shrine">
-        <span class="petal" style="left:12%; animation-duration:9s; animation-delay:0s;"></span>
-        <span class="petal" style="left:28%; animation-duration:11s; animation-delay:-2s;"></span>
-        <span class="petal" style="left:48%; animation-duration:10s; animation-delay:-4s;"></span>
-        <span class="petal" style="left:66%; animation-duration:12s; animation-delay:-1s;"></span>
-        <span class="petal" style="left:82%; animation-duration:9.5s; animation-delay:-6s;"></span>
+    <section id="view-gacha" class="view-panel flex-1 relative hidden flex-col items-center justify-between px-3.5 py-2 safe-bottom text-white overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+        <img src="./assets/bg-gacha.jpg" class="w-full h-full object-cover" alt="轉蛋背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
       <div class="w-full h-10 flex items-center justify-between gap-2 z-10 shrink-0">
-        <button data-nav="view-lobby" class="scene-nav-btn anime-btn px-3 py-1 bg-white text-[#4A3326] font-black text-xs rounded-xl flex items-center gap-1">
-          <span>◀</span> 返回大廳
+        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl flex items-center gap-1">
+          <span>◀</span> 大廳
         </button>
-        <span class="px-3 py-1 rounded-full bg-[#FFF3B0] text-[#4A3326] font-black text-[10px] anime-border">✦ 100% 必中店長秘寶 ✦</span>
-        <button data-guide="gacha" class="btn-open-guide anime-btn px-2.5 py-1 bg-[#A8E6CF] text-[#4A3326] font-black text-xs rounded-xl">？ 指南</button>
+        <span class="px-3 py-1 rounded-full bg-[#FF85A1] text-white border border-white/30 font-black text-[10px] shadow-lg">✦ 100% 必中秘寶 ✦</span>
+        <button data-guide="gacha" class="btn-open-guide pop-btn px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl">？ 指南</button>
       </div>
 
-      <div class="text-center z-10 shrink-0">
-        <h2 class="text-xl font-black text-white anime-stroke">商店街福引轉蛋亭</h2>
-        <p class="text-[11px] text-[#6E4F3A] font-bold">投入福引代幣，抽取店長專用盛合秘技與星鑽！</p>
+      <div class="text-center z-10 shrink-0 mt-2">
+        <h2 class="text-xl font-black text-white drop-shadow-md tracking-wider">商店街福引轉蛋亭</h2>
+        <p class="text-[11px] text-white/70 font-bold mt-0.5">投入福引代幣，抽取店長專用盛合秘技與星鑽！</p>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl p-2 bg-[#FFFDF7] shrink-0">
+      <div class="relative z-10 w-full rounded-2xl p-2 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0 mt-2">
         <div class="flex items-center justify-between mb-1 px-1">
-          <span class="text-[10px] font-black text-[#D94E67]">🏮 神社奉納・福引景品一覽與庫存</span>
-          <span class="text-[9px] font-bold text-[#8C583A]">特賞機率 UP</span>
+          <span class="text-[10px] font-black text-[#FFD166]">🏮 神社奉納・福引景品一覽</span>
+          <span class="text-[9px] font-bold text-white/60">特賞機率 UP</span>
         </div>
         <div class="grid grid-cols-5 gap-1.5 text-center">
-          <div class="bg-[#FFF3B0] rounded-xl p-1 border border-[#4A3326] flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#D94E67] text-white px-1 rounded">特賞</span>
+          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#FF85A1] text-white px-1 rounded">特賞</span>
             <span class="text-sm my-0.5">🥢</span>
-            <span class="text-[9px] font-black leading-none">極速盛合</span>
-            <span id="gacha-stock-magnet" class="text-[8px] font-bold text-[#8C583A] mt-0.5">持有:2</span>
+            <span class="text-[9px] font-black leading-none">盛合</span>
+            <span id="gacha-stock-magnet" class="text-[8px] font-bold text-white/70 mt-0.5">持有:2</span>
           </div>
-          <div class="bg-[#FFF3B0] rounded-xl p-1 border border-[#4A3326] flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#D94E67] text-white px-1 rounded">特賞</span>
+          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#FF85A1] text-white px-1 rounded">特賞</span>
             <span class="text-sm my-0.5">💎</span>
-            <span class="text-[9px] font-black leading-none">璀璨星鑽</span>
-            <span class="text-[8px] font-bold text-[#8C583A] mt-0.5">×100顆</span>
+            <span class="text-[9px] font-black leading-none">星鑽</span>
+            <span class="text-[8px] font-bold text-white/70 mt-0.5">×100</span>
           </div>
-          <div class="bg-[#E0F4FF] rounded-xl p-1 border border-[#4A3326] flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#4A3326] text-white px-1 rounded">一番</span>
+          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">一番</span>
             <span class="text-sm my-0.5">🍵</span>
-            <span class="text-[9px] font-black leading-none">暖茶融霜</span>
-            <span id="gacha-stock-hammer" class="text-[8px] font-bold text-[#8C583A] mt-0.5">持有:2</span>
+            <span class="text-[9px] font-black leading-none">融霜</span>
+            <span id="gacha-stock-hammer" class="text-[8px] font-bold text-white/70 mt-0.5">持有:2</span>
           </div>
-          <div class="bg-[#D8F3DC] rounded-xl p-1 border border-[#4A3326] flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#4A3326] text-white px-1 rounded">一番</span>
+          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">一番</span>
             <span class="text-sm my-0.5">🔀</span>
-            <span class="text-[9px] font-black leading-none">全櫃重整</span>
-            <span id="gacha-stock-shuffle" class="text-[8px] font-bold text-[#8C583A] mt-0.5">持有:3</span>
+            <span class="text-[9px] font-black leading-none">重整</span>
+            <span id="gacha-stock-shuffle" class="text-[8px] font-bold text-white/70 mt-0.5">持有:3</span>
           </div>
-          <div class="bg-[#FFE5B4] rounded-xl p-1 border border-[#4A3326] flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#8C583A] text-white px-1 rounded">二番</span>
+          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">二番</span>
             <span class="text-sm my-0.5">🪙</span>
-            <span class="text-[9px] font-black leading-none">營業資金</span>
-            <span class="text-[8px] font-bold text-[#8C583A] mt-0.5">×600幣</span>
+            <span class="text-[9px] font-black leading-none">資金</span>
+            <span class="text-[8px] font-bold text-white/70 mt-0.5">×600</span>
           </div>
         </div>
       </div>
 
       <div class="relative w-full flex items-center justify-center my-auto z-10">
+        <!-- 轉蛋機本體保持原本的鮮豔色彩，但加上光暈 -->
         <div class="flex flex-col items-center gap-2 mr-2">
-          <div class="w-14 py-2 px-1 bg-[#F3D5B5] anime-border rounded-xl text-center shadow-sm -rotate-6">
+          <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm -rotate-6">
             <div class="text-xs">⛩️</div>
-            <div class="text-[9px] font-black text-[#4A3326] leading-tight mt-0.5">商売繁盛</div>
-            <div class="text-[8px] font-bold text-[#D94E67]">祈願繪馬</div>
-          </div>
-          <div class="w-11 py-1.5 bg-[#FF85A1] anime-border rounded-full text-center text-white text-[9px] font-black shadow-sm">
-            大吉
+            <div class="text-[9px] font-black text-white leading-tight mt-0.5">商売繁盛</div>
           </div>
         </div>
 
-        <div class="relative flex flex-col items-center">
-          <div id="gacha-dome" class="w-40 h-40 rounded-full bg-gradient-to-b from-white/95 via-[#FFF9EE] to-[#FFE5EC] border-4 border-[#4A3326] shadow-xl relative overflow-hidden flex items-center justify-center">
+        <div class="relative flex flex-col items-center drop-shadow-2xl">
+          <div id="gacha-dome" class="w-40 h-40 rounded-full bg-gradient-to-b from-white/95 via-[#FFF9EE] to-[#FFE5EC] border-4 border-[#4A3326] shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden flex items-center justify-center">
             <div class="absolute top-3 left-5 w-12 h-5 bg-white/90 rounded-full -rotate-30"></div>
             <div class="relative w-32 h-28 flex flex-wrap items-center justify-center gap-1.5 pt-4">
-              <div class="w-10 h-10 rounded-full bg-[#FFF3B0] anime-border flex items-center justify-center text-[10px] font-black text-[#4A3326] animate-bounce">特賞</div>
-              <div class="w-8 h-8 rounded-full bg-[#FF85A1] anime-border"></div>
-              <div class="w-8 h-8 rounded-full bg-[#A8E6CF] anime-border"></div>
-              <div class="w-8 h-8 rounded-full bg-[#FFD194] anime-border"></div>
+              <div class="w-10 h-10 rounded-full bg-[#FFF3B0] border border-[#4A3326] flex items-center justify-center text-[10px] font-black text-[#4A3326] animate-bounce">特賞</div>
+              <div class="w-8 h-8 rounded-full bg-[#FF85A1] border border-[#4A3326]"></div>
+              <div class="w-8 h-8 rounded-full bg-[#A8E6CF] border border-[#4A3326]"></div>
+              <div class="w-8 h-8 rounded-full bg-[#FFD194] border border-[#4A3326]"></div>
             </div>
           </div>
-
-          <div class="w-48 h-20 -mt-4 rounded-3xl bg-gradient-to-b from-[#FF85A1] to-[#E05780] border-4 border-[#4A3326] flex flex-col items-center justify-between p-2 relative z-10 shadow-lg">
-            <div id="gacha-dial" class="w-10 h-10 rounded-full bg-[#FFF3B0] anime-border flex items-center justify-center cursor-pointer transition-transform duration-500 shadow">
+          <div class="w-48 h-20 -mt-4 rounded-3xl bg-gradient-to-b from-[#FF85A1] to-[#E05780] border-4 border-[#4A3326] flex flex-col items-center justify-between p-2 relative z-10 shadow-2xl">
+            <div id="gacha-dial" class="w-10 h-10 rounded-full bg-[#FFF3B0] border border-[#4A3326] flex items-center justify-center cursor-pointer transition-transform duration-500 shadow">
               <div class="w-6 h-2 bg-[#4A3326] rounded-full"></div>
             </div>
-            <div class="w-24 h-5 bg-[#FFFDF7] rounded-xl anime-border flex items-center justify-center">
+            <div class="w-24 h-5 bg-[#FFFDF7] rounded-xl border border-[#4A3326] flex items-center justify-center">
               <span class="text-[9px] font-black text-[#4A3326]">✦ 福引出口 ✦</span>
             </div>
           </div>
         </div>
 
         <div class="flex flex-col items-center gap-2 ml-2">
-          <div class="w-14 py-2 px-1 bg-[#FFF3B0] anime-border rounded-xl text-center shadow-sm rotate-6">
+          <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm rotate-6">
             <div class="text-xs">🌸</div>
-            <div class="text-[9px] font-black text-[#4A3326] leading-tight mt-0.5">千客萬來</div>
-            <div class="text-[8px] font-bold text-[#3B6E4C]">開運御守</div>
-          </div>
-          <div class="w-11 py-1.5 bg-[#FFD166] anime-border rounded-full text-center text-[#4A3326] text-[9px] font-black shadow-sm">
-            招福
+            <div class="text-[9px] font-black text-white leading-tight mt-0.5">千客萬來</div>
           </div>
         </div>
       </div>
 
       <div class="w-full flex flex-col items-center gap-1.5 z-10 shrink-0">
-        <div class="w-full anime-panel rounded-2xl px-3 py-1.5 bg-[#FFFDF7] flex items-center justify-between gap-2">
-          <span class="text-[10px] font-black text-[#D94E67] shrink-0">⛩️ 開運祈願值</span>
-          <div class="flex-1 h-3 bg-[#EAD7C0] rounded-full p-0.5 border border-[#4A3326] overflow-hidden">
+        <div class="w-full rounded-2xl px-3 py-1.5 bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-between gap-2 shadow-lg">
+          <span class="text-[10px] font-black text-[#FF85A1] shrink-0">⛩️ 開運祈願值</span>
+          <div class="flex-1 h-3 bg-black/50 rounded-full p-0.5 border border-white/20 overflow-hidden">
             <div id="gacha-pity-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFD166] rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
-          <span id="gacha-pity-text" class="text-[10px] font-black text-[#4A3326] shrink-0">0/5 (滿額必中特賞)</span>
+          <span id="gacha-pity-text" class="text-[10px] font-black text-white shrink-0">0/5</span>
         </div>
-
-        <div class="text-[11px] font-black text-[#6E4F3A]">每次消耗 🎫 1 張福引券（或 💎 30 星鑽）</div>
-        <button id="btn-draw-gacha" class="anime-btn w-full py-3 bg-gradient-to-r from-[#FFF3B0] via-[#FFD166] to-[#FFAE6B] text-[#4A3326] font-black text-base rounded-2xl flex items-center justify-center gap-2">
+        <div class="text-[11px] font-black text-white/80">每次消耗 🎫 1 張（或 💎 30 星鑽）</div>
+        <button id="btn-draw-gacha" class="pop-btn w-full py-3.5 bg-gradient-to-r from-[#FF6B8B] to-[#FF9E7D] text-white font-black text-base rounded-2xl flex items-center justify-center gap-2 border border-white/30 shadow-[0_0_20px_rgba(255,107,139,0.6)] active:scale-95 transition-transform">
           <span>🎐</span> 轉動福引扭蛋！(1回祈願)
         </button>
       </div>
     </section>
-
+    
     <!-- ============================================================
-         工坊 (#view-shop)
+         工坊 (#view-shop) - 毛玻璃版
          ============================================================ -->
-    <section id="view-shop" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-y-auto no-scrollbar allow-scroll-y justify-between">
-      <div class="scene-layer scene-shop-workroom"></div>
-
-      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-1.5 shrink-0">
-        <button data-nav="view-lobby" class="scene-nav-btn anime-btn px-3 py-1 bg-white text-[#4A3326] font-black text-xs rounded-xl flex items-center gap-1">
-          <span>◀</span> 返回大廳
-        </button>
-        <div class="text-center">
-          <div class="text-[9px] font-black text-[#3B6E4C] tracking-widest leading-none">✦ CRAFT WORKSHOP ✦</div>
-          <h2 class="text-sm font-black text-[#4A3326] mt-0.5">職人店鋪設備工坊</h2>
-        </div>
-        <button data-guide="shop" class="btn-open-guide anime-btn px-2.5 py-1 bg-[#A8E6CF] text-[#4A3326] font-black text-xs rounded-xl">？ 指南</button>
+    <section id="view-shop" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-y-auto no-scrollbar allow-scroll-y justify-between text-white">
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+        <img src="./assets/bg-shop.jpg" class="w-full h-full object-cover" alt="工坊背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl p-2.5 mb-2 bg-gradient-to-r from-[#D8F3DC] via-[#FFFDF7] to-[#FFE5B4] shrink-0">
+      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-1.5 shrink-0">
+        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl flex items-center gap-1">
+          <span>◀</span> 大廳
+        </button>
+        <div class="text-center">
+          <div class="text-[9px] font-black text-white/70 tracking-widest leading-none">✦ CRAFT WORKSHOP ✦</div>
+          <h2 class="text-sm font-black text-white mt-0.5 drop-shadow-md">職人店鋪設備工坊</h2>
+        </div>
+        <button data-guide="shop" class="btn-open-guide pop-btn px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl">？ 指南</button>
+      </div>
+
+      <div class="relative z-10 w-full rounded-2xl p-2.5 mb-2 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[10px] font-black text-[#3B6E4C]">📊 店鋪設備加成總覽儀表板</span>
-          <span class="text-[9px] font-black text-[#8C583A]">全關卡永久生效</span>
+          <span class="text-[10px] font-black text-[#FFD166]">📊 店鋪設備加成總覽</span>
+          <span class="text-[9px] font-black text-white/60">全關卡永久生效</span>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center">
-          <div class="bg-white/95 rounded-xl p-1.5 border border-[#4A3326]">
-            <div class="text-[9px] font-bold text-[#8C583A]">總營收加成</div>
-            <div id="dash-reg-bonus" class="text-sm font-black text-[#D94E67] mt-0.5">+25%</div>
+          <div class="bg-white/10 rounded-xl p-1.5 border border-white/20">
+            <div class="text-[9px] font-bold text-white/70">總營收加成</div>
+            <div id="dash-reg-bonus" class="text-sm font-black text-[#FF85A1] mt-0.5">+25%</div>
           </div>
-          <div class="bg-white/95 rounded-xl p-1.5 border border-[#4A3326]">
-            <div class="text-[9px] font-bold text-[#8C583A]">開局額外步數</div>
-            <div id="dash-shelf-bonus" class="text-sm font-black text-[#3B6E4C] mt-0.5">+2 步</div>
+          <div class="bg-white/10 rounded-xl p-1.5 border border-white/20">
+            <div class="text-[9px] font-bold text-white/70">額外步數</div>
+            <div id="dash-shelf-bonus" class="text-sm font-black text-[#A8E6CF] mt-0.5">+2 步</div>
           </div>
-          <div class="bg-white/95 rounded-xl p-1.5 border border-[#4A3326]">
-            <div class="text-[9px] font-bold text-[#8C583A]">暖霧融霜半徑</div>
-            <div id="dash-cold-bonus" class="text-sm font-black text-[#36698A] mt-0.5">1 櫃</div>
+          <div class="bg-white/10 rounded-xl p-1.5 border border-white/20">
+            <div class="text-[9px] font-bold text-white/70">融霜半徑</div>
+            <div id="dash-cold-bonus" class="text-sm font-black text-[#B0E0E6] mt-0.5">1 櫃</div>
           </div>
         </div>
       </div>
 
       <div class="relative z-10 flex flex-col gap-2 mb-2 shrink-0">
-        <div class="anime-panel p-2.5 rounded-2xl flex items-center justify-between gap-2">
+        <div class="bg-black/40 backdrop-blur-xl border border-white/20 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-lg">
           <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-[#FFF3B0] anime-border flex items-center justify-center text-xl shrink-0">🏧</div>
+            <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/30 flex items-center justify-center text-xl shrink-0">🏧</div>
             <div>
-              <h4 class="font-black text-xs text-[#4A3326]">和風智慧收銀台 (Lv.<span id="up-reg-val">1</span>)</h4>
-              <p class="text-[10px] text-[#D94E67] font-bold mt-0.5">營業結算與點單金幣永久 +<span id="up-reg-pct">25</span>%</p>
+              <h4 class="font-black text-xs text-white">和風智慧收銀台 (Lv.<span id="up-reg-val">1</span>)</h4>
+              <p class="text-[10px] text-[#FF85A1] font-bold mt-0.5">金幣永久 +<span id="up-reg-pct">25</span>%</p>
             </div>
           </div>
-          <button id="btn-up-register" class="anime-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0">🪙 200 改造</button>
+          <button id="btn-up-register" class="pop-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0 active:scale-95 transition-transform">🪙 200 改造</button>
         </div>
 
-        <div class="anime-panel p-2.5 rounded-2xl flex items-center justify-between gap-2">
+        <div class="bg-black/40 backdrop-blur-xl border border-white/20 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-lg">
           <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-[#D8F3DC] anime-border flex items-center justify-center text-xl shrink-0">🗄️</div>
+            <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/30 flex items-center justify-center text-xl shrink-0">🗄️</div>
             <div>
-              <h4 class="font-black text-xs text-[#4A3326]">特選檜木陳列架 (Lv.<span id="up-shelf-val">1</span>)</h4>
-              <p class="text-[10px] text-[#3B6E4C] font-bold mt-0.5">每日營業初始步數永久 +<span id="up-shelf-moves">2</span> 步</p>
+              <h4 class="font-black text-xs text-white">特選檜木架 (Lv.<span id="up-shelf-val">1</span>)</h4>
+              <p class="text-[10px] text-[#A8E6CF] font-bold mt-0.5">步數永久 +<span id="up-shelf-moves">2</span> 步</p>
             </div>
           </div>
-          <button id="btn-up-shelf" class="anime-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0">🪙 350 改造</button>
+          <button id="btn-up-shelf" class="pop-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0 active:scale-95 transition-transform">🪙 350 改造</button>
         </div>
 
-        <div class="anime-panel p-2.5 rounded-2xl flex items-center justify-between gap-2">
+        <div class="bg-black/40 backdrop-blur-xl border border-white/20 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-lg">
           <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-[#E0F4FF] anime-border flex items-center justify-center text-xl shrink-0">🍵</div>
+            <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/30 flex items-center justify-center text-xl shrink-0">🍵</div>
             <div>
-              <h4 class="font-black text-xs text-[#4A3326]">恆溫保鮮暖霧機 (Lv.<span id="up-cold-val">1</span>)</h4>
-              <p class="text-[10px] text-[#36698A] font-bold mt-0.5">完售時自動融化更大範圍的結霜料理！</p>
+              <h4 class="font-black text-xs text-white">保鮮暖霧機 (Lv.<span id="up-cold-val">1</span>)</h4>
+              <p class="text-[10px] text-[#B0E0E6] font-bold mt-0.5">加大融霜範圍！</p>
             </div>
           </div>
-          <button id="btn-up-cold" class="anime-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0">🪙 500 改造</button>
+          <button id="btn-up-cold" class="pop-btn px-2.5 py-1.5 bg-[#FFE5B4] text-[#4A3326] font-black text-xs rounded-xl shrink-0 active:scale-95 transition-transform">🪙 500 改造</button>
         </div>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl p-2.5 bg-[#FFFDF7] shrink-0">
+      <div class="relative z-10 w-full rounded-2xl p-2.5 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[10px] font-black text-[#4A3326]">🏺 店內開運擺設收藏櫃</span>
-          <span class="text-[9px] font-bold text-[#D94E67]">解鎖每件擺設可永久提升營收 +10%</span>
+          <span class="text-[10px] font-black text-white">🏺 店內開運擺設</span>
+          <span class="text-[9px] font-bold text-[#FF85A1]">提升營收 +10%</span>
         </div>
         <div id="shop-decor-cabinet" class="grid grid-cols-3 gap-2"></div>
       </div>
     </section>
-
+    
     <!-- ============================================================
-         委託 (#view-quests)
+         委託 (#view-quests) - 毛玻璃版
          ============================================================ -->
-    <section id="view-quests" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-y-auto no-scrollbar allow-scroll-y justify-between">
-      <div class="scene-layer scene-quests-tatami"></div>
-
-      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-1.5 shrink-0">
-        <button data-nav="view-lobby" class="scene-nav-btn anime-btn px-3 py-1 bg-white text-[#4A3326] font-black text-xs rounded-xl flex items-center gap-1">
-          <span>◀</span> 返回大廳
-        </button>
-        <div class="text-center">
-          <div class="text-[9px] font-black text-[#8C583A] tracking-widest leading-none">✦ MANAGER ROOM ✦</div>
-          <h2 class="text-sm font-black text-[#4A3326] mt-0.5">店長室日常委託帳</h2>
-        </div>
-        <button data-guide="quests" class="btn-open-guide anime-btn px-2.5 py-1 bg-[#A8E6CF] text-[#4A3326] font-black text-xs rounded-xl">？ 指南</button>
+    <section id="view-quests" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-y-auto no-scrollbar allow-scroll-y justify-between text-white">
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+        <img src="./assets/bg-quests.jpg" class="w-full h-full object-cover" alt="委託背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
+      <div class="relative z-10 h-10 flex items-center justify-between gap-2 mb-1.5 shrink-0">
+        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl flex items-center gap-1">
+          <span>◀</span> 大廳
+        </button>
+        <div class="text-center">
+          <div class="text-[9px] font-black text-white/70 tracking-widest leading-none">✦ MANAGER ROOM ✦</div>
+          <h2 class="text-sm font-black text-white mt-0.5 drop-shadow-md">店長室日常委託帳</h2>
+        </div>
+        <button data-guide="quests" class="btn-open-guide pop-btn px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl">？ 指南</button>
+      </div>
+
+      <!-- 這裡的任務列表由 JS 渲染，請確保 JS 也有改為毛玻璃風格 (見下文) -->
       <div id="quests-container" class="relative z-10 flex flex-col gap-2 mb-2 shrink-0"></div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl p-2.5 mb-2 bg-gradient-to-r from-[#FFF3B0] to-[#FFE5EC] shrink-0">
+      <div class="relative z-10 w-full rounded-2xl p-2.5 mb-2 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0">
         <div class="flex items-center justify-between mb-1.5">
           <div>
-            <div class="text-[10px] font-black text-[#4A3326]">💮 商店街自治會・五格集章卡</div>
-            <div class="text-[9px] font-bold text-[#8C583A]">每完成一項委託或完售即可累積印章</div>
+            <div class="text-[10px] font-black text-white">💮 自治會・五格集章卡</div>
+            <div class="text-[9px] font-bold text-white/60">完成委託或完售累積印章</div>
           </div>
-          <button id="btn-claim-stamp-card" class="anime-btn px-2.5 py-1 bg-[#FF85A1] text-white text-[10px] font-black rounded-xl">
+          <button id="btn-claim-stamp-card" class="pop-btn px-2.5 py-1 bg-[#FF85A1] text-white text-[10px] font-black rounded-xl border border-white/30 active:scale-95 transition-transform">
             滿章領 💎50
           </button>
         </div>
         <div id="stamp-card-slots" class="grid grid-cols-5 gap-1.5"></div>
       </div>
 
-      <div class="relative z-10 w-full anime-panel rounded-2xl p-2.5 bg-[#FFFDF7] shrink-0">
+      <div class="relative z-10 w-full rounded-2xl p-2.5 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] font-black text-[#4A3326]">📖 星野手作和食圖鑑 (全 20 品)</span>
-          <span id="encyclopedia-selected-info" class="text-[9px] font-black text-[#D94E67]">左右滑動・點擊查看料理介紹</span>
+          <span class="text-[10px] font-black text-white">📖 手作和食圖鑑</span>
+          <span id="encyclopedia-selected-info" class="text-[9px] font-black text-[#FFD166]">滑動鑑賞</span>
         </div>
         <div id="food-encyclopedia-list" class="flex items-center gap-2 overflow-x-auto no-scrollbar allow-scroll-x py-1"></div>
       </div>
