@@ -933,22 +933,6 @@ class GameApp {
       bgmBtn.innerText = BGM.enabled ? '🎵' : '🔇';
     }
     
-    // 👆👆👆 新增結束 👆👆👆
-
-    const themeBtn = document.getElementById('btn-theme-toggle');
-    if (themeBtn) {
-      themeBtn.onclick = () => {
-        SFX.tap();
-        const themes = getAllThemes();
-        const currentId = getActiveThemeId();
-        const idx = themes.findIndex(t => t.id === currentId);
-        const next = themes[(idx + 1) % themes.length];
-        setActiveTheme(next.id);
-        themeBtn.innerText = '⏳';
-        setTimeout(() => location.reload(), 300);
-      };
-    }
-
     document.getElementById('lobby-mascot-touch').onclick = () => {
       SFX.tap();
       this.lobbyLineIdx = (this.lobbyLineIdx + 1) % this.lobbyLines.length;
