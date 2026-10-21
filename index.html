@@ -82,117 +82,73 @@
   </div>
 
   <!-- ============================================================
-       扉頁：星野便利超商主視覺
+       扉頁：星野便利超商主視覺 (高質感插畫版)
        ============================================================ -->
-  <section id="view-title" class="absolute inset-0 z-50 scene-bg-lobby flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
-    <div class="absolute top-0 inset-x-0 h-3.5 noren-stripes border-b-2 border-[#4A3326]"></div>
+  <section id="view-title" class="absolute inset-0 z-50 flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
+    
+    <!-- 1. 滿版背景圖 (加上微暗的遮罩讓文字清楚) -->
+    <div class="absolute inset-0 z-0 bg-[#EAD7C0]">
+      <img src="./assets/bg-title.jpg" class="w-full h-full object-cover" alt="背景">
+      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none"></div>
+    </div>
 
+    <!-- 2. 頂部狀態列 -->
     <div class="w-full flex justify-between items-center z-10 pt-3 shrink-0">
-      <div class="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full anime-border shadow-sm">
+      <div class="flex items-center gap-1.5 px-3 py-1 bg-white/95 backdrop-blur-md rounded-full anime-border shadow-md">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
         <span id="txt-store-status" class="text-[11px] font-black text-[#4A3326] tracking-wider">星野便利 • 24H 營業中</span>
       </div>
-        <button id="btn-toggle-sfx" class="anime-btn px-3 py-1 bg-[#FFE5EC] rounded-full text-xs font-black text-[#4A3326]">
-          🔊 音效: 開啟
-        </button>
+      <button id="btn-toggle-sfx" class="anime-btn px-3 py-1 bg-[#FFE5EC]/95 backdrop-blur-md rounded-full text-xs font-black text-[#4A3326] shadow-md">
+        🔊 音效: 開啟
+      </button>
+    </div>
+
+    <!-- 3. 中央看板娘與標題 -->
+    <div class="relative flex flex-col items-center justify-center my-auto z-10 w-full max-w-[340px]">
+      
+      <!-- 標題面板 -->
+      <div class="px-4 py-2 bg-[#FFF3B0]/95 backdrop-blur-md text-[#4A3326] text-[10px] font-black tracking-widest rounded-full anime-border mb-4 shadow-lg">
+        ✦ HOSHINO KONBINI & WASHOKU MARCHÉ ✦
       </div>
 
-      <div class="relative flex flex-col items-center justify-center my-auto z-10 w-full max-w-[340px]">
-        <div class="px-3.5 py-0.5 bg-[#FFF3B0] text-[#4A3326] text-[10px] font-black tracking-widest rounded-full anime-border mb-2 shadow-sm">
-          ✦ HOSHINO KONBINI & WASHOKU MARCHÉ ✦
+      <div class="relative w-full py-4 px-5 bg-white/90 backdrop-blur-md anime-panel rounded-3xl flex items-center justify-center gap-3 mb-6 shadow-2xl">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF85A1] to-[#FF9F68] anime-border flex items-center justify-center text-white text-3xl font-black shadow-inner shrink-0">星</div>
+        <div class="flex flex-col items-start leading-none">
+          <span id="txt-title" class="text-3xl font-black text-white anime-stroke tracking-wider">家有貨物!</span>
+          <span id="txt-subtitle" class="text-[11px] font-black text-[#8C583A] tracking-wider mt-1">手作和食與療癒商店街物語</span>
         </div>
-
-        <div class="relative w-full py-3 px-4 anime-panel rounded-3xl flex items-center justify-center gap-3 mb-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF85A1] to-[#FF9F68] anime-border flex items-center justify-center text-white text-2xl font-black shadow-inner shrink-0">星</div>
-          <div class="flex flex-col items-start leading-none">
-            <span id="txt-title" class="text-3xl font-black text-white anime-stroke tracking-wider">家有貨物!</span>
-            <span id="txt-subtitle" class="text-[11px] font-black text-[#8C583A] tracking-wider mt-1">手作和食與療癒商店街物語</span>
-          </div>
-          <div class="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-[#A8E6CF] text-[#4A3326] font-black text-[10px] rounded-full anime-border rotate-3 shadow-sm">
-            無體力暢玩 ✦
-          </div>
-        </div>
-
-        <div class="relative w-full h-56 rounded-3xl bg-gradient-to-b from-[#FFFDF9] via-[#FFF3D6] to-[#F7D9B9] anime-panel overflow-hidden flex flex-col items-center justify-end">
-          <div class="absolute top-0 inset-x-0 h-6 w-full flex border-b-2 border-[#4A3326] z-10">
-            <div class="flex-1 bg-[#FF85A1] flex items-center justify-center text-[10px] font-black text-white">星</div>
-            <div class="flex-1 bg-[#FFFDF7] flex items-center justify-center text-[10px] font-black text-[#4A3326]">野</div>
-            <div class="flex-1 bg-[#FF85A1] flex items-center justify-center text-[10px] font-black text-white">便</div>
-            <div class="flex-1 bg-[#FFFDF7] flex items-center justify-center text-[10px] font-black text-[#4A3326]">利</div>
-          </div>
-
-          <div class="relative z-10 w-44 h-44 mascot-breathe -mb-1">
-            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-sm">
-              <circle cx="100" cy="90" r="86" fill="url(#shopGlow)"/>
-              <rect x="42" y="20" width="116" height="26" rx="7" fill="#FFF3B0" stroke="#4A3326" stroke-width="2.5"/>
-              <text x="100" y="39" text-anchor="middle" font-family="'M PLUS Rounded 1c',sans-serif"
-                    font-size="15" font-weight="900" fill="#4A3326" letter-spacing="1">星野便利</text>
-              <g>
-                <path d="M28,74 L172,74 L162,48 L38,48 Z" fill="url(#shopRoofGrad)" stroke="#4A3326" stroke-width="2.5" stroke-linejoin="round"/>
-                <path d="M40,48 L54,48 L44,74 L30,74 Z" fill="#FFFDF7"/>
-                <path d="M68,48 L82,48 L72,74 L58,74 Z" fill="#FFFDF7"/>
-                <path d="M96,48 L110,48 L100,74 L86,74 Z" fill="#FFFDF7"/>
-                <path d="M124,48 L138,48 L128,74 L114,74 Z" fill="#FFFDF7"/>
-                <path d="M152,48 L162,48 L162,74 L142,74 Z" fill="#FFFDF7"/>
-              </g>
-              <rect x="46" y="78" width="108" height="82" rx="6" fill="url(#shopGlassGrad)" stroke="#4A3326" stroke-width="2.5"/>
-              <path d="M52,84 L70,84 L52,138 Z" fill="#FFFDF7" opacity="0.55"/>
-              <path d="M58,84 L64,84 L58,110 Z" fill="#FFFDF7" opacity="0.75"/>
-              <line x1="100" y1="80" x2="100" y2="158" stroke="#4A3326" stroke-width="2"/>
-              <g opacity="0.72">
-                <rect x="56" y="96" width="34" height="3" fill="#C88A55"/>
-                <rect x="56" y="112" width="34" height="3" fill="#C88A55"/>
-                <rect x="56" y="128" width="34" height="3" fill="#C88A55"/>
-                <rect x="110" y="96" width="34" height="3" fill="#C88A55"/>
-                <rect x="110" y="112" width="34" height="3" fill="#C88A55"/>
-                <rect x="110" y="128" width="34" height="3" fill="#C88A55"/>
-                <rect x="60" y="86" width="8" height="10" rx="2" fill="#FFB3C6"/>
-                <rect x="72" y="86" width="8" height="10" rx="2" fill="#A8E6CF"/>
-                <rect x="84" y="86" width="5" height="10" rx="2" fill="#FFE5B4"/>
-                <rect x="114" y="86" width="8" height="10" rx="2" fill="#B0E0E6"/>
-                <rect x="126" y="86" width="8" height="10" rx="2" fill="#FFD166"/>
-                <rect x="138" y="86" width="5" height="10" rx="2" fill="#FF85A1"/>
-                <rect x="60" y="102" width="8" height="10" rx="2" fill="#FFD166"/>
-                <rect x="72" y="102" width="8" height="10" rx="2" fill="#FF85A1"/>
-                <rect x="84" y="102" width="5" height="10" rx="2" fill="#A8E6CF"/>
-                <rect x="114" y="102" width="8" height="10" rx="2" fill="#FFB3C6"/>
-                <rect x="126" y="102" width="8" height="10" rx="2" fill="#B0E0E6"/>
-                <rect x="138" y="102" width="5" height="10" rx="2" fill="#FFE5B4"/>
-                <rect x="60" y="118" width="8" height="10" rx="2" fill="#B0E0E6"/>
-                <rect x="72" y="118" width="8" height="10" rx="2" fill="#FFE5B4"/>
-                <rect x="84" y="118" width="5" height="10" rx="2" fill="#FF85A1"/>
-                <rect x="114" y="118" width="8" height="10" rx="2" fill="#FFD166"/>
-                <rect x="126" y="118" width="8" height="10" rx="2" fill="#A8E6CF"/>
-                <rect x="138" y="118" width="5" height="10" rx="2" fill="#FFB3C6"/>
-              </g>
-              <path d="M94,140 L94,158 M106,140 L106,158" stroke="#4A3326" stroke-width="1.5" opacity="0.35"/>
-              <rect x="36" y="160" width="128" height="8" rx="2" fill="#D9C2A5" stroke="#4A3326" stroke-width="2"/>
-              <rect x="30" y="168" width="140" height="9" rx="2" fill="#C89F78" stroke="#4A3326" stroke-width="2"/>
-              <line x1="34" y1="86" x2="34" y2="80" stroke="#4A3326" stroke-width="1.5"/>
-              <ellipse cx="34" cy="100" rx="9" ry="13" fill="#D94E67" stroke="#4A3326" stroke-width="2"/>
-              <line x1="34" y1="90" x2="34" y2="110" stroke="#FFF3B0" stroke-width="1.2" opacity="0.7"/>
-              <line x1="166" y1="86" x2="166" y2="80" stroke="#4A3326" stroke-width="1.5"/>
-              <ellipse cx="166" cy="100" rx="9" ry="13" fill="#D94E67" stroke="#4A3326" stroke-width="2"/>
-              <line x1="166" y1="90" x2="166" y2="110" stroke="#FFF3B0" stroke-width="1.2" opacity="0.7"/>
-              <path d="M178,60 L180,64 L184,66 L180,68 L178,72 L176,68 L172,66 L176,64 Z" fill="#FFD166"/>
-              <path d="M20,56 L21.5,59 L24.5,60 L21.5,61 L20,64 L18.5,61 L15.5,60 L18.5,59 Z" fill="#FF85A1"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="w-full anime-panel rounded-2xl px-3.5 py-2.5 -mt-2 z-20 text-left">
-          <div class="flex items-center justify-between mb-0.5">
-            <span class="text-[10px] font-black text-[#E05780]">✦ 看板娘・星野葵</span>
-            <span id="txt-mascot-tag" class="text-[9px] font-bold text-[#8C583A]">本日旬味新鮮上架</span>
-          </div>
-          <p class="text-xs font-bold text-[#4A3326] leading-snug">
-            「早安店長！超商冷藏櫃的海苔御飯糰與厚燒玉子已經補貨完畢囉♪」
-          </p>
+        <div class="absolute -top-3 -right-2 px-3 py-1 bg-[#A8E6CF] text-[#4A3326] font-black text-[10px] rounded-full anime-border rotate-3 shadow-md">
+          無體力暢玩 ✦
         </div>
       </div>
 
-      <div class="w-full max-w-[340px] flex flex-col pb-1 z-10 shrink-0">
-      <button id="btn-enter-lobby" class="anime-btn w-full py-3.5 bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFBC6B] text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 relative overflow-hidden">
+      <!-- 放大版星野葵立繪 (直接站在畫面中) -->
+      <div class="relative w-64 h-64 mascot-breathe drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
+         <!-- 這裡會由 main.js 動態塞入 aoi-happy.png -->
+         <div id="title-mascot-svg" class="w-full h-full"></div>
+      </div>
+      
+    </div>
+
+    <!-- 4. 底部對話框與進入按鈕 -->
+    <div class="w-full max-w-[340px] flex flex-col gap-3 pb-2 z-10 shrink-0">
+      
+      <!-- 對話框 -->
+      <div class="w-full bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 anime-border shadow-lg text-left relative">
+        <div class="flex items-center justify-between mb-0.5">
+          <span class="text-[10px] font-black text-[#E05780]">✦ 看板娘・星野葵</span>
+          <span id="txt-mascot-tag" class="text-[9px] font-bold text-[#8C583A]">本日旬味新鮮上架</span>
+        </div>
+        <p class="text-xs font-bold text-[#4A3326] leading-snug">
+          「早安店長！超商冷藏櫃的海苔御飯糰與厚燒玉子已經補貨完畢囉♪」
+        </p>
+        <!-- 對話框的小尖角 -->
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-t-2 border-l-2 border-[#4A3326] rotate-45"></div>
+      </div>
+
+      <!-- 進入按鈕 -->
+      <button id="btn-enter-lobby" class="anime-btn w-full py-3.5 bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFBC6B] text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 relative overflow-hidden shadow-xl">
+        <span class="absolute top-1 inset-x-4 h-1.5 bg-white/40 rounded-full"></span>
         <span>🏪</span>
         <span id="txt-enter-button" class="anime-stroke-sm tracking-wider">自動門開啟・進入店鋪</span>
       </button>
