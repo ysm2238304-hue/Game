@@ -357,17 +357,18 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 將左右邊距與格子間距縮小 (原本是 7, 6, 10，現在改為 3, 4, 6)
-    const padX = 3, gapX = 4, gapY = 6;
+    // 1. 將邊距與間距降到最低（讓格子更大）
+    const padX = 2, gapX = 4, gapY = 8;
 
-    this.topSceneH    = Math.max(46, Math.min(60, this.height * 0.13));
-    this.bottomSceneH = Math.max(54, Math.min(70, this.height * 0.15));
+    // 2. 大幅縮減頂部與底部的預留空間 (原本是 46~60 和 54~70，現在砍到最低)
+    this.topSceneH    = 10; // 幾乎不留頂部空間
+    this.bottomSceneH = 20; // 底部只留一點點顧客的頭
 
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
     const availH = this.height - this.topSceneH - this.bottomSceneH - gapY * (rows - 1) - 8;
     
-    // 2. 放大貨架高度上限 (原本 98，現在提高到 130)
-    const maxIdealShelfH = Math.min(130, shelfW * 0.95); 
+    // 3. 解除貨架最大高度限制，讓它盡可能變大
+    const maxIdealShelfH = shelfW * 1.1; 
     const shelfH = Math.max(66, Math.min(availH / rows, maxIdealShelfH));
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
@@ -416,53 +417,14 @@ class GameApp {
   }
 
   paintTopShopEaves(ctx) {
+    // 移除了原本的暖簾、黑板和燈籠，把空間讓給貨架
     const w = this.width;
     ctx.save();
     ctx.fillStyle = '#8C583A';
-    ctx.strokeStyle = '#4A3326';
-    ctx.lineWidth = 2;
-    ctx.fillRect(0, 0, w, 7);
-    ctx.strokeRect(0, 0, w, 7);
-
-    const norenCount = 6;
-    const nw = w / norenCount;
-    const nh = 22;
-    for (let i = 0; i < norenCount; i++) {
-      ctx.fillStyle = i % 2 === 0 ? '#FF85A1' : '#FFFDF7';
-      ctx.beginPath();
-      ctx.roundRect(i * nw + 1, 5, nw - 2, nh, [0, 0, 6, 6]);
-      ctx.fill();
-      ctx.stroke();
-    }
-
-    [22, w - 22].forEach(lx => {
-      const ly = 24;
-      ctx.fillStyle = '#D94E67';
-      ctx.beginPath();
-      ctx.ellipse(lx, ly, 8.5, 11, 0, 0, Math.PI * 2);
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#FFF3B0';
-      ctx.fillRect(lx - 4, ly - 2, 8, 4);
-    });
-
-    const boardW = Math.min(212, w * 0.58);
-    const boardH = 25;
-    const bx = (w - boardW) / 2;
-    const by = 13;
-    ctx.fillStyle = '#2B4C3F';
-    ctx.strokeStyle = '#C88A55';
-    ctx.lineWidth = 2.4;
-    ctx.beginPath();
-    ctx.roundRect(bx, by, boardW, boardH, 6);
-    ctx.fill(); ctx.stroke();
-
-    ctx.fillStyle = '#FFF3B0';
-    ctx.font = '900 10px "M PLUS Rounded 1c", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('✦ 本日のおすすめ・職人手握和食 ✦', w / 2, by + 17);
+    ctx.fillRect(0, 0, w, 4); // 只保留一條細細的裝飾線
     ctx.restore();
   }
-
+  
   paintBottomCounterBase(ctx) {
     const h = this.bottomSceneH;
     const w = this.width;
