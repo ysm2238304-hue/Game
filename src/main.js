@@ -1542,13 +1542,13 @@ class GameApp {
         const claimed = !!(GameState.milestonesClaimed && GameState.milestonesClaimed[ms.stars]);
         const canClaim = totalStars >= ms.stars && !claimed;
         const box = document.createElement('button');
-        box.className = `pop-btn rounded-xl p-1.5 border-2 border-[#4A3326] flex flex-col items-center text-center ${
-          claimed ? 'bg-[#D8F3DC]' : (canClaim ? 'bg-[#FFF3B0] animate-bounce' : 'bg-[#FFF8EC]')
+        box.className = `pop-btn rounded-xl p-1.5 border border-white/30 flex flex-col items-center text-center ${
+          claimed ? 'bg-black/40 text-white/50' : (canClaim ? 'bg-[#FF85A1] text-white animate-bounce shadow-[0_0_10px_rgba(255,133,161,0.5)]' : 'bg-white/10 text-white/70')
         }`;
         box.innerHTML = `
           <div class="text-base leading-none">${claimed ? '🎊' : (canClaim ? '🎁' : '📦')}</div>
-          <div class="text-[9px] font-black text-[#4A3326] mt-0.5">${ms.title}</div>
-          <div class="text-[8px] font-bold text-[#D94E67]">${claimed ? '已領取' : `💎${ms.diam} 🎫${ms.voucher}`}</div>
+          <div class="text-[9px] font-black mt-0.5">${ms.title}</div>
+          <div class="text-[8px] font-bold mt-0.5 ${canClaim ? 'text-[#FFF3B0]' : 'text-white/60'}">${claimed ? '已領取' : `💎${ms.diam} 🎫${ms.voucher}`}</div>
         `;
         if (canClaim) {
           box.onclick = () => {
@@ -1571,14 +1571,17 @@ class GameApp {
       const isCur = lv === GameState.unlockedLevel;
       const stars = GameState.stars[lv] || 0;
       const node = document.createElement('button');
-      node.className = `pop-btn h-14 rounded-2xl flex flex-col items-center justify-center font-black anime-border shadow-sm ${
-        isCur ? 'bg-[#FF85A1] text-white scale-105' :
-        unlocked ? 'bg-white text-[#4A3326]' :
-        'bg-[#EAD7C0]/70 text-[#8C583A]/60 opacity-70'
+      
+      // 👇 這裡是關卡按鈕的背景與文字顏色
+      node.className = `pop-btn h-14 rounded-2xl flex flex-col items-center justify-center font-black border border-white/20 shadow-md transition-transform active:scale-95 ${
+        isCur ? 'bg-[#FF85A1] text-white scale-105 shadow-[0_0_15px_rgba(255,133,161,0.5)]' :
+        unlocked ? 'bg-white/20 backdrop-blur-md text-white' :
+        'bg-black/50 text-white/40'
       }`;
+      
       node.innerHTML = `
-        <span class="text-xs leading-none">第 ${lv} 店</span>
-        <span class="text-[10px] mt-1 ${isCur ? 'text-[#FFF3B0]' : 'text-[#FF9F1C]'}">
+        <span class="text-xs leading-none drop-shadow-sm">第 ${lv} 店</span>
+        <span class="text-[10px] mt-1 ${isCur ? 'text-[#FFF3B0]' : (unlocked ? 'text-[#FFD166]' : 'text-white/20')}">
           ${unlocked ? ('★'.repeat(stars) + '☆'.repeat(3 - stars)) : '🔒'}
         </span>
       `;
@@ -1595,19 +1598,20 @@ class GameApp {
     for (let i = 1; i <= 5; i++) {
       const stamped = i <= count;
       const cell = document.createElement('div');
+      // 格子改成白邊框與半透明背景
       cell.className = `h-11 rounded-xl border border-white/30 flex items-center justify-center ${
         stamped ? 'bg-[#FF85A1]' : 'bg-white/10'
       }`;
       cell.innerHTML = stamped
-        ? `<div class="w-8 h-8 rounded-full border-2 border-[#D94E67] bg-[#FF85A1] text-white font-black text-xs flex items-center justify-center -rotate-12 shadow-xs">濟</div>`
-        : `<span class="text-[10px] font-black text-[#8C583A]/50">印${i}</span>`;
+        ? `<div class="w-8 h-8 rounded-full border-2 border-white/50 bg-[#FF85A1] text-white font-black text-xs flex items-center justify-center -rotate-12 shadow-sm">濟</div>`
+        : `<span class="text-[10px] font-black text-white/50">印${i}</span>`;
       slotBox.appendChild(cell);
     }
     const claimBtn = document.getElementById('btn-claim-stamp-card');
     if (claimBtn) {
-      claimBtn.innerText = count >= 5 ? '🎁 立即領 💎50!' : `集章 ${count}/5 (領💎50)`;
-      claimBtn.className = `anime-btn px-2.5 py-1 text-[10px] font-black rounded-xl ${
-        count >= 5 ? 'bg-[#A8E6CF] text-[#4A3326] animate-bounce' : 'bg-[#FF85A1] text-white'
+      claimBtn.innerText = count >= 5 ? '🎁 立即領 💎50!' : `集章 ${count}/5`;
+      claimBtn.className = `pop-btn px-2.5 py-1 text-[10px] font-black rounded-xl border border-white/30 active:scale-95 transition-transform ${
+        count >= 5 ? 'bg-[#A8E6CF] text-[#4A3326] animate-bounce shadow-[0_0_10px_rgba(168,230,207,0.5)]' : 'bg-white/10 text-white'
       }`;
     }
   }
@@ -1618,16 +1622,18 @@ class GameApp {
     GameState.quests.forEach(q => {
       const can = q.cur >= q.target && !q.claimed;
       const row = document.createElement('div');
+      // 卡片背景改成半透明黑
       row.className = 'bg-black/40 backdrop-blur-md border border-white/20 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-lg';
+      
       row.innerHTML = `
-        <div>
-          <h4 class="font-black text-xs text-[#4A3326]">${q.desc}</h4>
-          <p class="text-[10px] text-[#D94E67] font-black mt-0.5">達成度: ${Math.min(q.cur, q.target)}/${q.target} • 獎金 🪙${q.coins} 💎${q.diam}</p>
+        <div class="text-left">
+          <h4 class="font-black text-xs text-white drop-shadow-sm">${q.desc}</h4>
+          <p class="text-[10px] text-[#FFD166] font-black mt-1 drop-shadow-sm">達成度: ${Math.min(q.cur, q.target)}/${q.target} • 獎金 🪙${q.coins} 💎${q.diam}</p>
         </div>
-        <button class="anime-btn px-3 py-1.5 rounded-xl font-black text-xs shrink-0 ${
-          q.claimed ? 'bg-slate-100 text-slate-400' :
-          can ? 'bg-[#A8E6CF] text-[#4A3326]' :
-          'bg-[#FFF3D6] text-[#8C583A]'
+        <button class="pop-btn px-3 py-1.5 rounded-xl font-black text-xs shrink-0 border border-white/30 active:scale-95 transition-transform ${
+          q.claimed ? 'bg-black/50 text-white/50' :
+          can ? 'bg-[#A8E6CF] text-[#4A3326] shadow-[0_0_10px_rgba(168,230,207,0.5)]' :
+          'bg-white/10 text-white'
         }">${q.claimed ? '💮 已核定' : (can ? '蓋章領取!' : '營業中')}</button>
       `;
       const btn = row.querySelector('button');
