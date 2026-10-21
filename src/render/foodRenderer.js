@@ -61,7 +61,7 @@ export class CozyFoodRenderer {
     const lift = opts.lift || 0;
     const iceHp = opts.iceHp || 0;
     
-    // 基礎大小 (維持之前的 1.15 倍，確保格子內飽滿)
+    // 基礎大小 (維持 1.15 倍，確保格子內飽滿)
     const baseSize = Math.min(w * 1.15, h * 1.15);
 
     ctx.save();
@@ -89,7 +89,7 @@ export class CozyFoodRenderer {
     ctx.translate(0, -lift);
     ctx.scale(scaleX, scaleY);
 
-    // 👇 核心修改：等比例縮放，保證長條圖不會變形，也不會被裁切！
+    // 核心修改：等比例縮放，保證長條圖不會變形，也不會被裁切！
     const imgRatio = sprite.width / sprite.height;
     let drawW = baseSize;
     let drawH = baseSize;
@@ -109,3 +109,4 @@ export class CozyFoodRenderer {
     }
     ctx.restore();
   }
+} // 👈 就是這個大括號！沒有它整個遊戲會崩潰
