@@ -1472,48 +1472,73 @@ class GameApp {
   triggerGacha() {
     if (this.isDrawingGacha) return;
     if (GameState.vouchers <= 0 && GameState.diamonds < 30) { SFX.cancel(); return; }
+    
     this.isDrawingGacha = true;
     if (GameState.vouchers > 0) GameState.vouchers--;
     else GameState.diamonds -= 30;
+    
     SFX.gacha();
-    const dial = document.getElementById('gacha-dial');
+    const machine = document.getElementById('gacha-machine-wrapper');
+    const ball = document.getElementById('gacha-ball-drop');
     const drawBtn = document.getElementById('btn-draw-gacha');
+    
     if (drawBtn) drawBtn.disabled = true;
-    dial.style.transform = 'rotate(360deg)';
-    document.getElementById('gacha-dome').classList.add('gacha-shaking');
+    
+    // 1. 扭蛋機開始晃動
+    machine.classList.add('gacha-shaking');
+    
+    // 2. 0.5 秒後，扭蛋掉出來
     setTimeout(() => {
-      dial.style.transform = 'rotate(0deg)';
-      document.getElementById('gacha-dome').classList.remove('gacha-shaking');
-      if (drawBtn) drawBtn.disabled = false;
-      this.isDrawingGacha = false;
+      machine.classList.remove('gacha-shaking');
+      
+      // 初始化扭蛋位置（在出口處）
+      ball.style.opacity = '1';
+      ball.style.transform = 'translateY(0) scale(1)';
+      ball.style.transition = 'none';
+      SFX.drop();
+      
+      // 3. 扭蛋彈跳動畫
+      setTimeout(() => {
+        ball.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s';
+        ball.style.transform = 'translateY(20px) scale(1.2)';
+        ball.style.opacity = '0';
+      }, 50);
 
-      const pool = [
-        { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '🥢', name: '極速盛合秘技 × 2', desc: '直接從全店集齊 3 份同款和食瞬間完售！', fn: () => GameState.boosters.magnet += 2 },
-        { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '💎', name: '璀璨星鑽禮盒 × 100', desc: '商店街自治會特別頒發的高額星鑽獎勵！', fn: () => GameState.diamonds += 100 },
-        { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🍵', name: '暖茶融霜秘技 × 2', desc: '瞬間融化全場結霜並完售一組料理！', fn: () => GameState.boosters.hammer += 2 },
-        { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🔀', name: '全櫃重整秘技 × 3', desc: '隨時重新調度所有木櫃上的料理位置！', fn: () => GameState.boosters.shuffle += 3 },
-        { special: false, rarity: '✦ 二番賞・營業資金 ✦', icon: '🪙', name: '店鋪營業資金 × 600', desc: '可用於職人木工坊升級收銀台與開運擺設！', fn: () => GameState.coins += 600 }
-      ];
+      // 4. 動畫結束後，彈出獎勵視窗
+      setTimeout(() => {
+        ball.style.opacity = '0';
+        if (drawBtn) drawBtn.disabled = false;
+        this.isDrawingGacha = false;
 
-      let rew;
-      if ((GameState.gachaPity || 0) >= 5) {
-        const specials = pool.filter(p => p.special);
-        rew = specials[Math.floor(Math.random() * specials.length)];
-        GameState.gachaPity = 0;
-      } else {
-        rew = pool[Math.floor(Math.random() * pool.length)];
-        GameState.gachaPity = rew.special ? 0 : (GameState.gachaPity || 0) + 1;
-      }
+        const pool = [
+          { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '🥢', name: '極速盛合秘技 × 2', desc: '直接從全店集齊 3 份同款和食瞬間完售！', fn: () => GameState.boosters.magnet += 2 },
+          { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '💎', name: '璀璨星鑽禮盒 × 100', desc: '商店街自治會特別頒發的高額星鑽獎勵！', fn: () => GameState.diamonds += 100 },
+          { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🍵', name: '暖茶融霜秘技 × 2', desc: '瞬間融化全場結霜並完售一組料理！', fn: () => GameState.boosters.hammer += 2 },
+          { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🔀', name: '全櫃重整秘技 × 3', desc: '隨時重新調度所有木櫃上的料理位置！', fn: () => GameState.boosters.shuffle += 3 },
+          { special: false, rarity: '✦ 二番賞・營業資金 ✦', icon: '🪙', name: '店鋪營業資金 × 600', desc: '可用於職人木工坊升級收銀台與開運擺設！', fn: () => GameState.coins += 600 }
+        ];
 
-      rew.fn();
-      GameState.save();
-      this.renderHUD();
-      document.getElementById('gacha-rarity-badge').innerText = rew.rarity;
-      document.getElementById('gacha-reward-icon').innerText  = rew.icon;
-      document.getElementById('gacha-reward-name').innerText  = rew.name;
-      document.getElementById('gacha-reward-desc').innerText  = rew.desc;
-      document.getElementById('modal-gacha-reward').classList.remove('hidden');
-    }, 750);
+        let rew;
+        if ((GameState.gachaPity || 0) >= 5) {
+          const specials = pool.filter(p => p.special);
+          rew = specials[Math.floor(Math.random() * specials.length)];
+          GameState.gachaPity = 0;
+        } else {
+          rew = pool[Math.floor(Math.random() * pool.length)];
+          GameState.gachaPity = rew.special ? 0 : (GameState.gachaPity || 0) + 1;
+        }
+
+        rew.fn();
+        GameState.save();
+        this.renderHUD();
+        
+        document.getElementById('gacha-rarity-badge').innerText = rew.rarity;
+        document.getElementById('gacha-reward-icon').innerText  = rew.icon;
+        document.getElementById('gacha-reward-name').innerText  = rew.name;
+        document.getElementById('gacha-reward-desc').innerText  = rew.desc;
+        document.getElementById('modal-gacha-reward').classList.remove('hidden');
+      }, 450);
+    }, 600); // 晃動 0.6 秒
   }
 
   buyUpgrade(type, baseCost) {
