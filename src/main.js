@@ -357,23 +357,23 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 將邊距與間距降到最低（讓格子更大）
-    const padX = 2, gapX = 4, gapY = 8;
+    // 1. 左右留極小邊距，讓正方形盡可能大
+    const padX = 2;
+    const gapX = 6;
+    const gapY = 12; // 行距稍微拉大，讓畫面有呼吸空間
 
-    // 2. 大幅縮減頂部與底部的預留空間 (原本是 46~60 和 54~70，現在砍到最低)
-    this.topSceneH    = 10; // 幾乎不留頂部空間
-    this.bottomSceneH = 20; // 底部只留一點點顧客的頭
-
+    // 2. 以寬度為基準，計算出最大的正方形邊長
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
-    const availH = this.height - this.topSceneH - this.bottomSceneH - gapY * (rows - 1) - 8;
-    
-    // 3. 解除貨架最大高度限制，讓它盡可能變大
-    const maxIdealShelfH = shelfW * 1.1; 
-    const shelfH = Math.max(66, Math.min(availH / rows, maxIdealShelfH));
+    const shelfH = shelfW; // 👈 強制高度等於寬度（絕對正方形）
 
+    // 3. 頂部與底部的預留空間 (保留一點空間給顧客頭部)
+    this.topSceneH    = 10; 
+    this.bottomSceneH = 30;
+
+    // 4. 計算整個九宮格的總高度，並讓它在剩餘空間中垂直置中
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
-    const startY = this.topSceneH + Math.max(4, (freeMidH - totalGridH) / 2);
+    const startY = this.topSceneH + Math.max(0, (freeMidH - totalGridH) / 2);
 
     this.shelves.forEach((sh, idx) => {
       const r = Math.floor(idx / cols);
@@ -383,9 +383,10 @@ class GameApp {
       sh.w = shelfW;
       sh.h = shelfH;
 
-      const innerPadX = 2.5;
-      const headerH = 14;
-      const bottomPlankH = 6;
+      const innerPadX = 3; 
+      const headerH = 16;  
+      const bottomPlankH = 8; 
+      
       const slotW = (shelfW - innerPadX * 2) / 3;
       const slotH = shelfH - headerH - bottomPlankH;
 
@@ -397,7 +398,7 @@ class GameApp {
       });
     });
   }
-
+  
   rebuildShelfStaticLayer() {
     if (!this.width || !this.height) return;
     if (!this.shelfStatic) this.shelfStatic = document.createElement('canvas');
