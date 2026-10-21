@@ -381,16 +381,18 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 縮小貨架間距，讓格子變寬
-    const padX = 2;
-    const gapX = 4;  // 從 6 降到 4
-    const gapY = 8;  // 從 12 降到 8
+    // 1. 物理極限：左右邊距 0，格子間距縮到最小 (3px)
+    const padX = 0; 
+    const gapX = 3; 
+    const gapY = 6;
 
+    // 2. 以寬度算出最大正方形，不變形
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
-    const shelfH = shelfW;
+    const shelfH = shelfW; // 絕對正方形
 
-    this.topSceneH    = 10; 
-    this.bottomSceneH = 30;
+    // 3. 上下留白極小化，讓九宮格完全撐滿
+    this.topSceneH    = 4; 
+    this.bottomSceneH = 10;
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -404,9 +406,10 @@ class GameApp {
       sh.w = shelfW;
       sh.h = shelfH;
 
-      const innerPadX = 1;   // 從 3 降到 1 (讓食物可以更貼近邊緣)
-      const headerH = 12;    // 從 16 降到 12 (把頂部標籤條變薄)
-      const bottomPlankH = 6; // 底部木板變薄
+      // 👇 這裡是關鍵：把木櫃的內框厚度、頂部標籤、底部木板全部縮到最薄
+      const innerPadX = 1;   // 左右木框厚度 1px
+      const headerH = 12;    // 頂部漸層標籤高度 12px (原本 16)
+      const bottomPlankH = 4; // 底部木板厚度 4px (原本 8)
       
       const slotW = (shelfW - innerPadX * 2) / 3;
       const slotH = shelfH - headerH - bottomPlankH;
