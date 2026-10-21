@@ -61,8 +61,8 @@ export class CozyFoodRenderer {
     const lift = opts.lift || 0;
     const iceHp = opts.iceHp || 0;
     
-    // 👇 調高到 1.55，因為我們剛剛縮小了 innerPadX 和 headerH
-    const baseSize = Math.min(w * 1.55, h * 1.55);
+    // 基礎大小 (維持之前的 1.15 倍，確保格子內飽滿)
+    const baseSize = Math.min(w * 1.15, h * 1.15);
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -71,11 +71,6 @@ export class CozyFoodRenderer {
       ctx.scale(0.75, 0.75);
       ctx.globalAlpha = 0.52;
     } else {
-      // 👇 加一個隱形的圓角裁切，防止食物放大後方塊邊緣太銳利 (可選)
-      ctx.beginPath();
-      ctx.roundRect(-w / 2, -h / 2, w, h, 8);
-      ctx.clip(); // 如果你覺得食物被切到，把這行註解掉即可
-
       const shadowScale = Math.max(0.5, 1 - lift * 0.015);
       ctx.beginPath();
       ctx.ellipse(
@@ -93,12 +88,24 @@ export class CozyFoodRenderer {
 
     ctx.translate(0, -lift);
     ctx.scale(scaleX, scaleY);
-    ctx.drawImage(sprite, -baseSize / 2, -baseSize / 2, baseSize, baseSize);
+
+    // 👇 核心修改：等比例縮放，保證長條圖不會變形，也不會被裁切！
+    const imgRatio = sprite.width / sprite.height;
+    let drawW = baseSize;
+    let drawH = baseSize;
+    
+    if (imgRatio > 1) {
+      // 如果圖片是橫向長條（例如太卷），限制寬度，高度縮小
+      drawH = baseSize / imgRatio;
+    } else {
+      // 如果圖片是直向長條，限制高度，寬度縮小
+      drawW = baseSize * imgRatio;
+    }
+
+    ctx.drawImage(sprite, -drawW / 2, -drawH / 2, drawW, drawH);
 
     if (iceHp > 0 && !isBack) {
       this.drawIceOverlay(ctx, baseSize, iceHp);
     }
     ctx.restore();
   }
-
-}
