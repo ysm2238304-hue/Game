@@ -138,6 +138,8 @@ class GameApp {
   }
 
   setMascotMood(mood, speechText) {
+    const titleMascot = document.getElementById('title-mascot-svg');
+    if (titleMascot) titleMascot.innerHTML = AnimeMascot.renderSVG('happy', false);
     const faceBox = document.getElementById('hud-mascot-face');
     if (faceBox) faceBox.innerHTML = AnimeMascot.renderSVG(mood, true);
     if (speechText) document.getElementById('mascot-speech').innerText = speechText;
