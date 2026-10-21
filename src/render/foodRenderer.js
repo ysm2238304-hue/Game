@@ -62,7 +62,7 @@ export class CozyFoodRenderer {
     const iceHp = opts.iceHp || 0;
     
     // 👇 調高到 1.55，因為我們剛剛縮小了 innerPadX 和 headerH
-    const baseSize = Math.min(w * 1.55, h * 1.55);
+    const baseSize = Math.min(w * 1.6, h * 1.6);
 
     ctx.save();
     ctx.translate(cx, cy);
