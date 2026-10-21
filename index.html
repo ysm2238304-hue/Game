@@ -81,16 +81,16 @@
     <div id="trans-visual-stage" class="relative z-10 w-full max-w-md h-full flex flex-col items-center justify-center p-5"></div>
   </div>
 
-  <!-- ============================================================
+    <!-- ============================================================
        扉頁：星野便利超商主視覺 (無人物・極致夜景版)
        ============================================================ -->
   <section id="view-title" class="absolute inset-0 z-50 flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
     
-    <!-- 滿版大廳背景圖 -->
-    < inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
-      <img src="./assets/bg-lobby.jpg" class="w-full h-full object-cover" alt="大廳背景">
+    <!-- 滿版背景圖 -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+      <img src="./assets/bg-title.jpg" class="w-full h-full object-cover animate-ken-burns" alt="背景">
       <!-- 上下的微暗漸層，讓 UI 看得更清楚 -->
-      < inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/60 via-transparent to-[#0F1123]/90 pointer-events-none"></div>
     </div>
 
     <!-- 頂部狀態列 -->
@@ -104,7 +104,7 @@
       </button>
     </div>
 
-    <!-- 中央標題區塊 (無人物，往上置中對齊) -->
+    <!-- 中央標題區塊 -->
     <div class="relative flex flex-col items-center justify-center -mt-10 my-auto z-10 w-full max-w-[340px]">
       
       <!-- 頂部小標籤 -->
@@ -119,7 +119,7 @@
           <span id="txt-title" class="text-4xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)] tracking-wider">家有貨物!</span>
           <span id="txt-subtitle" class="text-xs font-black text-white/90 tracking-wider mt-1.5 drop-shadow-md">手作和食與療癒商店街物語</span>
         </div>
-        < -top-3 -right-2 px-3 py-1 bg-[#A8E6CF]/90 backdrop-blur-sm text-[#1A1E36] font-black text-[10px] rounded-full border border-white/40 rotate-3 shadow-lg">
+        <div class="absolute -top-3 -right-2 px-3 py-1 bg-[#A8E6CF]/90 backdrop-blur-sm text-[#1A1E36] font-black text-[10px] rounded-full border border-white/40 rotate-3 shadow-lg">
           無體力暢玩 ✦
         </div>
       </div>
