@@ -363,66 +363,59 @@
         <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/70 pointer-events-none"></div>
       </div>
 
-      <!-- 頂部 HUD -->
-      <div class="relative z-10 w-full px-2 pt-1.5 pb-1 bg-black/40 backdrop-blur-md border-b border-white/20 shrink-0 shadow-lg">
-        <div class="flex items-center justify-between gap-1.5">
-          <div class="flex flex-col gap-1 shrink-0">
-            <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-2 py-1 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none">
+      <!-- 極簡頂部 HUD -->
+      <div class="relative z-10 w-full px-2 pt-1.5 pb-1 bg-black/50 backdrop-blur-md border-b border-white/20 shrink-0 shadow-lg">
+        <div class="flex items-center justify-between gap-2">
+          <!-- 左側：返回與指南 -->
+          <div class="flex gap-1 shrink-0">
+            <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-2 py-1.5 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none active:scale-95 transition-transform">
               <span>🏠</span><span>大廳</span>
             </button>
-            <button data-guide="game" class="btn-open-guide pop-btn px-2 py-1 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none">
-              <span>？</span><span>指南</span>
+            <button data-guide="game" class="btn-open-guide pop-btn px-2 py-1.5 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none active:scale-95 transition-transform">
+              <span>？</span>
             </button>
           </div>
 
-          <div class="flex items-center gap-1.5 min-w-0 flex-1 bg-black/30 px-2 py-1 rounded-xl border border-white/20">
-            <div id="hud-mascot-face" class="w-9 h-9 rounded-lg bg-white/10 border border-white/30 overflow-hidden shrink-0 flex items-center justify-center cursor-pointer"></div>
-            <div class="flex flex-col min-w-0 flex-1">
-              <div class="flex items-center justify-between gap-1">
-                <div class="flex items-center gap-1">
-                  <span class="px-1.5 py-0.5 bg-[#FF85A1] text-white text-[9px] font-black rounded border border-white/30 leading-none">第<span id="label-level">1</span>日</span>
-                  <span id="badge-direction-hud" class="text-[9px] font-black text-[#FFD166] bg-white/10 px-1 py-0.5 rounded border border-white/30 cursor-pointer leading-none">⚡速銷</span>
-                </div>
-                <div id="order-items" class="flex items-center gap-1"></div>
-              </div>
-              <p id="mascot-speech" class="text-[10px] font-black text-white/90 mt-0.5 leading-tight truncate">「同櫃擺滿3份相同料理就能完售囉♪」</p>
+          <!-- 中間：天數與訂單資訊 -->
+          <div class="flex-1 flex flex-col min-w-0 bg-black/30 px-2 py-1 rounded-xl border border-white/20">
+            <div class="flex items-center justify-between">
+              <span class="px-1.5 py-0.5 bg-[#FF85A1] text-white text-[9px] font-black rounded leading-none">第<span id="label-level">1</span>日</span>
+              <div id="order-items" class="flex items-center gap-1"></div>
             </div>
+            <!-- 隱藏原本的看板娘對話 -->
+            <p id="mascot-speech" class="hidden">「同櫃擺滿3份相同料理就能完售囉♪」</p>
+            <!-- 隱藏原本的看板娘小頭像，避免 JS 報錯 -->
+            <div id="hud-mascot-face" class="hidden"></div>
+            <span id="badge-direction-hud" class="hidden"></span>
+            <span id="label-shelves-count" class="hidden"></span>
           </div>
 
-          <div id="moves-badge" class="flex flex-col items-center justify-center bg-[#FF85A1] text-white px-2 py-1 rounded-xl border border-white/30 shrink-0 min-w-[46px] shadow-md">
-            <span class="text-[8px] font-black leading-none text-white/80">剩餘步數</span>
+          <!-- 右側：步數 -->
+          <div id="moves-badge" class="flex flex-col items-center justify-center bg-[#FF85A1] text-white px-3 py-1 rounded-xl border border-white/30 shrink-0 shadow-md">
+            <span class="text-[8px] font-black leading-none text-white/80">剩餘</span>
             <span id="label-moves" class="text-base font-black leading-tight drop-shadow-md mt-0.5">24</span>
           </div>
         </div>
 
-        <div class="relative w-full mt-1 h-5">
-          <div id="normal-status-strip" class="w-full h-full px-2 bg-black/50 rounded-lg flex items-center justify-between gap-2 border border-white/10">
-            <div class="flex items-center gap-1 shrink-0">
-              <span class="px-1 py-0.5 bg-white/20 text-white font-black text-[8px] rounded leading-none">九宮格</span>
-              <span id="label-shelves-count" class="text-[9px] font-black text-white/80">9 座檜木櫃</span>
-            </div>
-            <div class="flex items-center gap-1 shrink-0">
-              <span class="text-[9px] font-black text-[#FFD166]">🔥熱度</span>
-              <div class="w-16 h-2 bg-black/60 rounded-full p-0.5 overflow-hidden border border-white/20">
-                <div id="fever-progress-bar" class="h-full bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] rounded-full transition-all duration-300" style="width: 0%"></div>
-              </div>
-            </div>
-            <div class="flex items-center gap-1 shrink-0">
-              <span class="text-[9px] font-black text-white/80">完售</span>
-              <div class="w-16 h-2 bg-black/60 rounded-full p-0.5 overflow-hidden border border-white/20">
-                <div id="clear-progress-bar" class="h-full bg-gradient-to-r from-[#FFF3B0] to-[#A8E6CF] rounded-full transition-all duration-300" style="width: 0%"></div>
-              </div>
-              <span id="clear-progress-text" class="text-[9px] font-black text-white min-w-[24px] text-right">0%</span>
-            </div>
+        <!-- 進度條 (壓縮成一條細線) -->
+        <div class="w-full mt-1.5 flex items-center gap-2">
+          <div class="flex-1 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/20">
+            <div id="fever-progress-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFF3B0] rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
-          <div id="top-combo-toast" class="pointer-events-none absolute inset-x-0 -top-0.5 h-6 hidden z-20">
-            <div id="top-combo-box" class="w-full h-full px-2.5 rounded-lg bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] border-2 border-white/50 shadow-md flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <span class="px-1.5 py-0.5 bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black rounded-full leading-none" id="combo-maintext">COMBO ×1</span>
-                <span id="combo-subtext" class="text-[11px] font-black text-[#4A3326]">✦ 絕品三連完售!!</span>
-              </div>
-              <span id="combo-dish-name" class="text-[9px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">雙味海苔御飯糰 ✦</span>
+          <div class="flex-1 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/20">
+            <div id="clear-progress-bar" class="h-full bg-gradient-to-r from-[#A8E6CF] to-[#FFF3B0] rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <span id="clear-progress-text" class="text-[9px] font-black text-white min-w-[24px] text-right">0%</span>
+        </div>
+
+        <!-- 保留 Combo Toast 結構，但放在正確位置 -->
+        <div id="top-combo-toast" class="pointer-events-none absolute inset-x-0 -bottom-4 h-6 hidden z-20">
+          <div id="top-combo-box" class="w-full h-full px-2.5 rounded-lg bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] border-2 border-white/50 shadow-md flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="px-1.5 py-0.5 bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black rounded-full leading-none" id="combo-maintext">COMBO ×1</span>
+              <span id="combo-subtext" class="text-[11px] font-black text-[#4A3326]">✦ 絕品三連完售!!</span>
             </div>
+            <span id="combo-dish-name" class="text-[9px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">雙味海苔御飯糰 ✦</span>
           </div>
         </div>
       </div>
@@ -431,32 +424,37 @@
         <canvas id="shelf-canvas" class="w-full h-full block"></canvas>
       </div>
 
-      <!-- 底部操作塢 -->
-      <div class="relative z-10 w-full px-2.5 pt-1.5 safe-bottom bg-black/50 backdrop-blur-xl border-t border-white/20 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
-        <div class="flex items-center justify-between gap-2 pb-1">
-          <div class="flex items-center gap-1.5 bg-black/30 px-2 py-1 rounded-2xl border border-white/20 shrink-0">
+      <!-- 極簡底部操作塢 -->
+      <div class="relative z-10 w-full px-2 pt-1 safe-bottom bg-black/50 backdrop-blur-xl border-t border-white/20 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center justify-between gap-1.5 pb-1">
+          
+          <!-- 手提籃 -->
+          <div class="flex items-center gap-1 bg-black/30 px-1.5 py-1 rounded-xl border border-white/20 shrink-0">
             <div class="flex flex-col items-start leading-none pr-0.5">
-              <span class="text-[10px] font-black text-white">🧺手提籃</span>
+              <span class="text-[9px] font-black text-white">🧺籃</span>
               <span id="label-cart-capacity" class="text-[8px] font-black text-white/60 mt-0.5">2 籃位</span>
             </div>
-            <div id="cart-tray" class="flex items-center gap-1.5"></div>
+            <div id="cart-tray" class="flex items-center gap-1"></div>
           </div>
 
-          <div class="flex-1 grid grid-cols-3 gap-1.5">
-            <button id="btn-tool-shuffle" class="pop-btn h-12 px-1 rounded-2xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-base leading-none">🔀</span>
-              <span class="text-[10px] font-black text-white leading-none mt-1">重整</span>
-              <span id="cnt-tool-shuffle" class="absolute -top-1.5 -right-1 min-w-[18px] h-4 bg-[#4A3326] text-white text-[9px] font-black px-1 rounded-full flex items-center justify-center border border-white">3</span>
+          <!-- 三大秘技 -->
+          <div class="flex-1 grid grid-cols-3 gap-1">
+            <button id="btn-tool-shuffle" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
+              <span class="text-sm leading-none">🔀</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5">重整</span>
+              <span id="cnt-tool-shuffle" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">3</span>
             </button>
-            <button id="btn-tool-hammer" class="pop-btn h-12 px-1 rounded-2xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-base leading-none">🍵</span>
-              <span class="text-[10px] font-black text-white leading-none mt-1">融霜</span>
-              <span id="cnt-tool-hammer" class="absolute -top-1.5 -right-1 min-w-[18px] h-4 bg-[#4A3326] text-white text-[9px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
+            
+            <button id="btn-tool-hammer" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
+              <span class="text-sm leading-none">🍵</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5">融霜</span>
+              <span id="cnt-tool-hammer" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
             </button>
-            <button id="btn-tool-magnet" class="pop-btn h-12 px-1 rounded-2xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-base leading-none">🥢</span>
-              <span class="text-[10px] font-black text-white leading-none mt-1">盛合</span>
-              <span id="cnt-tool-magnet" class="absolute -top-1.5 -right-1 min-w-[18px] h-4 bg-[#4A3326] text-white text-[9px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
+            
+            <button id="btn-tool-magnet" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
+              <span class="text-sm leading-none">🥢</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5">盛合</span>
+              <span id="cnt-tool-magnet" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
             </button>
           </div>
         </div>
