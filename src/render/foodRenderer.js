@@ -62,7 +62,7 @@ export class CozyFoodRenderer {
     const iceHp = opts.iceHp || 0;
     
     // 基礎大小 (維持 1.15 倍，確保格子內飽滿)
-    const baseSize = Math.min(w * 1.15, h * 1.15);
+    const baseSize = Math.min(w * 1.55, h * 1.55);
 
     ctx.save();
     ctx.translate(cx, cy);
