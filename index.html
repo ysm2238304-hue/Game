@@ -377,9 +377,8 @@
               <span class="px-1.5 py-0.5 bg-[#FF85A1] text-white text-[9px] font-black rounded leading-none">第<span id="label-level">1</span>日</span>
               <div id="order-items" class="flex items-center gap-1"></div>
             </div>
-            <!-- 隱藏原本的看板娘對話 -->
+            <!-- 隱藏原本的看板娘對話，避免排版錯亂 -->
             <p id="mascot-speech" class="hidden">「同櫃擺滿3份相同料理就能完售囉♪」</p>
-            <!-- 隱藏原本的看板娘小頭像，避免 JS 報錯 -->
             <div id="hud-mascot-face" class="hidden"></div>
             <span id="badge-direction-hud" class="hidden"></span>
             <span id="label-shelves-count" class="hidden"></span>
@@ -402,19 +401,21 @@
           </div>
           <span id="clear-progress-text" class="text-[9px] font-black text-white min-w-[24px] text-right">0%</span>
         </div>
-
-        <!-- 保留 Combo Toast 結構，但放在正確位置 -->
-        <div id="top-combo-toast" class="pointer-events-none absolute inset-x-0 -bottom-4 h-6 hidden z-20">
-          <div id="top-combo-box" class="w-full h-full px-2.5 rounded-lg bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] border-2 border-white/50 shadow-md flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="px-1.5 py-0.5 bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black rounded-full leading-none" id="combo-maintext">COMBO ×1</span>
-              <span id="combo-subtext" class="text-[11px] font-black text-[#4A3326]">✦ 絕品三連完售!!</span>
-            </div>
-            <span id="combo-dish-name" class="text-[9px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">雙味海苔御飯糰 ✦</span>
-          </div>
-        </div>
       </div>
 
+      <!-- 👇 懸浮通知條 (獨立拉出來，不會遮擋任何 UI) 👇 -->
+      <div id="top-combo-toast" class="pointer-events-none absolute top-[70px] inset-x-2 h-9 hidden z-50 flex justify-center">
+        <div id="top-combo-box" class="w-full max-w-[340px] h-full px-3 rounded-xl bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] border-2 border-white/50 shadow-[0_4px_15px_rgba(0,0,0,0.4)] flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-[#4A3326] text-[#FFF3B0] text-[10px] font-black rounded-md leading-none" id="combo-maintext">COMBO ×1</span>
+            <span id="combo-subtext" class="text-xs font-black text-[#4A3326]">✦ 絕品三連完售!!</span>
+          </div>
+          <span id="combo-dish-name" class="text-[10px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">雙味海苔御飯糰 ✦</span>
+        </div>
+      </div>
+      <!-- 👆 懸浮通知條結束 👆 -->
+
+      <!-- 貨架畫布區 -->
       <div id="shelves-stage-container" class="relative z-10 w-full flex-1 overflow-hidden flex items-center justify-center min-h-0">
         <canvas id="shelf-canvas" class="w-full h-full block"></canvas>
       </div>
@@ -455,7 +456,6 @@
         </div>
       </div>
     </section>
-
     <!-- ============================================================
          地圖 (#view-map) - 毛玻璃版
          ============================================================ -->
