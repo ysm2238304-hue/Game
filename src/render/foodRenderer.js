@@ -61,8 +61,8 @@ export class CozyFoodRenderer {
     const lift = opts.lift || 0;
     const iceHp = opts.iceHp || 0;
     
-    // 放大圖示：將原本的 1.14 與 0.92 改為 1.45 與 1.15
-    const baseSize = Math.min(w * 1.45, h * 1.45);
+    // 👇 調高到 1.55，因為我們剛剛縮小了 innerPadX 和 headerH
+    const baseSize = Math.min(w * 1.55, h * 1.55);
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -71,6 +71,11 @@ export class CozyFoodRenderer {
       ctx.scale(0.75, 0.75);
       ctx.globalAlpha = 0.52;
     } else {
+      // 👇 加一個隱形的圓角裁切，防止食物放大後方塊邊緣太銳利 (可選)
+      ctx.beginPath();
+      ctx.roundRect(-w / 2, -h / 2, w, h, 8);
+      ctx.clip(); // 如果你覺得食物被切到，把這行註解掉即可
+
       const shadowScale = Math.max(0.5, 1 - lift * 0.015);
       ctx.beginPath();
       ctx.ellipse(
