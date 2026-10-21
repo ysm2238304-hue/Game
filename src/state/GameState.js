@@ -1,14 +1,13 @@
 // ============================================================
-// 💾 src/state/GameState.js — 遊戲狀態管理（含深層合併與防損毀保護）
+// 💾 src/state/GameState.js — 遊戲狀態管理（進階防損毀與版本遷移版）
 // ============================================================
 //
-// 職責：儲存所有玩家進度（金幣、關卡、升級、庫存、委託與集章）
-//
-// 對外提供：
-//   - GameState  狀態物件（含 load / save / reset 方法）
+// 職責：儲存所有玩家進度，並確保版本更新時舊存檔不會損壞。
 // ============================================================
 
-const SAVE_KEY = 'HoshinoWashoku_Save_v7';
+// ⚠️ 只有當你「徹底改變資料結構」且無法合併時，才需要升級這個版號。
+// 平常加新功能，只要在 DEFAULT_STATE 加預設值即可，不用改這裡。
+const SAVE_KEY = 'HoshinoWashoku_Save_v7'; 
 
 const DEFAULT_STATE = {
   unlockedLevel: 1,
@@ -28,10 +27,7 @@ const DEFAULT_STATE = {
     { id: 'q1', desc: '完成 2 次木櫃和食全數完售', cur: 0, target: 2, claimed: false, coins: 200, diam: 20 },
     { id: 'q2', desc: '累計達成 6 次料理三連完售', cur: 0, target: 6, claimed: false, coins: 250, diam: 25 },
     { id: 'q3', desc: '在營業中施展 1 次店長秘技', cur: 0, target: 1, claimed: false, coins: 150, diam: 15 }
-  ],
-  lastCheckIn: null,
-  checkInStreak: 0,
-  hasCheckedInToday: false
+  ]
 };
 
 function safeInt(val, fallback, min = 0) {
@@ -44,25 +40,14 @@ function cloneDefaultQuests() {
 }
 
 export const GameState = {
-  unlockedLevel: DEFAULT_STATE.unlockedLevel,
-  coins: DEFAULT_STATE.coins,
-  diamonds: DEFAULT_STATE.diamonds,
-  vouchers: DEFAULT_STATE.vouchers,
-  direction: DEFAULT_STATE.direction,
-  stars: {},
-  totalDishesCleared: DEFAULT_STATE.totalDishesCleared,
-  gachaPity: DEFAULT_STATE.gachaPity,
-  stampCount: DEFAULT_STATE.stampCount,
-  milestonesClaimed: {},
-  decorsUnlocked: { ...DEFAULT_STATE.decorsUnlocked },
-  upgrades: { ...DEFAULT_STATE.upgrades },
-  boosters: { ...DEFAULT_STATE.boosters },
-  quests: cloneDefaultQuests(),
+  // 初始化為預設值
+  ...JSON.parse(JSON.stringify(DEFAULT_STATE)),
 
   load() {
     try {
       const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return;
+      
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object') return;
 
@@ -83,9 +68,7 @@ export const GameState = {
 
       // 3. 巢狀物件深層合併（確保日後新增裝飾、設備或道具時，舊玩家存檔不會缺欄位報錯）
       this.stars = (parsed.stars && typeof parsed.stars === 'object') ? { ...parsed.stars } : {};
-      this.milestonesClaimed = (parsed.milestonesClaimed && typeof parsed.milestonesClaimed === 'object')
-        ? { ...parsed.milestonesClaimed }
-        : {};
+      this.milestonesClaimed = (parsed.milestonesClaimed && typeof parsed.milestonesClaimed === 'object') ? { ...parsed.milestonesClaimed } : {};
       this.decorsUnlocked = {
         ...DEFAULT_STATE.decorsUnlocked,
         ...(parsed.decorsUnlocked && typeof parsed.decorsUnlocked === 'object' ? parsed.decorsUnlocked : {})
@@ -112,9 +95,7 @@ export const GameState = {
           claimed: Boolean(found.claimed)
         };
       });
-      this.lastCheckIn = parsed.lastCheckIn || null;
-      this.checkInStreak = safeInt(parsed.checkInStreak, 0);
-      this.hasCheckedInToday = Boolean(parsed.hasCheckedInToday);
+
     } catch (err) {
       console.warn('[GameState] 讀取存檔失敗，已自動回退至預設狀態:', err);
     }
@@ -137,10 +118,6 @@ export const GameState = {
         upgrades: this.upgrades,
         boosters: this.boosters,
         quests: this.quests,
-        lastCheckIn: this.lastCheckIn,
-        checkInStreak: this.checkInStreak,
-        hasCheckedInToday: this.hasCheckedInToday,
-        
         lastSavedAt: Date.now()
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
@@ -148,24 +125,6 @@ export const GameState = {
       // iOS 無痕模式或儲存空間滿時靜默略過，不中斷遊戲運行
       console.warn('[GameState] 寫入存檔略過:', err);
     }
-  },
-
-  reset() {
-    this.unlockedLevel = DEFAULT_STATE.unlockedLevel;
-    this.coins = DEFAULT_STATE.coins;
-    this.diamonds = DEFAULT_STATE.diamonds;
-    this.vouchers = DEFAULT_STATE.vouchers;
-    this.direction = DEFAULT_STATE.direction;
-    this.stars = {};
-    this.totalDishesCleared = DEFAULT_STATE.totalDishesCleared;
-    this.gachaPity = DEFAULT_STATE.gachaPity;
-    this.stampCount = DEFAULT_STATE.stampCount;
-    this.milestonesClaimed = {};
-    this.decorsUnlocked = { ...DEFAULT_STATE.decorsUnlocked };
-    this.upgrades = { ...DEFAULT_STATE.upgrades };
-    this.boosters = { ...DEFAULT_STATE.boosters };
-    this.quests = cloneDefaultQuests();
-    this.save();
   }
 };
 
