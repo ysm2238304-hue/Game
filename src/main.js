@@ -276,15 +276,15 @@ class GameApp {
     const backdrop = document.getElementById('trans-backdrop');
     const stage    = document.getElementById('trans-visual-stage');
     stage.innerHTML = `
-      <div class="w-full max-w-xs anime-panel rounded-3xl p-4 flex flex-col items-center text-center transform transition-all duration-300 scale-95 opacity-0" id="trans-card-inner">
-        <span class="px-3 py-0.5 rounded-full bg-gradient-to-r ${sceneTheme.accent} text-white text-[9px] font-black tracking-wider border border-[#4A3326] mb-2">${sceneTheme.tag}</span>
+      <div class="w-full max-w-xs bg-white/10 backdrop-blur-2xl border border-white/30 rounded-3xl p-4 flex flex-col items-center text-center transform transition-all duration-300 scale-95 opacity-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)]" id="trans-card-inner">
+        <span class="px-3 py-0.5 rounded-full bg-gradient-to-r ${sceneTheme.accent} text-white text-[9px] font-black tracking-wider border border-white/30 mb-2 shadow-sm">${sceneTheme.tag}</span>
         ${sceneTheme.renderVisual()}
-        <h3 class="text-lg font-black text-[#4A3326] mt-3 flex items-center gap-1.5">
+        <h3 class="text-lg font-black text-white mt-3 flex items-center gap-1.5 drop-shadow-md">
           <span>${sceneTheme.icon}</span><span>${sceneTheme.title}</span>
         </h3>
-        <div class="w-full mt-2 p-2.5 rounded-2xl bg-[#FFF3D6] anime-border flex items-center gap-2 text-left">
-          <div class="w-10 h-10 rounded-xl bg-white border border-[#4A3326] shrink-0 overflow-hidden">${AnimeMascot.renderSVG('star', true)}</div>
-          <p class="text-[11px] font-bold text-[#4A3326] leading-snug">${sceneTheme.tip}</p>
+        <div class="w-full mt-2 p-2.5 rounded-2xl bg-black/40 border border-white/20 flex items-center gap-2 text-left">
+          <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/30 shrink-0 overflow-hidden">${AnimeMascot.renderSVG('star', true)}</div>
+          <p class="text-[11px] font-bold text-white/90 leading-snug drop-shadow-sm">${sceneTheme.tip}</p>
         </div>
       </div>`;
     transEl.classList.remove('hidden');
