@@ -1720,8 +1720,8 @@ class GameApp {
     for (let i = 1; i <= 5; i++) {
       const stamped = i <= count;
       const cell = document.createElement('div');
-      cell.className = `h-11 rounded-xl border-2 border-[#4A3326] flex items-center justify-center ${
-        stamped ? 'bg-[#FFE5EC]' : 'bg-white/90'
+      cell.className = `h-11 rounded-xl border border-white/30 flex items-center justify-center ${
+        stamped ? 'bg-[#FF85A1]' : 'bg-white/10'
       }`;
       cell.innerHTML = stamped
         ? `<div class="w-8 h-8 rounded-full border-2 border-[#D94E67] bg-[#FF85A1] text-white font-black text-xs flex items-center justify-center -rotate-12 shadow-xs">濟</div>`
@@ -1743,7 +1743,7 @@ class GameApp {
     GameState.quests.forEach(q => {
       const can = q.cur >= q.target && !q.claimed;
       const row = document.createElement('div');
-      row.className = 'anime-panel p-2.5 rounded-2xl flex items-center justify-between gap-2';
+      row.className = 'bg-black/40 backdrop-blur-md border border-white/20 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-lg';
       row.innerHTML = `
         <div>
           <h4 class="font-black text-xs text-[#4A3326]">${q.desc}</h4>
