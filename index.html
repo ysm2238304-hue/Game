@@ -86,11 +86,11 @@
        ============================================================ -->
   <section id="view-title" class="absolute inset-0 z-50 flex flex-col items-center justify-between px-5 pb-5 safe-top safe-bottom overflow-hidden">
     
-    <!-- 滿版背景圖 (加入緩慢推移動畫) -->
-    <div class="absolute inset-0 z-0 bg-[#1A1E36]">
-      <img src="./assets/bg-title.jpg" class="w-full h-full object-cover animate-ken-burns" alt="背景">
-      <!-- 上下加深的微暗遮罩，讓文字看得更清楚 -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/60 via-transparent to-[#0F1123]/90 pointer-events-none"></div>
+    <!-- 滿版大廳背景圖 -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+      <img src="./assets/bg-lobby.jpg" class="w-full h-full object-cover" alt="大廳背景">
+      <!-- 上下的微暗漸層，讓 UI 看得更清楚 -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
     </div>
 
     <!-- 頂部狀態列 -->
@@ -171,201 +171,103 @@
     </header>
 
     <!-- ============================================================
-         大廳 (#view-lobby)
+         大廳 (#view-lobby) - 極致夜景玻璃擬態版
          ============================================================ -->
     <section id="view-lobby" class="view-panel flex-1 relative flex flex-col justify-between safe-bottom overflow-hidden">
-      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <svg viewBox="0 0 430 760" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
-          <defs>
-            <linearGradient id="fullLobbyWall" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFF9EE"/>
-              <stop offset="52%" stop-color="#F7E4C8"/>
-              <stop offset="100%" stop-color="#E2C29B"/>
-            </linearGradient>
-            <linearGradient id="windowSkyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#D8F3DC"/>
-              <stop offset="60%" stop-color="#FFF3B0"/>
-              <stop offset="100%" stop-color="#FFD194"/>
-            </linearGradient>
-            <linearGradient id="counterWoodGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#D99B5E"/>
-              <stop offset="15%" stop-color="#C88A55"/>
-              <stop offset="100%" stop-color="#9C6334"/>
-            </linearGradient>
-          </defs>
-
-          <rect width="430" height="760" fill="url(#fullLobbyWall)"/>
-          <g stroke="#4A3326" stroke-opacity="0.08" stroke-width="1.5">
-            <line x1="48" y1="0" x2="48" y2="480"/>
-            <line x1="108" y1="0" x2="108" y2="480"/>
-            <line x1="168" y1="0" x2="168" y2="480"/>
-            <line x1="228" y1="0" x2="228" y2="480"/>
-            <line x1="288" y1="0" x2="288" y2="480"/>
-            <line x1="348" y1="0" x2="348" y2="480"/>
-            <line x1="398" y1="0" x2="398" y2="480"/>
-          </g>
-
-          <g transform="translate(18, 128)">
-            <rect x="0" y="0" width="118" height="170" rx="10" fill="url(#windowSkyGrad)" stroke="#4A3326" stroke-width="3"/>
-            <circle cx="88" cy="40" r="18" fill="#FFFDF7" opacity="0.7"/>
-            <path d="M0,130 Q45,105 118,125 L118,170 L0,170 Z" fill="#C89F78" opacity="0.45"/>
-            <circle cx="28" cy="65" r="26" fill="#FFB3C6" opacity="0.8"/>
-            <circle cx="52" cy="52" r="20" fill="#FFC2D1" opacity="0.85"/>
-            <line x1="59" y1="0" x2="59" y2="170" stroke="#4A3326" stroke-width="2.5"/>
-            <line x1="0" y1="85" x2="118" y2="85" stroke="#4A3326" stroke-width="2.5"/>
-          </g>
-
-          <g transform="translate(278, 122)">
-            <rect x="0" y="0" width="134" height="185" rx="8" fill="#E6C59E" stroke="#4A3326" stroke-width="3"/>
-            <rect x="6" y="8" width="122" height="50" rx="4" fill="#C89F78" stroke="#4A3326" stroke-width="2"/>
-            <rect x="6" y="66" width="122" height="50" rx="4" fill="#C89F78" stroke="#4A3326" stroke-width="2"/>
-            <rect x="6" y="124" width="122" height="50" rx="4" fill="#C89F78" stroke="#4A3326" stroke-width="2"/>
-            <rect x="16" y="20" width="24" height="32" rx="4" fill="#FF85A1" stroke="#4A3326" stroke-width="2"/>
-            <rect x="48" y="20" width="24" height="32" rx="4" fill="#A8E6CF" stroke="#4A3326" stroke-width="2"/>
-            <rect x="82" y="16" width="34" height="36" rx="5" fill="#FFD166" stroke="#4A3326" stroke-width="2"/>
-            <rect x="18" y="78" width="38" height="32" rx="5" fill="#FFF3B0" stroke="#4A3326" stroke-width="2"/>
-            <rect x="66" y="78" width="48" height="32" rx="5" fill="#FFB3C6" stroke="#4A3326" stroke-width="2"/>
-            <rect x="18" y="136" width="30" height="32" rx="4" fill="#B0E0E6" stroke="#4A3326" stroke-width="2"/>
-            <rect x="56" y="136" width="58" height="32" rx="4" fill="#D8F3DC" stroke="#4A3326" stroke-width="2"/>
-          </g>
-
-          <g transform="translate(148, 118)">
-            <rect x="0" y="0" width="24" height="62" rx="3" fill="#FFF3D6" stroke="#4A3326" stroke-width="2.2"/>
-            <text x="12" y="18" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">御</text>
-            <text x="12" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">飯</text>
-            <text x="12" y="50" text-anchor="middle" font-size="10" font-weight="900" fill="#D94E67">糰</text>
-
-            <rect x="32" y="0" width="24" height="62" rx="3" fill="#FFF3D6" stroke="#4A3326" stroke-width="2.2"/>
-            <text x="44" y="18" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">玉</text>
-            <text x="44" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">子</text>
-            <text x="44" y="50" text-anchor="middle" font-size="10" font-weight="900" fill="#D94E67">燒</text>
-
-            <rect x="64" y="0" width="24" height="62" rx="3" fill="#FFF3D6" stroke="#4A3326" stroke-width="2.2"/>
-            <text x="76" y="18" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">壽</text>
-            <text x="76" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">司</text>
-            <text x="76" y="50" text-anchor="middle" font-size="10" font-weight="900" fill="#3B6E4C">盛</text>
-
-            <rect x="96" y="0" width="24" height="62" rx="3" fill="#FFF3D6" stroke="#4A3326" stroke-width="2.2"/>
-            <text x="108" y="18" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">豚</text>
-            <text x="108" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3326">骨</text>
-            <text x="108" y="50" text-anchor="middle" font-size="10" font-weight="900" fill="#D94E67">麵</text>
-          </g>
-
-          <g>
-            <rect x="0" y="0" width="430" height="10" fill="#8C583A" stroke="#4A3326" stroke-width="2"/>
-            <rect x="0" y="10" width="72" height="32" rx="4" fill="#FF85A1" stroke="#4A3326" stroke-width="2.2"/>
-            <rect x="72" y="10" width="72" height="32" rx="4" fill="#FFFDF7" stroke="#4A3326" stroke-width="2.2"/>
-            <rect x="144" y="10" width="71" height="32" rx="4" fill="#FF85A1" stroke="#4A3326" stroke-width="2.2"/>
-            <rect x="215" y="10" width="71" height="32" rx="4" fill="#FFFDF7" stroke="#4A3326" stroke-width="2.2"/>
-            <rect x="286" y="10" width="72" height="32" rx="4" fill="#FF85A1" stroke="#4A3326" stroke-width="2.2"/>
-            <rect x="358" y="10" width="72" height="32" rx="4" fill="#FFFDF7" stroke="#4A3326" stroke-width="2.2"/>
-          </g>
-
-          <rect x="0" y="365" width="430" height="395" fill="url(#counterWoodGrad)" stroke="#4A3326" stroke-width="3"/>
-          <rect x="0" y="355" width="430" height="16" fill="#F3D5B5" stroke="#4A3326" stroke-width="2.8"/>
-
-          <g transform="translate(22, 305)">
-            <ellipse cx="22" cy="28" rx="18" ry="16" fill="#FFFDF7" stroke="#4A3326" stroke-width="2.5"/>
-            <polygon points="8,16 5,2 18,10" fill="#FFFDF7" stroke="#4A3326" stroke-width="2.2"/>
-            <polygon points="36,16 39,2 26,10" fill="#E05780" stroke="#4A3326" stroke-width="2.2"/>
-            <circle cx="16" cy="25" r="2.2" fill="#4A3326"/>
-            <circle cx="28" cy="25" r="2.2" fill="#4A3326"/>
-            <rect x="15" y="32" width="14" height="11" rx="2.5" fill="#FFD166" stroke="#4A3326" stroke-width="2"/>
-          </g>
-          <g transform="translate(362, 300)">
-            <rect x="0" y="8" width="36" height="40" rx="6" fill="#6BA368" stroke="#4A3326" stroke-width="2.5"/>
-            <rect x="-3" y="2" width="42" height="8" rx="3" fill="#4A3326"/>
-            <rect x="7" y="18" width="22" height="16" rx="3" fill="#FFFDF7" stroke="#4A3326" stroke-width="1.6"/>
-            <text x="18" y="30" text-anchor="middle" font-size="10" font-weight="900" fill="#3B6E4C">茶</text>
-          </g>
-        </svg>
-
-        <div class="lantern-deco" style="top:7%; left:3%;">
-          <svg width="26" height="38" viewBox="0 0 24 34">
-            <line x1="12" y1="0" x2="12" y2="6" stroke="#4A3326" stroke-width="1.5"/>
-            <ellipse cx="12" cy="18" rx="9" ry="12" fill="#D94E67" stroke="#4A3326" stroke-width="2"/>
-            <line x1="12" y1="8" x2="12" y2="28" stroke="#FFF3B0" stroke-width="1.2" opacity="0.8"/>
-          </svg>
-        </div>
-        <div class="lantern-deco" style="top:7%; right:3%; animation-delay:-2.4s;">
-        <svg width="26" height="38" viewBox="0 0 24 34">
-          <line x1="12" y1="0" x2="12" y2="6" stroke="#4A3326" stroke-width="1.5"/>
-          <ellipse cx="12" cy="18" rx="9" ry="12" fill="#FF85A1" stroke="#4A3326" stroke-width="2"/>
-          <line x1="12" y1="8" x2="12" y2="28" stroke="#FFF3B0" stroke-width="1.2" opacity="0.8"/>
-        </svg>
-      </div>
-    </div>
-
-    <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0">
-      <div class="flex items-center justify-between gap-2">
-        <div class="bg-white rounded-2xl px-2.5 py-1 anime-border shadow-sm flex items-center gap-2">
-          <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] anime-border flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
-          <div>
-            <div id="txt-lobby-store" class="text-[9px] font-black text-[#8C583A] leading-none">星野和風マルシェ・總店</div>
-            <div class="text-xs font-black text-[#4A3326] mt-0.5">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
-          </div>
-        </div>
-
-        <button id="btn-lobby-skill" class="anime-btn px-2.5 py-1.5 bg-[#FFF3B0] text-[#4A3326] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0">
-          <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
-        </button>
+      
+      <!-- 滿版大廳背景圖 -->
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
+        <img src="./assets/bg-lobby.jpg" class="w-full h-full object-cover" alt="大廳背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
-      <div class="bg-[#FFFDF7] rounded-full px-3 py-1 anime-border flex items-center justify-between gap-2 shadow-xs">
-        <div class="flex items-center gap-1.5 shrink-0">
-          <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-[#4A3326] text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
-          <span id="lobby-rank-title" class="text-[10px] font-black text-[#4A3326]">街角和食小舖</span>
-        </div>
-        <div class="flex-1 h-2 bg-[#EAD7C0] rounded-full p-0.5 border border-[#4A3326] overflow-hidden">
-          <div id="lobby-rank-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFB86B] rounded-full transition-all duration-300" style="width: 35%"></div>
-        </div>
-        <div class="text-[9px] font-black text-[#D94E67] shrink-0">
-          完售 <span id="lobby-total-dishes">0</span> 皿
-        </div>
-      </div>
-    </div>
-
-    <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0">
-      <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
-        <div class="w-full max-w-[360px] bg-white rounded-2xl px-3 py-1.5 anime-border shadow-md mb-1 relative">
-          <div class="flex items-center justify-between mb-0.5">
-            <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-[#4A3326]">✦ 看板娘・星野葵</span>
-            <span class="text-[9px] font-black text-[#3B6E4C]">💬 點擊小葵或吧台料理互動</span>
-          </div>
-          <p id="lobby-speech-text" class="text-[11px] font-black text-[#4A3326] leading-snug">
-          </p>
-        </div>
-
-        <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-2 drop-shadow-md"></div>
-      </div>
-
-      <div class="w-full bg-gradient-to-b from-white to-[#FFF8EC] rounded-2xl px-2.5 py-1.5 anime-border shadow-md mb-1.5 shrink-0">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] font-black text-[#D94E67] flex items-center gap-1">
-            <span>🔥</span><span>吧台冷藏玻璃罩 • 本日旬味 TOP 3</span>
-          </span>
-          <span class="text-[9px] font-bold text-[#8C583A]">點擊試吃鑑賞</span>
-        </div>
-        <div id="lobby-daily-specials" class="grid grid-cols-3 gap-1.5"></div>
-      </div>
-    </div>
-
-    <div class="relative z-10 w-full px-3 pb-1.5 flex flex-col gap-1.5 shrink-0">
-      <button data-nav="view-game" class="scene-nav-btn anime-btn w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-[#FF85A1] via-[#FF9E7D] to-[#FFB86B] text-white flex items-center justify-between relative overflow-hidden">
-        <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-white anime-border flex items-center justify-center text-xl shadow-sm shrink-0">🍱</div>
-            <div class="flex flex-col items-start leading-tight">
-              <span class="text-[9px] font-black text-[#FFF3B0] anime-stroke-sm tracking-wider">✦ OPEN COUNTER ✦</span>
-              <span class="text-base font-black anime-stroke-sm">開始營業 • 整理木櫃</span>
+      <!-- 頂層懸浮 HUD：店鋪招牌 + 繁盛度進度膠囊 + 經營方針 -->
+      <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0">
+        <div class="flex items-center justify-between gap-2">
+          
+          <!-- 左側店名與天數 -->
+          <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-2.5 py-1 shadow-lg flex items-center gap-2">
+            <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border border-white/40 flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
+            <div>
+              <div id="txt-lobby-store" class="text-[9px] font-black text-[#FFD166] leading-none drop-shadow-sm">星野和風マルシェ・總店</div>
+              <div class="text-xs font-black text-white mt-0.5 drop-shadow-sm">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
             </div>
           </div>
-          <div class="bg-[#FFF3B0] text-[#4A3326] px-2.5 py-1 rounded-xl anime-border text-xs font-black shrink-0">
+
+          <!-- 右側切換方針 -->
+          <button id="btn-lobby-skill" class="pop-btn px-2.5 py-1.5 bg-white/10 backdrop-blur-md border border-white/30 text-[#FFD166] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0 shadow-lg active:scale-95 transition-transform">
+            <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
+          </button>
+        </div>
+
+        <!-- 懸浮式繁盛度膠囊條 -->
+        <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 flex items-center justify-between gap-2 shadow-lg">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-black/60 text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
+            <span id="lobby-rank-title" class="text-[10px] font-black text-white">街角和食小舖</span>
+          </div>
+          <div class="flex-1 h-2 bg-black/50 rounded-full p-0.5 border border-white/30 overflow-hidden">
+            <div id="lobby-rank-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFB86B] rounded-full transition-all duration-300" style="width: 35%"></div>
+          </div>
+          <div class="text-[9px] font-black text-white shrink-0">
+            完售 <span id="lobby-total-dishes">0</span> 皿
+          </div>
+        </div>
+      </div>
+
+      <!-- 中央滿版人物舞台 -->
+      <div class="relative z-10 flex-1 flex flex-col items-center justify-end px-3 min-h-0">
+        <!-- 看板娘點擊互動區 -->
+        <div id="lobby-mascot-touch" class="relative w-full flex-1 flex flex-col items-center justify-end cursor-pointer group min-h-[150px]">
+          
+          <!-- 對話氣泡 -->
+          <div class="w-full max-w-[360px] bg-black/40 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/20 shadow-xl mb-1 relative">
+            <div class="flex items-center justify-between mb-1">
+              <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-white/30 shadow-sm">✦ 看板娘・星野葵</span>
+              <span class="text-[9px] font-black text-white/70">💬 點擊小葵互動</span>
+            </div>
+            <p id="lobby-speech-text" class="text-[11px] font-black text-white leading-snug drop-shadow-md">
+            </p>
+          </div>
+
+          <!-- 放大版星野葵立繪 -->
+          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-2 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]"></div>
+        </div>
+
+        <!-- 吧台冷藏玻璃罩 (本日旬味 TOP 3) -->
+        <div class="w-full bg-black/40 backdrop-blur-xl rounded-2xl px-3 py-2 border border-white/20 shadow-xl mb-1.5 shrink-0">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-black text-[#FF85A1] flex items-center gap-1 drop-shadow-sm">
+              <span>🔥</span><span>吧台冷藏玻璃罩 • 本日旬味 TOP 3</span>
+            </span>
+            <span class="text-[9px] font-bold text-white/70">點擊試吃</span>
+          </div>
+          <div id="lobby-daily-specials" class="grid grid-cols-3 gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- 底部導航塢 -->
+      <div class="relative z-10 w-full px-3 pb-1.5 flex flex-col gap-1.5 shrink-0">
+        
+        <!-- 開始營業大按鈕 -->
+        <button data-nav="view-game" class="scene-nav-btn pop-btn w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF6B8B] to-[#FF9E7D] border border-white/30 shadow-[0_0_20px_rgba(255,107,139,0.6)] active:scale-95 transition-transform text-white flex items-center justify-between relative overflow-hidden">
+          <span class="absolute top-1 inset-x-3 h-1.5 bg-white/30 rounded-full pointer-events-none"></span>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm border border-white/40 flex items-center justify-center text-xl shadow-sm shrink-0">🍱</div>
+            <div class="flex flex-col items-start leading-tight">
+              <span class="text-[9px] font-black text-[#FFF3B0] tracking-wider">✦ OPEN COUNTER ✦</span>
+              <span class="text-base font-black drop-shadow-md">開始營業 • 整理木櫃</span>
+            </div>
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm text-white border border-white/30 px-2.5 py-1 rounded-xl text-xs font-black shrink-0 shadow-sm">
             第 <span id="btn-stage-num">1</span> 日 ▶
           </div>
         </button>
 
+        <!-- 四大導航按鈕 -->
         <div class="grid grid-cols-2 gap-1.5">
-          <button data-nav="view-map" class="scene-nav-btn anime-btn nav-card rounded-2xl bg-[#FFE5B4] text-[#4A3326] flex items-center gap-2 relative">
+          <!-- 商店街 -->
+          <button data-nav="view-map" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
             <div class="mini-scene" style="background:#FFD194;">
               <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
                 <rect y="30" width="44" height="14" fill="#C89F78"/>
@@ -380,12 +282,13 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-map-title" class="text-xs font-black truncate">商店街巡禮</span>
-              <span id="txt-nav-map-sub" class="text-[9px] font-bold text-[#8C583A] mt-1 truncate">分店地圖與褒賞</span>
+              <span id="txt-nav-map-title" class="text-xs font-black truncate drop-shadow-sm">商店街巡禮</span>
+              <span id="txt-nav-map-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">分店地圖與褒賞</span>
             </div>
           </button>
 
-          <button data-nav="view-gacha" class="scene-nav-btn anime-btn nav-card rounded-2xl bg-[#FFE5EC] text-[#4A3326] flex items-center gap-2 relative">
+          <!-- 轉蛋亭 -->
+          <button data-nav="view-gacha" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
             <div class="mini-scene" style="background:#FFD6E0;">
               <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
                 <ellipse cx="22" cy="40" rx="18" ry="6" fill="#E3C7A2"/>
@@ -398,13 +301,14 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-gacha-title" class="text-xs font-black truncate">福引轉蛋亭</span>
-               <span id="txt-nav-gacha-sub" class="text-[9px] font-bold text-[#9E4764] mt-1 truncate">祈願抽取秘寶</span>
+              <span id="txt-nav-gacha-title" class="text-xs font-black truncate drop-shadow-sm">福引轉蛋亭</span>
+              <span id="txt-nav-gacha-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">祈願抽取秘寶</span>
             </div>
-            <span id="badge-gacha-dot" class="absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF85A1] text-white text-[10px] font-black flex items-center justify-center anime-border">!</span>
+            <span id="badge-gacha-dot" class="absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF85A1] text-white text-[10px] font-black flex items-center justify-center border border-white shadow-md">!</span>
           </button>
 
-          <button data-nav="view-shop" class="scene-nav-btn anime-btn nav-card rounded-2xl bg-[#D8F3DC] text-[#4A3326] flex items-center gap-2 relative">
+          <!-- 設備工坊 -->
+          <button data-nav="view-shop" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
             <div class="mini-scene" style="background:#C8E6C9;">
               <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
                 <rect x="6" y="26" width="32" height="14" fill="#C88A55" stroke="#4A3326" stroke-width="1.8"/>
@@ -418,12 +322,13 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-shop-title" class="text-xs font-black truncate">職人設備工坊</span>
-              <span id="txt-nav-shop-sub" class="text-[9px] font-bold text-[#3B6E4C] mt-1 truncate">改造與開運擺設</span>
+              <span id="txt-nav-shop-title" class="text-xs font-black truncate drop-shadow-sm">職人設備工坊</span>
+              <span id="txt-nav-shop-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">改造與開運擺設</span>
             </div>
           </button>
 
-          <button data-nav="view-quests" class="scene-nav-btn anime-btn nav-card rounded-2xl bg-[#E0F4FF] text-[#4A3326] flex items-center gap-2 relative">
+          <!-- 店長室委託 -->
+          <button data-nav="view-quests" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
             <div class="mini-scene" style="background:#B9DEF0;">
               <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
                 <rect x="9" y="8" width="26" height="30" rx="3" fill="#FFFDF7" stroke="#4A3326" stroke-width="1.8"/>
@@ -435,15 +340,14 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-quests-title" class="text-xs font-black truncate">店長室委託</span>
-              <span id="txt-nav-quests-sub" class="text-[9px] font-bold text-[#36698A] mt-1 truncate">集章卡與料理圖鑑</span>
+              <span id="txt-nav-quests-title" class="text-xs font-black truncate drop-shadow-sm">店長室委託</span>
+              <span id="txt-nav-quests-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">集章卡與料理圖鑑</span>
             </div>
-            <span id="badge-quest-dot" class="hidden absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center anime-border animate-bounce">!</span>
+            <span id="badge-quest-dot" class="hidden absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center border border-white shadow-md animate-bounce">!</span>
           </button>
         </div>
       </div>
     </section>
-
     <!-- ============================================================
          遊戲主舞台 (#view-game)
          ============================================================ -->
