@@ -1,9 +1,15 @@
-// src/auth/firebase.js (最新 v10 寫法)
+// src/auth/firebase.js (v10.8.0 手機穩定版)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithRedirect, 
+  getRedirectResult, // 👈 新增：接收跳轉回來的結果
+  onAuthStateChanged, 
+  signOut 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 你的 Firebase 設定
 const firebaseConfig = {
   apiKey: "AIzaSyDUwnKiTdmlJaSLADPxwt4OdLqUpfod0Ck",
   authDomain: "hoshino-game.firebaseapp.com",
@@ -14,7 +20,6 @@ const firebaseConfig = {
   measurementId: "G-Q7FH95E3Z7"
 };
 
-// 初始化
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -23,6 +28,17 @@ let currentUser = null;
 
 export const CloudAuth = {
   init() {
+    // 1. 處理從 Google 跳轉回來的登入結果
+    getRedirectResult(auth).then((result) => {
+      if (result) {
+        console.log('✅ 登入成功，歡迎回來！', result.user.displayName);
+      }
+    }).catch((error) => {
+      console.error('❌ 登入重定向失敗:', error);
+      alert(`登入失敗 (${error.code})，請確認網域授權或稍後再試。`);
+    });
+
+    // 2. 監聽登入狀態的變化
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -57,9 +73,10 @@ export const CloudAuth = {
 
   login() {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).catch((err) => {
+    // 👇 改為 signInWithRedirect，這在手機上是穩定的做法
+    signInWithRedirect(auth, provider).catch((err) => {
       console.error('登入失敗:', err);
-      alert('登入失敗，請確認是否阻擋彈出視窗，或授權網域是否正確。');
+      alert(`登入失敗 (${err.code})，請確認網路連線。`);
     });
   },
 
