@@ -1,10 +1,9 @@
-// src/auth/firebase.js (v10.8.0 手機穩定版)
+// src/auth/firebase.js (v10.8.0 穩定測試版)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
   getAuth, 
   GoogleAuthProvider, 
-  signInWithRedirect, 
-  getRedirectResult, // 👈 新增：接收跳轉回來的結果
+  signInWithPopup, // 👈 改回 Popup 測試
   onAuthStateChanged, 
   signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -28,17 +27,6 @@ let currentUser = null;
 
 export const CloudAuth = {
   init() {
-    // 1. 處理從 Google 跳轉回來的登入結果
-    getRedirectResult(auth).then((result) => {
-      if (result) {
-        console.log('✅ 登入成功，歡迎回來！', result.user.displayName);
-      }
-    }).catch((error) => {
-      console.error('❌ 登入重定向失敗:', error);
-      alert(`登入失敗 (${error.code})，請確認網域授權或稍後再試。`);
-    });
-
-    // 2. 監聽登入狀態的變化
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -51,10 +39,6 @@ export const CloudAuth = {
           loginBtnText.innerText = `已登入：${user.displayName ? user.displayName.split(' ')[0] : '使用者'}`;
           loginBtn.classList.remove('bg-white/20');
           loginBtn.classList.add('bg-[#A8E6CF]/90', 'text-[#4A3326]');
-        }
-        
-        if (userData) {
-          window.dispatchEvent(new CustomEvent('cloudSaveLoaded', { detail: userData }));
         }
       } else {
         currentUser = null;
@@ -73,10 +57,10 @@ export const CloudAuth = {
 
   login() {
     const provider = new GoogleAuthProvider();
-    // 👇 改為 signInWithRedirect，這在手機上是穩定的做法
-    signInWithRedirect(auth, provider).catch((err) => {
-      console.error('登入失敗:', err);
-      alert(`登入失敗 (${err.code})，請確認網路連線。`);
+    // 👇 改用 signInWithPopup 並加上防呆提示
+    signInWithPopup(auth, provider).catch((err) => {
+      console.error('登入失敗詳細資訊:', err);
+      alert(`登入失敗！\n代碼: ${err.code}\n請檢查 Firebase 後台是否已將此網域加入授權清單。`);
     });
   },
 
@@ -98,9 +82,7 @@ export const CloudAuth = {
     if (!currentUser) return null;
     try {
       const docSnap = await getDoc(doc(db, 'saves', currentUser.uid));
-      if (docSnap.exists()) {
-        return docSnap.data();
-      }
+      if (docSnap.exists()) return docSnap.data();
       return null;
     } catch (e) {
       console.error('讀取雲端失敗:', e);
