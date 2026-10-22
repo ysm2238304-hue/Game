@@ -85,10 +85,20 @@ class GameApp {
     this.fever = 0;
     this.lastMatchTime = 0;
     this.customerCheerUntil = 0;
+    // 預先載入顧客圖片
+    this.customerImgs = {
+      girl: new Image(),
+      salaryman: new Image(),
+      grandma: new Image()
+    };
+    this.customerImgs.girl.src = './assets/cust-girl.png';
+    this.customerImgs.salaryman.src = './assets/cust-salaryman.png';
+    this.customerImgs.grandma.src = './assets/cust-grandma.png';
+
     this.customers = [
-      { name: '女學生', hair: '#4A2E2B', clothes: '#FF85A1', wantId: 'onigiri' },
-      { name: '上班族', hair: '#2B3A4A', clothes: '#6699CC', wantId: 'sushi' },
-      { name: '柴犬叔', hair: '#D99B52', clothes: '#6BA368', wantId: 'dango' }
+      { name: '女學生', imgKey: 'girl', wantId: 'onigiri' },
+      { name: '上班族', imgKey: 'salaryman', wantId: 'sushi' },
+      { name: '老奶奶', imgKey: 'grandma', wantId: 'dango' }
     ];
 
     this.particles = [];
@@ -392,7 +402,7 @@ class GameApp {
 
     // 3. 上下留白極小化，讓九宮格完全撐滿
     this.topSceneH    = 4; 
-    this.bottomSceneH = 10;
+    this.bottomSceneH = 45;
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -562,79 +572,61 @@ class GameApp {
 
   drawBottomCustomers(ctx, now) {
     const w = this.width;
-    const baseY = this.height - 6;
+    // 把基準線設在畫面最底部稍微偏上的位置
+    const baseY = this.height - 5; 
     const isCheering = now < this.customerCheerUntil;
 
-    const positions = [w * 0.34, w * 0.59, w * 0.84];
+    // 三個顧客的 X 軸位置
+    const positions = [w * 0.25, w * 0.5, w * 0.75];
+    
     this.customers.forEach((cust, idx) => {
       const cx = positions[idx];
+      
+      // 計算彈跳與歡呼效果
       const bob = isCheering
-        ? -Math.abs(Math.sin(now * 0.015 + idx)) * 7
+        ? -Math.abs(Math.sin(now * 0.015 + idx)) * 8
         : Math.sin(now * 0.004 + idx * 1.4) * 2;
       const cy = baseY + bob;
 
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.scale(0.92, 0.92);
+      const img = this.customerImgs[cust.imgKey];
+      
+      // 確保圖片已載入才繪製
+      if (img && img.complete && img.naturalWidth > 0) {
+        // 設定圖片顯示的寬度 (可依需求微調，50~60 左右)
+        const imgW = 55; 
+        // 依照原圖比例計算高度
+        const imgH = imgW * (img.naturalHeight / img.naturalWidth);
+        
+        ctx.save();
+        ctx.translate(cx, cy);
+        
+        // 如果正在歡呼，就稍微放大一點點
+        if (isCheering) ctx.scale(1.1, 1.1);
 
-      ctx.fillStyle = cust.clothes;
-      ctx.strokeStyle = '#4A3326';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(-14, -18, 28, 18, [10, 10, 2, 2]);
-      ctx.fill(); ctx.stroke();
+        // 繪製顧客圖片 (因為是底部切齊，所以往上推 imgH 的距離)
+        ctx.drawImage(img, -imgW / 2, -imgH, imgW, imgH);
 
-      ctx.fillStyle = '#FFEFE2';
-      ctx.beginPath();
-      ctx.arc(0, -29, 13, 0, Math.PI * 2);
-      ctx.fill(); ctx.stroke();
-
-      ctx.fillStyle = cust.hair;
-      ctx.beginPath();
-      ctx.arc(0, -31, 13.2, Math.PI * 0.95, Math.PI * 2.05);
-      ctx.fill(); ctx.stroke();
-
-      ctx.strokeStyle = '#4A3326';
-      ctx.lineWidth = 1.8;
-      if (isCheering) {
+        // 👇 繪製頭頂的點單小氣泡
+        const bubbleX = imgW / 2 - 5; 
+        const bubbleY = -imgH + 5;
+        ctx.fillStyle = '#FFFDF7';
+        ctx.strokeStyle = '#4A3326';
+        ctx.lineWidth = 1.6;
         ctx.beginPath();
-        ctx.arc(-4.5, -28, 2.5, Math.PI, 0);
-        ctx.moveTo(2, -28);
-        ctx.arc(4.5, -28, 2.5, Math.PI, 0);
-        ctx.stroke();
-        ctx.fillStyle = '#FF85A1';
-        ctx.beginPath();
-        ctx.arc(0, -23, 3, 0, Math.PI);
+        ctx.roundRect(bubbleX - 11, bubbleY - 11, 22, 22, 6);
         ctx.fill();
-      } else {
-        ctx.fillStyle = '#4A3326';
-        ctx.beginPath();
-        ctx.arc(-4.5, -28, 1.7, 0, Math.PI * 2);
-        ctx.arc(4.5, -28, 1.7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(0, -24, 2.2, 0.2, Math.PI - 0.2);
         ctx.stroke();
-      }
 
-      const bubbleX = 18, bubbleY = -36;
-      ctx.fillStyle = '#FFFDF7';
-      ctx.strokeStyle = '#4A3326';
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      ctx.roundRect(bubbleX - 11, bubbleY - 11, 22, 22, 6);
-      ctx.fill();
-      ctx.stroke();
-
-      if (isCheering) {
-        ctx.fillStyle = '#E05780';
-        ctx.font = '900 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('♥', bubbleX, bubbleY + 4);
-      } else {
-        CozyFoodRenderer.drawFood(ctx, cust.wantId || 'onigiri', bubbleX, bubbleY, 18, 18, { isBack: false });
+        if (isCheering) {
+          ctx.fillStyle = '#E05780';
+          ctx.font = '900 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('♥', bubbleX, bubbleY + 4);
+        } else {
+          CozyFoodRenderer.drawFood(ctx, cust.wantId || 'onigiri', bubbleX, bubbleY, 18, 18, { isBack: false });
+        }
+        ctx.restore();
       }
-      ctx.restore();
     });
   }
 
