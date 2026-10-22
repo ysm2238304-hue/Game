@@ -1808,7 +1808,7 @@ class GameApp {
   }
 }
 
-// 👇 加上這行，啟動 Firebase 監聽 👇
+// 👇 新增這行：啟動 Firebase 監聽
 CloudAuth.init();
 
 FoodSpriteAtlas.init().then(() => {
