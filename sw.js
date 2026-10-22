@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v43'; // 每次大更新請遞增版號
+const CACHE_NAME = 'hoshino-game-v44'; // 每次大更新請遞增版號
 
 const PRECACHE_ASSETS = [
   './',
