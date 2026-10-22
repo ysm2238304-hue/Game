@@ -4,6 +4,7 @@ import { SFX } from './audio/sfx.js';
 import { BGM } from './audio/bgm.js';
 import { GameState } from './state/GameState.js';
 import { CozyFoodRenderer } from './render/foodRenderer.js';
+import { CloudAuth } from './auth/firebase.js'; 
 const theme = getActiveTheme();
 const ITEM_DEFS = theme.items;
 const GUIDE_DATA = theme.guides;
@@ -887,9 +888,19 @@ class GameApp {
       }
     }, { passive: false });
     
+    // 👇 新增：Google 登入按鈕綁定 👇
+    const loginBtn = document.getElementById('btn-google-login');
+    if (loginBtn) {
+      loginBtn.onclick = () => {
+        SFX.tap();
+        CloudAuth.login();
+      };
+    }
+    // 👆 新增結束 👆
+
     document.getElementById('btn-enter-lobby').onclick = () => {
       SFX.tap();
-      BGM.play(); // 👈 在這裡觸發音樂播放（符合 iOS 手勢解鎖）
+      BGM.play();
       document.getElementById('view-title').classList.add('hidden');
       this.renderHUD();
     };
