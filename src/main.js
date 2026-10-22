@@ -888,15 +888,16 @@ class GameApp {
       }
     }, { passive: false });
     
-    // 👇 新增：Google 登入按鈕綁定 👇
+    // 👇 確保有這段綁定 👇
     const loginBtn = document.getElementById('btn-google-login');
     if (loginBtn) {
       loginBtn.onclick = () => {
+        console.log('點擊了登入按鈕！'); // 測試用
         SFX.tap();
         CloudAuth.login();
       };
     }
-    // 👆 新增結束 👆
+    // 👆 確保有這段綁定 👆
 
     document.getElementById('btn-enter-lobby').onclick = () => {
       SFX.tap();
