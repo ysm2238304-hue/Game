@@ -185,40 +185,42 @@
         <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
       </div>
 
-      <!-- 顶层悬浮 HUD：店铺招牌 + 繁盛度进度胶囊 + 经营方针 -->
-      <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0">
-        <div class="flex items-center justify-between gap-2">
+      <!-- 頂層懸浮 HUD：店鋪招牌 + 繁盛度進度膠囊 + 經營方針 -->
+      <div class="relative z-10 px-3 pt-2 flex flex-col gap-1.5 shrink-0 w-full overflow-hidden">
+        <div class="flex items-center justify-between gap-2 w-full">
           
-          <!-- 左侧店名与天数 -->
-          <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-2.5 py-1 shadow-lg flex items-center gap-2">
-          
-          <!-- 左側店名與天數 -->
-          <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-2.5 py-1 shadow-lg flex items-center gap-2">
+          <!-- 左側店名與天數 (加入 whitespace-nowrap 強制不換行) -->
+          <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-2.5 py-1 shadow-lg flex items-center gap-2 shrink-0 whitespace-nowrap">
             <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border border-white/40 flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
-            <div>
-              <div id="txt-lobby-store" class="text-[9px] font-black text-[#FFD166] leading-none drop-shadow-sm">星野和風マルシェ・總店</div>
-              <div class="text-xs font-black text-white mt-0.5 drop-shadow-sm">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
+            <div class="flex flex-col justify-center">
+              <div id="txt-lobby-store" class="text-[9px] font-black text-[#FFD166] leading-none drop-shadow-sm whitespace-nowrap">星野和風マルシェ・總店</div>
+              <div class="text-xs font-black text-white mt-0.5 drop-shadow-sm whitespace-nowrap">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
             </div>
           </div>
 
-          <!-- 右側：登入按鈕 + 切換方針 -->
+          <!-- 右側：切換方針 (加入 whitespace-nowrap 強制不換行) -->
           <div class="flex items-center gap-1.5 shrink-0">
-            <button id="btn-lobby-skill" class="pop-btn px-2.5 py-1.5 bg-white/10 backdrop-blur-md border border-white/30 text-[#FFD166] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0 shadow-lg active:scale-95 transition-transform">
+            <button id="btn-lobby-skill" class="pop-btn px-2.5 py-1.5 bg-white/10 backdrop-blur-md border border-white/30 text-[#FFD166] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0 shadow-lg active:scale-95 transition-transform whitespace-nowrap">
               <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
             </button>
           </div>
 
         </div>
-        <!-- 懸浮式繁盛度膠囊條 -->
-        <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 flex items-center justify-between gap-2 shadow-lg">
-          <div class="flex items-center gap-1.5 shrink-0">
+        
+        <!-- 懸浮式繁盛度膠囊條 (確保中間進度條能正常伸縮，右側文字不換行) -->
+        <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 flex items-center justify-between gap-2 shadow-lg w-full">
+          <div class="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-black/60 text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
-            <span id="lobby-rank-title" class="text-[10px] font-black text-white">街角和食小舖</span>
+            <span id="lobby-rank-title" class="text-[10px] font-black text-white whitespace-nowrap">街角和食小舖</span>
           </div>
-          <div class="flex-1 h-2 bg-black/50 rounded-full p-0.5 border border-white/30 overflow-hidden">
+          
+          <!-- 進度條本體 (flex-1 讓它自動填滿剩餘空間) -->
+          <div class="flex-1 min-w-[20px] h-2 bg-black/50 rounded-full p-0.5 border border-white/30 overflow-hidden">
             <div id="lobby-rank-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFB86B] rounded-full transition-all duration-300" style="width: 35%"></div>
           </div>
-          <div class="text-[9px] font-black text-white shrink-0">
+          
+          <!-- 右側文字 (加入 whitespace-nowrap 防止折行) -->
+          <div class="text-[9px] font-black text-white shrink-0 whitespace-nowrap">
             完售 <span id="lobby-total-dishes">0</span> 皿
           </div>
         </div>
