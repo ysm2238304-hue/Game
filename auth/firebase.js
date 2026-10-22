@@ -37,12 +37,13 @@ export const CloudAuth = {
         // 因為這裡拿不到 GameState，我們暫時把資料存在全域變數
         window.cloudSaveData = userData;
         
-        // 更新 UI 按鈕
+        // 更新歡迎頁的登入按鈕狀態
+        const loginBtnText = document.getElementById('login-btn-text');
         const loginBtn = document.getElementById('btn-google-login');
-        if (loginBtn) {
-          loginBtn.innerText = `✅ ${user.displayName.split(' ')[0]}`;
-          loginBtn.classList.remove('bg-[#FF85A1]');
-          loginBtn.classList.add('bg-[#A8E6CF]');
+        if (loginBtnText && loginBtn) {
+          loginBtnText.innerText = `已登入：${user.displayName.split(' ')[0]}`;
+          loginBtn.classList.remove('bg-white/20');
+          loginBtn.classList.add('bg-[#A8E6CF]/90', 'text-[#4A3326]');
         }
         
         // 如果雲端有存檔，透過自訂事件通知 main.js 進行合併
