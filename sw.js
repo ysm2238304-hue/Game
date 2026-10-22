@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v52'; // 每次大更新請遞增版號
+const CACHE_NAME = 'hoshino-game-v53'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -9,7 +9,7 @@ const PRECACHE_ASSETS = [
   './assets/mascot/aoi-happy.png'
 ];
 
-// 1. 安裝階段：容錯預載入資源，單一圖片缺漏不會導致整個 SW 崩潰
+// 1. 安裝階段：容錯預載入資源
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -26,7 +26,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. 啟動階段：自動清除舊版號（如 v1）的快取
+// 2. 啟動階段：自動清除舊版號的快取
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -39,13 +39,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. 攔截請求：HTML/JS/CSS 走「網路優先」，圖片音效走「快取優先」
+// 3. 攔截請求：只攔截同網域資源，完全放行 Firebase / Google 外部 API
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
   if (!url.protocol.startsWith('http')) return;
+
+  // 👇 【關鍵修復】如果不是自己網站的網域（例如 googleapis / firebaseapp / gstatic），直接放行不攔截！
+  if (url.origin !== self.location.origin) return;
 
   const isAsset =
     url.pathname.includes('/assets/') ||
@@ -76,7 +79,11 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match(request))
+        .catch(async () => {
+          const cached = await caches.match(request);
+          // 避免回傳 undefined 導致 Service Worker 拋出 NetworkError
+          return cached || Response.error();
+        })
     );
   }
 });
