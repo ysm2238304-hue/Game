@@ -53,12 +53,16 @@ export const CloudAuth = {
       } else {
         currentUser = null;
         window.cloudSaveData = null;
+
+        // 👇 新增：復原按鈕狀態 👇
+        const loginBtnText = document.getElementById('login-btn-text');
         const loginBtn = document.getElementById('btn-google-login');
-        if (loginBtn) {
-          loginBtn.innerText = '🔑 登入';
-          loginBtn.classList.add('bg-[#FF85A1]');
-          loginBtn.classList.remove('bg-[#A8E6CF]');
+        if (loginBtnText && loginBtn) {
+          loginBtnText.innerText = '使用 Google 帳號登入';
+          loginBtn.classList.add('bg-white/20');
+          loginBtn.classList.remove('bg-[#A8E6CF]/90', 'text-[#4A3326]');
         }
+        // 👆 新增結束 👆
       }
     });
   },
