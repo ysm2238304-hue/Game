@@ -1,7 +1,9 @@
-// ============================================================
-// 🔐 src/auth/firebase.js — Firebase 登入與雲端存檔
-// ============================================================
+// src/auth/firebase.js (最新 v10 寫法)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// 你的 Firebase 設定
 const firebaseConfig = {
   apiKey: "AIzaSyDUwnKiTdmlJaSLADPxwt4OdLqUpfod0Ck",
   authDomain: "hoshino-game.firebaseapp.com",
@@ -12,41 +14,29 @@ const firebaseConfig = {
   measurementId: "G-Q7FH95E3Z7"
 };
 
-let auth, db;
+// 初始化
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 let currentUser = null;
 
 export const CloudAuth = {
   init() {
-    // 如果找不到 Firebase 全域變數，代表 CDN 沒載入成功
-    if (typeof firebase === 'undefined') {
-      console.warn('Firebase SDK 未載入');
-      return;
-    }
-
-    // 初始化 Firebase
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
-
-    // 監聽登入狀態
-    auth.onAuthStateChanged(async (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         const userData = await CloudAuth.loadFromCloud();
-        
-        // 因為這裡拿不到 GameState，我們暫時把資料存在全域變數
         window.cloudSaveData = userData;
         
-        // 更新歡迎頁的登入按鈕狀態
         const loginBtnText = document.getElementById('login-btn-text');
         const loginBtn = document.getElementById('btn-google-login');
         if (loginBtnText && loginBtn) {
-          loginBtnText.innerText = `已登入：${user.displayName.split(' ')[0]}`;
+          loginBtnText.innerText = `已登入：${user.displayName ? user.displayName.split(' ')[0] : '使用者'}`;
           loginBtn.classList.remove('bg-white/20');
           loginBtn.classList.add('bg-[#A8E6CF]/90', 'text-[#4A3326]');
         }
         
-        // 如果雲端有存檔，透過自訂事件通知 main.js 進行合併
         if (userData) {
           window.dispatchEvent(new CustomEvent('cloudSaveLoaded', { detail: userData }));
         }
@@ -54,7 +44,6 @@ export const CloudAuth = {
         currentUser = null;
         window.cloudSaveData = null;
 
-        // 👇 新增：復原按鈕狀態 👇
         const loginBtnText = document.getElementById('login-btn-text');
         const loginBtn = document.getElementById('btn-google-login');
         if (loginBtnText && loginBtn) {
@@ -62,29 +51,26 @@ export const CloudAuth = {
           loginBtn.classList.add('bg-white/20');
           loginBtn.classList.remove('bg-[#A8E6CF]/90', 'text-[#4A3326]');
         }
-        // 👆 新增結束 👆
       }
     });
   },
 
   login() {
-    if (!auth) return;
-    const provider = new firebase.auth.GoogleAuthProvider();
-    // 使用 popup 彈出視窗登入
-    auth.signInWithPopup(provider).catch((err) => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).catch((err) => {
       console.error('登入失敗:', err);
-      alert('登入失敗，請確認瀏覽器是否阻擋彈出視窗，或授權網域是否設定正確。');
+      alert('登入失敗，請確認是否阻擋彈出視窗，或授權網域是否正確。');
     });
   },
 
   logout() {
-    if (auth) auth.signOut();
+    signOut(auth);
   },
 
   async saveToCloud(dataToSave) {
-    if (!currentUser || !db) return;
+    if (!currentUser) return;
     try {
-      await db.collection('saves').doc(currentUser.uid).set(dataToSave);
+      await setDoc(doc(db, 'saves', currentUser.uid), dataToSave);
       console.log('☁️ 雲端存檔成功');
     } catch (e) {
       console.error('雲端存檔失敗:', e);
@@ -92,11 +78,11 @@ export const CloudAuth = {
   },
 
   async loadFromCloud() {
-    if (!currentUser || !db) return null;
+    if (!currentUser) return null;
     try {
-      const doc = await db.collection('saves').doc(currentUser.uid).get();
-      if (doc.exists) {
-        return doc.data();
+      const docSnap = await getDoc(doc(db, 'saves', currentUser.uid));
+      if (docSnap.exists()) {
+        return docSnap.data();
       }
       return null;
     } catch (e) {
