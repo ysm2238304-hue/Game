@@ -967,16 +967,6 @@ class GameApp {
         if (target) this.navigateTo(target); 
       };
     });
-        
-        // 👇 關鍵修復：如果目標是遊戲畫面，且「已經結算過」或「貨架是空的」
-        // 就自動重新啟動當前關卡（生成新的貨架與步數）
-        if (target === 'view-game' && (this.isLevelSettled || !this.shelves || this.shelves.length === 0)) {
-          this.startLevel(GameState.unlockedLevel);
-        }
-        
-        this.navigateTo(target);
-      };
-    });
 
     document.querySelectorAll('.btn-open-guide').forEach(btn => {
       btn.onclick = () => this.openGuideModal(btn.dataset.guide);
