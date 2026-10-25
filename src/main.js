@@ -96,6 +96,26 @@ class GameApp {
     this.customerImgs.salaryman.src = './assets/cust-salaryman.png';
     this.customerImgs.grandma.src = './assets/cust-grandma.png';
 
+    // 👇 新增：預載入所有全螢幕背景圖與轉蛋機，徹底消除切換場景閃白 👇
+    const preloadAssets = [
+      './assets/bg-title.jpg',
+      './assets/bg-lobby.jpg',
+      './assets/bg-game.jpg',
+      './assets/bg-shop.jpg',
+      './assets/bg-gacha.jpg',
+      './assets/bg-quests.jpg',
+      './assets/bg-map.jpg',
+      './assets/bg-transition.jpg',
+      './assets/gacha-machine.png',
+      './assets/mascot/aoi-happy.png'
+    ];
+    this.preloadedBg = preloadAssets.map(url => {
+      const img = new Image();
+      img.src = url;
+      return img;
+    });
+    // 👆 預載入結束 👆
+
     this.customers = [
       { name: '女學生', imgKey: 'girl', wantId: 'onigiri' },
       { name: '上班族', imgKey: 'salaryman', wantId: 'sushi' },
@@ -336,7 +356,16 @@ class GameApp {
       const targetEl = document.getElementById(targetViewId);
       if (targetEl) { targetEl.classList.remove('hidden'); targetEl.classList.add('flex'); }
       this.currentView = targetViewId;
-      if (targetViewId === 'view-game') setTimeout(() => this.initCanvasSize(), 20);
+      
+      // 👇 修復 Bug：當切換進入遊戲畫面時，若上一局已結算完畢，自動開始最新關卡並補貨 👇
+      if (targetViewId === 'view-game') {
+        if (this.isLevelSettled || !this.shelves || this.shelves.length === 0) {
+          this.startLevel(GameState.unlockedLevel);
+        }
+        setTimeout(() => this.initCanvasSize(), 20);
+      }
+      // 👆 修復結束 👆
+
       this.renderHUD();
     }, 340);
     setTimeout(() => {
@@ -932,10 +961,12 @@ class GameApp {
       document.getElementById('lobby-mascot-svg').innerHTML = AnimeMascot.renderSVG(moods[this.lobbyLineIdx % moods.length], false);
     };
 
-ocument.querySelectorAll('.scene-nav-btn').forEach(btn => {
-      btn.onclick = () => {
-        const target = btn.dataset.nav;
-        if (!target) return;
+    document.querySelectorAll('.scene-nav-btn').forEach(btn => {
+      btn.onclick = () => { 
+        const target = btn.dataset.nav; 
+        if (target) this.navigateTo(target); 
+      };
+    });
         
         // 👇 關鍵修復：如果目標是遊戲畫面，且「已經結算過」或「貨架是空的」
         // 就自動重新啟動當前關卡（生成新的貨架與步數）
@@ -1056,6 +1087,8 @@ ocument.querySelectorAll('.scene-nav-btn').forEach(btn => {
     document.getElementById('btn-settle-lobby').onclick = () => {
       SFX.tap();
       document.getElementById('modal-settle').classList.add('hidden');
+      // 👇 提前把下一關的貨架補滿，這樣從大廳點進來時，連載入延遲都沒有 👇
+      this.startLevel(GameState.unlockedLevel); 
       this.navigateTo('view-lobby');
     };
 
