@@ -1,4 +1,4 @@
-// src/auth/firebase.js (v10.8.0 穩定強化版)
+// src/auth/firebase.js (v10.8.0 終極整合版)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
   getAuth, 
@@ -24,7 +24,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
-let isLoggingIn = false; // 防止連點造成請求衝突與中斷
+let isLoggingIn = false; 
 
 export const CloudAuth = {
   init() {
@@ -41,6 +41,14 @@ export const CloudAuth = {
           loginBtn.classList.remove('bg-white/20');
           loginBtn.classList.add('bg-[#A8E6CF]/90', 'text-[#4A3326]');
         }
+
+        // 👇👇👇 新增：通知 main.js 套用雲端存檔 👇👇👇
+        if (userData) {
+          console.log('☁️ 雲端存檔已下載，發送 cloudSaveLoaded 事件');
+          window.dispatchEvent(new CustomEvent('cloudSaveLoaded', { detail: userData }));
+        }
+        // 👆👆👆 新增結束 👆👆👆
+
       } else {
         currentUser = null;
         window.cloudSaveData = null;
@@ -57,15 +65,12 @@ export const CloudAuth = {
   },
 
   async login(event) {
-    // 若呼叫時有傳入點擊事件，阻擋預設表單送出或頁面重整行為
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
 
-    // 防止玩家在手機上重複點擊導致前一個請求被取消
     if (isLoggingIn) return;
 
-    // 1. 偵測 LINE / IG / FB 等內建瀏覽器 (WebView 會阻擋 Google OAuth)
     const ua = navigator.userAgent || '';
     if (/Line|FBAN|FBAV|Instagram/i.test(ua)) {
       alert('請點擊右上角或右下角選單，選擇「使用預設瀏覽器 (Safari / Chrome) 開啟」以進行 Google 登入！');
@@ -81,19 +86,16 @@ export const CloudAuth = {
     } catch (err) {
       console.error('登入失敗詳細資訊:', err);
 
-      // 玩家主動關閉視窗或連點取消時，不跳出錯誤警告干擾體驗
       if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         return;
       }
 
-      // 針對 iOS 主畫面捷徑 (PWA Standalone) 模式的提示
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
       if (err.code === 'auth/network-request-failed' && isStandalone) {
         alert('iOS 主畫面模式可能會中斷 Google 彈窗連線。\n請先直接在 Safari 瀏覽器中開啟網址完成登入！');
         return;
       }
 
-      // 針對不同錯誤代碼提供精準排錯訊息
       if (err.code === 'auth/unauthorized-domain') {
         alert(`登入失敗！\n代碼: ${err.code}\n請至 Firebase 後台 Authorized domains 將「${window.location.hostname}」加入授權清單。`);
       } else if (err.code === 'auth/popup-blocked') {
@@ -117,12 +119,15 @@ export const CloudAuth = {
   },
 
   async saveToCloud(dataToSave) {
-    if (!currentUser) return;
+    if (!currentUser) {
+      console.warn('⚠️ 尚未登入，無法儲存至雲端');
+      return;
+    }
     try {
       await setDoc(doc(db, 'saves', currentUser.uid), dataToSave);
       console.log('☁️ 雲端存檔成功');
     } catch (e) {
-      console.error('雲端存檔失敗:', e);
+      console.error('❌ 雲端存檔失敗 (請檢查 Firestore 規則):', e);
     }
   },
 
@@ -133,7 +138,7 @@ export const CloudAuth = {
       if (docSnap.exists()) return docSnap.data();
       return null;
     } catch (e) {
-      console.error('讀取雲端失敗:', e);
+      console.error('❌ 讀取雲端失敗:', e);
       return null;
     }
   }
