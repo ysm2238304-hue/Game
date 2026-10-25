@@ -7,6 +7,7 @@
 
 // ⚠️ 只有當你「徹底改變資料結構」且無法合併時，才需要升級這個版號。
 // 平常加新功能，只要在 DEFAULT_STATE 加預設值即可，不用改這裡。
+import { CloudAuth } from '../auth/firebase.js'; 
 const SAVE_KEY = 'HoshinoWashoku_Save_v7'; 
 
 const DEFAULT_STATE = {
@@ -120,9 +121,14 @@ export const GameState = {
         quests: this.quests,
         lastSavedAt: Date.now()
       };
+      
+      // 1. 存到手機本機 (localStorage)
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+
+      // 2. 自動上傳到雲端 (Firebase)
+      CloudAuth.saveToCloud(payload); 
+
     } catch (err) {
-      // iOS 無痕模式或儲存空間滿時靜默略過，不中斷遊戲運行
       console.warn('[GameState] 寫入存檔略過:', err);
     }
   }
