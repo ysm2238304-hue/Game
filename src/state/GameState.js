@@ -7,7 +7,8 @@
 
 // ⚠️ 只有當你「徹底改變資料結構」且無法合併時，才需要升級這個版號。
 // 平常加新功能，只要在 DEFAULT_STATE 加預設值即可，不用改這裡。
-import { CloudAuth } from '../auth/firebase.js'; 
+// ✅ 正確的寫法
+import { CloudAuth } from '../../auth/firebase.js'; 
 const SAVE_KEY = 'HoshinoWashoku_Save_v7'; 
 
 const DEFAULT_STATE = {
