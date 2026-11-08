@@ -30,8 +30,8 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
 
   const rng = mulberry32(safeLevelId * 9137 + 101);
   const cols = 3;
-  const rows = 3;
-  const shelfCount = 9;
+  const rows = 4;
+  const shelfCount = 12;
   const totalSlots = shelfCount * 3;
   const depthPerSlot = safeLevelId >= 21 ? 4 : (safeLevelId >= 8 ? 3 : 2);
   const rawCapacity = totalSlots * depthPerSlot;
@@ -62,7 +62,7 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const iceCount = Math.min(shelfCount - 2, Math.floor((safeLevelId + 1) / 2));
   const moves = 999; // 開啟純秒數倒數模式，步數充裕不卡關
   // 關卡倒數秒數配置：基礎 75 秒 + 根據三連組數與貨架升級動態調配（60s ~ 150s）
-  const timeLimit = Math.min(150, Math.max(60, 65 + matchTriplets * 3 + (safeShelfLv - 1) * 4));
+  const timeLimit = Math.min(180, Math.max(90, 85 + matchTriplets * 3 + (safeShelfLv - 1) * 5));
   const uniqueTypes = [...new Set(chosenTypes)];
   const orderCount = Math.min(uniqueTypes.length, safeLevelId >= 10 ? 3 : 2);
   const orders = uniqueTypes.slice(0, orderCount).map((id) => ({ id, req: 3, done: 0 }));

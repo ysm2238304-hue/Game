@@ -65,7 +65,8 @@ export class CozyFoodRenderer {
     // 基礎大小最大化：配合大槽位放大，讓料理視覺更加飽滿大氣、觸控拖曳更靈敏
     // 圖示極限最大化：以槽位寬度 2.38 倍計算（約 80px~84px），讓美食無比飽滿、填滿木框核心！
     // 圖示巨無霸最大化：直徑提升至 92px~96px，飽滿塞滿木框，立體多汁！
-    const baseSize = Math.max(90, Math.min(96, Math.round(w * 2.85)));
+    // 🌟 家樂福黃金比例校準：單件寬度 34px~36px，高度 60px~64px，3件並列零重疊、整齊直立！
+    const baseSize = Math.max(58, Math.min(65, Math.round(w * 1.72)));
 
     ctx.save();
     ctx.translate(cx, cy);

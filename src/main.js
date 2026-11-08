@@ -449,28 +449,27 @@ class GameApp {
   recalcShelvesLayout() {
     if (!this.shelves.length) return;
     const cols = 3;
-    const rows = 3;
+    const rows = 4; // 🌟 升級為 4 層深海整合型大貨架（看齊家樂福/萬家福）！
     
     // 1. 左右邊距 8px，木框間距 9px，最大化槽位橫向寬度
     const padX = 8; 
     const gapX = 9; 
     const gapY = 16; 
 
-    // 2. 寬度基準
+    // 2. 寬度基準：左右各留 10px，兩列間隙 6px，充分利用水平寬度
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
-    // 3. 頂底留白
-    this.topSceneH = 8; 
-    this.bottomSceneH = 8;
+    // 3. 頂底留白輕盈
+    this.topSceneH = 4; 
+    this.bottomSceneH = 4;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
-    const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
-    // 扎實微方比例，剛好包覆 92px 巨型美食！
-    const shelfH = Math.round(shelfW * 1.02);
+    // 4 層均勻劃分垂直可用高度：每層約 98px ~ 110px，垂直空間 100% 吃滿無浪費！
+    const shelfH = Math.floor((availH - gapY * (rows - 1)) / rows);
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
-    const startY = this.topSceneH + Math.max(0, (freeMidH - totalGridH) / 2);
+    const startY = this.topSceneH + Math.max(0, Math.floor((freeMidH - totalGridH) / 2));
 
     this.shelves.forEach((sh, idx) => {
       const r = Math.floor(idx / cols);
@@ -510,9 +509,118 @@ class GameApp {
     sctx.clearRect(0, 0, this.width, this.height);
     sctx.lineJoin = 'round';
 
-    this.paintTopShopEaves(sctx);
-    this.shelves.forEach(sh => this.paintShelfFrame(sctx, sh));
-    // this.paintBottomCounterBase(sctx); // 移除底部假吧台，不再遮擋
+    this.paintSupermarketShelfUnit(sctx);
+  }
+
+  paintSupermarketShelfUnit(ctx) {
+    if (!this.shelves.length) return;
+    const cols = 3;
+    const rows = 4;
+    const LINE = '#251408';
+
+    const firstSh = this.shelves[0];
+    const lastSh = this.shelves[this.shelves.length - 1];
+    const shelfLeft = firstSh.x - 2;
+    const shelfRight = lastSh.x + lastSh.w + 2;
+    const shelfTop = firstSh.y - 4;
+    const shelfBottom = lastSh.y + lastSh.h + 2;
+
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    // 木紋漸層
+    const woodG = ctx.createLinearGradient(0, shelfTop, 0, shelfBottom);
+    woodG.addColorStop(0, '#F5A642');
+    woodG.addColorStop(0.35, '#C87428');
+    woodG.addColorStop(1, '#8C4610');
+
+    // 1. 整座大貨架的深海陰影
+    ctx.fillStyle = 'rgba(2, 24, 43, 0.40)';
+    ctx.beginPath();
+    ctx.roundRect(shelfLeft - 3, shelfTop - 1, (shelfRight - shelfLeft) + 6, (shelfBottom - shelfTop) + 8, 8);
+    ctx.fill();
+
+    // 2. 繪製 4 層橫樑層板 (頂板 + 4 層隔板)
+    // 頂板
+    ctx.fillStyle = woodG;
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.roundRect(shelfLeft - 4, shelfTop - 2, (shelfRight - shelfLeft) + 8, 6.5, [3, 3, 2, 2]);
+    ctx.fill(); ctx.stroke();
+
+    // 4 層商品承重板 (Planks under each row)
+    for (let r = 0; r < rows; r++) {
+      const rowSh = this.shelves[r * cols];
+      if (!rowSh) continue;
+      const plankY = rowSh.y + rowSh.h - 8;
+      const plankH = 8.5;
+
+      // 投影
+      ctx.fillStyle = 'rgba(2, 24, 43, 0.35)';
+      ctx.fillRect(shelfLeft, plankY + plankH, (shelfRight - shelfLeft), 3);
+
+      // 層板本體
+      ctx.fillStyle = woodG;
+      ctx.strokeStyle = LINE;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(shelfLeft - 3, plankY, (shelfRight - shelfLeft) + 6, plankH, [2, 2, 3, 3]);
+      ctx.fill(); ctx.stroke();
+    }
+
+    // 3. 兩側大立柱 (Left & Right Main Pillars)
+    const pillarW = 6;
+    [shelfLeft - 1, shelfRight - pillarW + 1].forEach((px) => {
+      ctx.fillStyle = woodG;
+      ctx.strokeStyle = LINE;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(px, shelfTop - 4, pillarW, (shelfBottom - shelfTop) + 8, 3);
+      ctx.fill(); ctx.stroke();
+    });
+
+    // 4. 中間兩根垂直隔間木柱 (2 Vertical Divider Posts)
+    for (let c = 1; c < cols; c++) {
+      const prevSh = this.shelves[c - 1];
+      const nextSh = this.shelves[c];
+      if (!prevSh || !nextSh) continue;
+      const divX = (prevSh.x + prevSh.w + nextSh.x) / 2 - 2;
+      ctx.fillStyle = woodG;
+      ctx.strokeStyle = LINE;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.roundRect(divX, shelfTop, 4, (shelfBottom - shelfTop), 2);
+      ctx.fill(); ctx.stroke();
+    }
+
+    // 5. 節點金屬航海鉚釘
+    for (let r = 0; r < rows; r++) {
+      const rowSh = this.shelves[r * cols];
+      if (!rowSh) continue;
+      const ry = rowSh.y + rowSh.h - 4;
+      [shelfLeft + 2, shelfRight - 2].forEach(rx => {
+        ctx.fillStyle = '#B0BEC5';
+        ctx.strokeStyle = '#263238';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(rx, ry, 2.2, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+      });
+    }
+
+    // 6. 各槽位微光落點陰影
+    this.shelves.forEach(sh => {
+      sh.slots.forEach(sl => {
+        ctx.fillStyle = 'rgba(0, 24, 48, 0.22)';
+        ctx.beginPath();
+        ctx.ellipse(sl.x + sl.w / 2, sh.y + sh.h - 9, sl.w * 0.38, 2.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+
+    ctx.restore();
   }
 
   paintTopShopEaves(ctx) {
@@ -1911,9 +2019,9 @@ class GameApp {
           ctx.arc(slot.x + slot.w / 2 - 6 + d * 4.2, slot.y + 4, 1.8, 0, Math.PI * 2);
           ctx.fill();
         }
-        // 垂直對齊：商品底部踏在底木上，頂部飽滿延伸至頂木下方，填滿木框 85% 空間
-        const foodCY = slot.y + slot.h / 2 + 1;
-        const backFoodCY = slot.y + slot.h / 2 - 8;
+        // 垂直對齊：商品立正站在木層板上，與上層層板緊湊咬合，零重疊！
+        const foodCY = slot.y + slot.h - 18;
+        const backFoodCY = slot.y + slot.h - 26;
 
         if (slot.queue.length > 1) {
           CozyFoodRenderer.drawFood(ctx, slot.queue[1], slot.x + slot.w / 2 + 1, backFoodCY, slot.w, slot.h, { isBack: true });
