@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v76-og-complete-and-300levels-timer'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'bikinibottom-v77-og-krab-cache-break'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
