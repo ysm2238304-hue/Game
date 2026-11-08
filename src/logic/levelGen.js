@@ -62,7 +62,8 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const iceCount = Math.min(shelfCount - 2, Math.floor((safeLevelId + 1) / 2));
   const moves = 999; // 開啟純秒數倒數模式，步數充裕不卡關
   // 關卡倒數秒數配置：基礎 75 秒 + 根據三連組數與貨架升級動態調配（60s ~ 150s）
-  const timeLimit = Math.min(180, Math.max(90, 85 + matchTriplets * 3 + (safeShelfLv - 1) * 5));
+  // ⚡ 關卡倒數秒數緊湊化（心跳加速快節奏）：基礎 50 秒，每組三連 +1.5 秒，上限 80~85 秒封頂！
+  const timeLimit = Math.min(85, Math.max(50, 48 + Math.floor(matchTriplets * 1.5) + (safeShelfLv - 1) * 3));
   const uniqueTypes = [...new Set(chosenTypes)];
   const orderCount = Math.min(uniqueTypes.length, safeLevelId >= 10 ? 3 : 2);
   const orders = uniqueTypes.slice(0, orderCount).map((id) => ({ id, req: 3, done: 0 }));

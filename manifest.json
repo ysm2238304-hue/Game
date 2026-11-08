@@ -1,15 +1,15 @@
 {
-  "name": "星野物語 - 深夜和風食堂",
-  "short_name": "星野物語",
-  "description": "手作和食與療癒商店街物語",
+  "name": "蟹堡王物語 - 比奇堡深海貨架大冒險",
+  "short_name": "蟹堡王物語",
+  "description": "我準備好了！快來幫助海綿寶寶整理深海漂流木貨架，美味蟹堡、水母果醬限時開搶！",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFF8EC",
-  "theme_color": "#FF85A1",
+  "background_color": "#0077B6",
+  "theme_color": "#00B4D8",
   "icons": [
     {
-      "src": "./assets/mascot/icon180.png?v=999",
+      "src": "./assets/mascot/icon180.png?v=20261108_spongebob",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
