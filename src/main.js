@@ -446,18 +446,22 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 物理極限：左右邊距 0，格子間距縮到最小 (3px)
+    // 1. 物理極限：左右邊距 0，水平間距 3px，垂直間距縮到 4px
     const padX = 0; 
     const gapX = 3; 
-    const gapY = 6;
+    const gapY = 4;
 
-    // 2. 以寬度算出最大正方形，不變形
+    // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
-    const shelfH = shelfW; // 絕對正方形
 
-    // 3. 上下留白極小化，讓九宮格完全撐滿
-    this.topSceneH    = 4; 
-    this.bottomSceneH = 45;
+    // 3. 垂直空間最大化：打破死板正方形限制，徹底消滅上下大片空白！
+    this.topSceneH = 2; 
+    this.bottomSceneH = Math.min(34, Math.max(24, Math.round(this.height * 0.06)));
+
+    const availH = this.height - this.topSceneH - this.bottomSceneH;
+    const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
+    // 自適應拉長放大：在直式螢幕上充分延展（最高可達 shelfW * 1.36），使觸控與拖曳熱區增加 30%+
+    const shelfH = Math.max(shelfW, Math.min(maxGridShelfH, Math.round(shelfW * 1.36)));
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -471,10 +475,10 @@ class GameApp {
       sh.w = shelfW;
       sh.h = shelfH;
 
-      // 👇 這裡是關鍵：把木櫃的內框厚度、頂部標籤、底部木板全部縮到最薄
-      const innerPadX = 1;   // 左右木框厚度 1px
-      const headerH = 12;    // 頂部漸層標籤高度 12px (原本 16)
-      const bottomPlankH = 4; // 底部木板厚度 4px (原本 8)
+      // 槽位最大化：內框與標籤極薄化，提供最大操作面積
+      const innerPadX = 1;
+      const headerH = 11;
+      const bottomPlankH = 4;
       
       const slotW = (shelfW - innerPadX * 2) / 3;
       const slotH = shelfH - headerH - bottomPlankH;
@@ -523,28 +527,30 @@ class GameApp {
     ctx.save();
     ctx.fillStyle = '#C88A55';
     ctx.strokeStyle = '#4A3326';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.8;
     ctx.fillRect(0, topY + h * 0.36, w, h * 0.64);
     ctx.strokeRect(0, topY + h * 0.36, w, h * 0.64);
 
     ctx.fillStyle = '#E6B88A';
-    ctx.fillRect(0, topY + h * 0.30, w, 7);
-    ctx.strokeRect(0, topY + h * 0.30, w, 7);
+    ctx.fillRect(0, topY + h * 0.30, w, Math.max(5, h * 0.18));
+    ctx.strokeRect(0, topY + h * 0.30, w, Math.max(5, h * 0.18));
 
+    const signH = Math.min(20, h * 0.58);
+    const signW = 34;
     ctx.fillStyle = '#FFF3B0';
     ctx.beginPath();
-    ctx.roundRect(8, topY + h * 0.08, 36, 22, 4);
+    ctx.roundRect(8, topY + h * 0.05, signW, signH, 4);
     ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#4A3326';
-    ctx.font = '900 8px sans-serif';
+    ctx.font = '900 7.5px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('会計処', 26, topY + h * 0.08 + 14);
+    ctx.fillText('会計処', 8 + signW / 2, topY + h * 0.05 + signH * 0.68);
 
     const decors = GameState.decorsUnlocked || {};
-    ctx.font = '13px sans-serif';
-    if (decors.maneki) ctx.fillText('🐱', 54, topY + h * 0.25);
-    if (decors.matcha) ctx.fillText('🍵', 70, topY + h * 0.25);
-    if (decors.sakura) ctx.fillText('🌸', 86, topY + h * 0.25);
+    ctx.font = '11px sans-serif';
+    if (decors.maneki) ctx.fillText('🐱', 50, topY + h * 0.25);
+    if (decors.matcha) ctx.fillText('🍵', 66, topY + h * 0.25);
+    if (decors.sakura) ctx.fillText('🌸', 82, topY + h * 0.25);
     ctx.restore();
   }
 
@@ -648,7 +654,7 @@ class GameApp {
       // 確保圖片已載入才繪製
       if (img && img.complete && img.naturalWidth > 0) {
         // 設定圖片顯示的寬度 (可依需求微調，50~60 左右)
-        const imgW = 55; 
+        const imgW = Math.min(48, Math.round(w * 0.13)); 
         // 依照原圖比例計算高度
         const imgH = imgW * (img.naturalHeight / img.naturalWidth);
         
@@ -1085,6 +1091,18 @@ class GameApp {
       this.dragging = null;
       this.cancelDragReturn(drag);
     });
+
+    const fsBtn = document.getElementById('btn-toggle-fullscreen');
+    if (fsBtn) {
+      fsBtn.onclick = () => {
+        SFX.tap();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      };
+    }
 
     document.getElementById('btn-tool-shuffle').onclick = () => this.useTool('shuffle');
     document.getElementById('btn-tool-hammer').onclick  = () => this.useTool('hammer');
@@ -1860,7 +1878,7 @@ class GameApp {
       const px = this.dragPointer.x;
       const py = this.dragPointer.y;
       this.fxCtx.save();
-      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 74, 74, {
+      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 82, 82, {
         isBack: false, scaleX: 1.15, scaleY: 1.15, lift: 14
       });
       this.fxCtx.restore();
