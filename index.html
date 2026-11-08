@@ -242,7 +242,9 @@
           </div>
 
           <!-- 放大版星野葵立繪 -->
-          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-4 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]"></div>
+          <div id="lobby-mascot-svg" class="relative z-10 w-44 h-44 sm:w-48 sm:h-48 mascot-breathe transition-transform group-active:scale-95 -mb-4 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]">
+            <img src="./assets/mascot/spongebob-happy.png?v=20261108_spongebob_mascot_final_v4" class="w-full h-full object-contain select-none drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]" alt="海綿寶寶" draggable="false">
+          </div>
         </div>
 
         <!-- 吧台冷藏玻璃罩 (本日旬味 TOP 3) -->
@@ -279,17 +281,14 @@
         <div class="grid grid-cols-2 gap-1.5">
           <!-- 商店街 -->
           <button data-nav="view-map" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
-            <div class="mini-scene" style="background:#FFD194;">
-              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
-                <rect y="30" width="44" height="14" fill="#C89F78"/>
-                <line x1="0" y1="34" x2="44" y2="34" stroke="#8C583A" stroke-width="1"/>
-                <line x1="0" y1="38" x2="44" y2="38" stroke="#8C583A" stroke-width="1"/>
-                <rect x="8" y="14" width="28" height="18" rx="4" fill="#A8E6CF" stroke="#4A3326" stroke-width="2"/>
-                <rect x="12" y="18" width="9" height="7" rx="1" fill="#FFFDF7"/>
-                <rect x="23" y="18" width="9" height="7" rx="1" fill="#FFFDF7"/>
-                <circle cx="14" cy="32" r="2" fill="#4A3326"/>
-                <circle cx="30" cy="32" r="2" fill="#4A3326"/>
-                <circle cx="34" cy="10" r="3" fill="#FFE169"/>
+            <div class="mini-scene" style="background: linear-gradient(135deg, #00B4D8, #0077B6);">
+              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid meet">
+                <rect x="6" y="8" width="32" height="28" rx="4" fill="#FFE8C2" stroke="#251408" stroke-width="1.8"/>
+                <path d="M10 16 Q18 20 26 14 T34 22" fill="none" stroke="#D84315" stroke-width="2" stroke-dasharray="2,2"/>
+                <line x1="28" y1="26" x2="34" y2="32" stroke="#D90429" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="34" y1="26" x2="28" y2="32" stroke="#D90429" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="16" cy="26" r="5" fill="#FFFFFF" stroke="#251408" stroke-width="1.2"/>
+                <polygon points="16,22 17.5,26 16,30 14.5,26" fill="#0077B6"/>
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
@@ -300,15 +299,13 @@
 
           <!-- 轉蛋亭 -->
           <button data-nav="view-gacha" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
-            <div class="mini-scene" style="background:#FFD6E0;">
-              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
-                <ellipse cx="22" cy="40" rx="18" ry="6" fill="#E3C7A2"/>
-                <rect x="10" y="8" width="4" height="28" fill="#D94E67" stroke="#4A3326" stroke-width="1.6"/>
-                <rect x="30" y="8" width="4" height="28" fill="#D94E67" stroke="#4A3326" stroke-width="1.6"/>
-                <rect x="6" y="6" width="32" height="4" fill="#D94E67" stroke="#4A3326" stroke-width="1.6"/>
-                <rect x="8" y="12" width="28" height="3" fill="#D94E67" stroke="#4A3326" stroke-width="1.4"/>
-                <circle cx="34" cy="34" r="3" fill="#FFC2D1"/>
-                <circle cx="12" cy="36" r="2" fill="#FFC2D1"/>
+            <div class="mini-scene" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">
+              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid meet">
+                <rect x="7" y="18" width="30" height="20" rx="3" fill="#8D4925" stroke="#251408" stroke-width="1.8"/>
+                <path d="M7 18 Q22 8 37 18 Z" fill="#C87428" stroke="#251408" stroke-width="1.8"/>
+                <line x1="7" y1="23" x2="37" y2="23" stroke="#FFE082" stroke-width="2"/>
+                <circle cx="22" cy="23" r="3" fill="#FFD166" stroke="#251408" stroke-width="1.4"/>
+                <polygon points="22,11 23,14 26,14 23.5,16 24.5,19 22,17 19.5,19 20.5,16 18,14 21,14" fill="#FFF3B0"/>
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
@@ -320,16 +317,14 @@
 
           <!-- 設備工坊 -->
           <button data-nav="view-shop" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
-            <div class="mini-scene" style="background:#C8E6C9;">
-              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
-                <rect x="6" y="26" width="32" height="14" fill="#C88A55" stroke="#4A3326" stroke-width="1.8"/>
-                <line x1="14" y1="26" x2="14" y2="40" stroke="#8C583A" stroke-width="1.2"/>
-                <line x1="22" y1="26" x2="22" y2="40" stroke="#8C583A" stroke-width="1.2"/>
-                <line x1="30" y1="26" x2="30" y2="40" stroke="#8C583A" stroke-width="1.2"/>
-                <path d="M12 8 L30 8 L30 14 L12 14 Z" fill="#FFFDF7" stroke="#4A3326" stroke-width="1.6"/>
-                <path d="M12 14 L12 10 L8 12 Z" fill="#8C583A" stroke-width="1.2"/>
-                <rect x="28" y="6" width="10" height="6" rx="1" fill="#A8E6CF" stroke="#4A3326" stroke-width="1.5"/>
-                <line x1="33" y1="12" x2="33" y2="22" stroke="#8C583A" stroke-width="2"/>
+            <div class="mini-scene" style="background: linear-gradient(135deg, #FF6F00, #E65100);">
+              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid meet">
+                <rect x="6" y="24" width="32" height="14" rx="2" fill="#37474F" stroke="#251408" stroke-width="1.8"/>
+                <line x1="12" y1="28" x2="32" y2="28" stroke="#FF5722" stroke-width="1.8"/>
+                <line x1="22" y1="6" x2="22" y2="18" stroke="#90A4AE" stroke-width="2.2" stroke-linecap="round"/>
+                <rect x="17" y="16" width="10" height="7" rx="1.5" fill="#CFD8DC" stroke="#251408" stroke-width="1.4"/>
+                <line x1="20" y1="18" x2="20" y2="21" stroke="#251408" stroke-width="1"/>
+                <line x1="24" y1="18" x2="24" y2="21" stroke="#251408" stroke-width="1"/>
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
@@ -340,14 +335,14 @@
 
           <!-- 蟹老闆每日契約 -->
           <button data-nav="view-quests" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
-            <div class="mini-scene" style="background:#B9DEF0;">
-              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
-                <rect x="9" y="8" width="26" height="30" rx="3" fill="#FFFDF7" stroke="#4A3326" stroke-width="1.8"/>
-                <line x1="14" y1="16" x2="30" y2="16" stroke="#8C583A" stroke-width="1.6"/>
-                <line x1="14" y1="21" x2="30" y2="21" stroke="#8C583A" stroke-width="1.6"/>
-                <line x1="14" y1="26" x2="24" y2="26" stroke="#8C583A" stroke-width="1.6"/>
-                <circle cx="28" cy="32" r="6" fill="#FF85A1" stroke="#4A3326" stroke-width="1.6"/>
-                <text x="28" y="35" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="7" font-weight="900" fill="#FFFDF7">印</text>
+            <div class="mini-scene" style="background: linear-gradient(135deg, #0288D1, #01579B);">
+              <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid meet">
+                <rect x="8" y="7" width="28" height="32" rx="3" fill="#FFF8E7" stroke="#251408" stroke-width="1.8"/>
+                <line x1="14" y1="14" x2="30" y2="14" stroke="#78909C" stroke-width="1.6"/>
+                <line x1="14" y1="19" x2="30" y2="19" stroke="#78909C" stroke-width="1.6"/>
+                <line x1="14" y1="24" x2="24" y2="24" stroke="#78909C" stroke-width="1.6"/>
+                <circle cx="27" cy="29" r="6" fill="#FFD166" stroke="#251408" stroke-width="1.6"/>
+                <text x="27" y="33" text-anchor="middle" font-family="sans-serif" font-size="8" font-weight="900" fill="#D84315">$</text>
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
@@ -882,6 +877,6 @@
     </div>
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261108_bikinibottom_full_lobby"></script>
+  <script type="module" src="./src/main.js?v=20261108_spongebob_final_lobby"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v70-bikinibottom-full-lobby'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'hoshino-game-v71-spongebob-final-lobby'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -6,7 +6,9 @@ const PRECACHE_ASSETS = [
   './manifest.json',
   './src/styles/main.css',
   './assets/mascot/icon180.png',
-  './assets/mascot/aoi-happy.png'
+  './assets/mascot/spongebob-happy.png',
+  './assets/mascot/spongebob-star.png',
+  './assets/mascot/spongebob-worry.png'
 ];
 
 // 1. 安裝階段：容錯預載入資源

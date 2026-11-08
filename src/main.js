@@ -739,10 +739,10 @@ class GameApp {
     const d = GameState.totalDishesCleared || 0;
     const ranks = [
       { lv: 1, title: '實習洗碗海綿', min: 0,   next: 30 },
-      { lv: 2, title: '人氣旬味食堂', min: 30,  next: 90 },
-      { lv: 3, title: '商店街名物店', min: 90,  next: 180 },
-      { lv: 4, title: '特選和風料亭', min: 180, next: 320 },
-      { lv: 5, title: '星野總本家 ✦', min: 320, next: 500 }
+      { lv: 2, title: '榮譽鏟堡大師', min: 30,  next: 90 },
+      { lv: 3, title: '水母田大霸主', min: 90,  next: 180 },
+      { lv: 4, title: '蟹老闆金牌特廚', min: 180, next: 320 },
+      { lv: 5, title: '比奇堡商業傳奇 ✦', min: 320, next: 500 }
     ];
     let cur = ranks[0];
     for (const r of ranks) {

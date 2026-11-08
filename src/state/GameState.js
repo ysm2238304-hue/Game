@@ -26,9 +26,9 @@ const DEFAULT_STATE = {
   upgrades: { register: 1, shelf: 1, cold: 1 },
   boosters: { shuffle: 3, hammer: 2, magnet: 2 },
   quests: [
-    { id: 'q1', desc: '完成 2 次木櫃和食全數完售', cur: 0, target: 2, claimed: false, coins: 200, diam: 20 },
-    { id: 'q2', desc: '累計達成 6 次料理三連完售', cur: 0, target: 6, claimed: false, coins: 250, diam: 25 },
-    { id: 'q3', desc: '在營業中施展 1 次店長秘技', cur: 0, target: 1, claimed: false, coins: 150, diam: 15 }
+    { id: 'q1', desc: '完成 2 次漂流木美食全數完售', cur: 0, target: 2, claimed: false, coins: 200, diam: 20 },
+    { id: 'q2', desc: '累計達成 6 次美味蟹堡三連完售', cur: 0, target: 6, claimed: false, coins: 250, diam: 25 },
+    { id: 'q3', desc: '在營業中施展 1 次深海神級秘技', cur: 0, target: 1, claimed: false, coins: 150, diam: 15 }
   ]
 };
 
