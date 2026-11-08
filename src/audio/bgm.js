@@ -6,7 +6,7 @@ export const BGM = {
 
   init() {
     if (this.audio) return;
-    this.audio = new Audio('./assets/bgm.mp3');
+    this.audio = new Audio('./assets/bgm.mp3?v=20261108_hawaiian');
     this.audio.loop = true;
     this.audio.volume = 0.35; // 音量 35%
   },

@@ -1442,6 +1442,9 @@ class GameApp {
       if (this.currentView !== 'view-game' || this.isLevelSettled || document.hidden) return;
       this.timeLeft = Math.max(0, this.timeLeft - 1);
       this.updateTimerUI();
+      if (this.timeLeft <= 10 && this.timeLeft > 0) {
+        if (typeof SFX !== "undefined" && SFX.tick) SFX.tick();
+      }
       if (this.timeLeft <= 0) {
         this.stopTimer();
         this.onTimeUp();
