@@ -515,11 +515,15 @@ class GameApp {
   }
 
   paintTopShopEaves(ctx) {
-    // 移除了原本的暖簾、黑板和燈籠，把空間讓給貨架
     const w = this.width;
     ctx.save();
-    ctx.fillStyle = '#8C583A';
-    ctx.fillRect(0, 0, w, 4); // 只保留一條細細的裝飾線
+    // 比奇堡熱帶海洋頂部碧藍光斑裝飾條
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, '#00B4D8');
+    grad.addColorStop(0.5, '#48CAE4');
+    grad.addColorStop(1, '#0077B6');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, 3.5);
     ctx.restore();
   }
   
@@ -529,68 +533,99 @@ class GameApp {
     const topY = this.height - h;
 
     ctx.save();
-    ctx.fillStyle = '#C88A55';
-    ctx.strokeStyle = '#4A3326';
+    // 比奇堡沙灘木桶吧台 (Nautical Barrel Counter)
+    ctx.fillStyle = '#C87428';
+    ctx.strokeStyle = '#23140A';
+    ctx.lineWidth = 2.2;
+    ctx.fillRect(0, topY + h * 0.35, w, h * 0.65);
+    ctx.strokeRect(0, topY + h * 0.35, w, h * 0.65);
+
+    // 金屬強化條 (Metal Band)
+    ctx.fillStyle = '#48CAE4';
+    ctx.fillRect(0, topY + h * 0.28, w, Math.max(5, h * 0.18));
+    ctx.strokeStyle = '#23140A';
+    ctx.strokeRect(0, topY + h * 0.28, w, Math.max(5, h * 0.18));
+
+    // 救生圈 / 招牌 (Krusty Sign)
+    const signH = Math.min(22, h * 0.6);
+    const signW = 48;
+    ctx.fillStyle = '#FFE082';
+    ctx.strokeStyle = '#23140A';
     ctx.lineWidth = 1.8;
-    ctx.fillRect(0, topY + h * 0.36, w, h * 0.64);
-    ctx.strokeRect(0, topY + h * 0.36, w, h * 0.64);
-
-    ctx.fillStyle = '#E6B88A';
-    ctx.fillRect(0, topY + h * 0.30, w, Math.max(5, h * 0.18));
-    ctx.strokeRect(0, topY + h * 0.30, w, Math.max(5, h * 0.18));
-
-    const signH = Math.min(20, h * 0.58);
-    const signW = 34;
-    ctx.fillStyle = '#FFF3B0';
     ctx.beginPath();
-    ctx.roundRect(8, topY + h * 0.05, signW, signH, 4);
+    ctx.roundRect(8, topY + h * 0.05, signW, signH, 5);
     ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#4A3326';
-    ctx.font = '900 7.5px sans-serif';
+    ctx.fillStyle = '#D84315';
+    ctx.font = '900 8px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('会計処', 8 + signW / 2, topY + h * 0.05 + signH * 0.68);
+    ctx.fillText('⚓ 蟹堡點餐 ⚓', 8 + signW / 2, topY + h * 0.05 + signH * 0.68);
 
-    const decors = GameState.decorsUnlocked || {};
-    ctx.font = '11px sans-serif';
-    if (decors.maneki) ctx.fillText('🐱', 50, topY + h * 0.25);
-    if (decors.matcha) ctx.fillText('🍵', 66, topY + h * 0.25);
-    if (decors.sakura) ctx.fillText('🌸', 82, topY + h * 0.25);
+    // 比奇堡深海吉祥物裝飾
+    ctx.font = '13px sans-serif';
+    ctx.fillText('🦀', 64, topY + h * 0.25);
+    ctx.fillText('⭐', 80, topY + h * 0.25);
+    ctx.fillText('🪼', 96, topY + h * 0.25);
     ctx.restore();
   }
 
   paintShelfFrame(ctx, sh) {
     const shelfTheme = sh.theme || SHELF_THEMES[0];
 
-    ctx.fillStyle = 'rgba(74,51,38,0.2)';
+    // 1. 粗獷美漫外投影
+    ctx.fillStyle = 'rgba(10, 35, 55, 0.35)';
     ctx.beginPath();
-    ctx.roundRect(sh.x, sh.y + 3, sh.w, sh.h, 11);
+    ctx.roundRect(sh.x, sh.y + 3.5, sh.w, sh.h, 12);
     ctx.fill();
 
+    // 2. 比奇堡熱帶沉船木架厚框 (Driftwood Planks)
     const woodGrad = ctx.createLinearGradient(0, sh.y, 0, sh.y + sh.h);
-    woodGrad.addColorStop(0, '#FFF8EC');
-    woodGrad.addColorStop(1, '#EED4B1');
+    woodGrad.addColorStop(0, '#F5A642');
+    woodGrad.addColorStop(0.3, '#E28C2B');
+    woodGrad.addColorStop(1, '#B56018');
     ctx.fillStyle = woodGrad;
-    ctx.strokeStyle = '#4A3326';
-    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = '#251408'; // 經典美式手繪粗黑線
+    ctx.lineWidth = 2.6;
     ctx.beginPath();
     ctx.roundRect(sh.x, sh.y, sh.w, sh.h, 10);
     ctx.fill(); ctx.stroke();
 
-    const innerX = sh.x + 2.5, innerY = sh.y + 14;
-    const innerW = sh.w - 5, innerH = sh.h - 18;
+    // 3. 四角金屬航海螺栓鉚釘 (Nautical Steel Rivets)
+    const rivets = [
+      [sh.x + 5, sh.y + 6],
+      [sh.x + sh.w - 5, sh.y + 6],
+      [sh.x + 5, sh.y + sh.h - 5],
+      [sh.x + sh.w - 5, sh.y + sh.h - 5]
+    ];
+    rivets.forEach(([rx, ry]) => {
+      ctx.fillStyle = '#B0BEC5';
+      ctx.strokeStyle = '#263238';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(rx, ry, 2.5, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(rx - 0.7, ry - 0.7, 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 4. 內層槽位底色：明亮透徹的海底白沙與碧水光澤 (Clear Sea Sand Glow)
+    const innerX = sh.x + 2.5, innerY = sh.y + 13;
+    const innerW = sh.w - 5, innerH = sh.h - 17;
     const recessG = ctx.createLinearGradient(0, innerY, 0, innerY + innerH);
-    recessG.addColorStop(0, '#DEC09A');
-    recessG.addColorStop(0.55, '#F3E1C7');
-    recessG.addColorStop(1, '#FFFDF9');
+    recessG.addColorStop(0, '#E0F4F7');
+    recessG.addColorStop(0.5, '#FFF9EC');
+    recessG.addColorStop(1, '#FFF2D6');
     ctx.fillStyle = recessG;
-    ctx.strokeStyle = '#8C583A';
-    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = '#0077B6';
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.roundRect(innerX, innerY, innerW, innerH, 6);
+    ctx.roundRect(innerX, innerY, innerW, innerH, 7);
     ctx.fill(); ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(110,79,58,0.22)';
-    ctx.lineWidth = 1;
+    // 5. 槽位格線：碧海水波虛線
+    ctx.strokeStyle = 'rgba(0, 119, 182, 0.35)';
+    ctx.lineWidth = 1.2;
     ctx.setLineDash([3, 3]);
     for (let i = 1; i <= 2; i++) {
       const divX = innerX + (innerW / 3) * i;
@@ -601,38 +636,41 @@ class GameApp {
     }
     ctx.setLineDash([]);
 
-    ctx.fillStyle = '#C88A55';
-    ctx.strokeStyle = '#4A3326';
-    ctx.lineWidth = 1.3;
+    // 6. 底部厚實支撐橫木 (Bottom Crossbeam)
+    ctx.fillStyle = '#9C4E15';
+    ctx.strokeStyle = '#251408';
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.roundRect(innerX, sh.y + sh.h - 8, innerW, 6, [2, 2, 5, 5]);
+    ctx.roundRect(innerX, sh.y + sh.h - 7.5, innerW, 5.5, [2, 2, 5, 5]);
     ctx.fill(); ctx.stroke();
 
-    const tagW = 28, tagH = 10;
+    // 7. 價格小吊牌：比奇堡海綿黃小木板
+    const tagW = 30, tagH = 10;
     const tagX = sh.x + sh.w - tagW - 5;
-    const tagY = sh.y + sh.h - 9.5;
-    ctx.fillStyle = '#FFF3B0';
-    ctx.strokeStyle = '#4A3326';
+    const tagY = sh.y + sh.h - 9;
+    ctx.fillStyle = '#FFE082';
+    ctx.strokeStyle = '#251408';
     ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.roundRect(tagX, tagY, tagW, tagH, 2);
+    ctx.roundRect(tagX, tagY, tagW, tagH, 2.5);
     ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#D94E67';
-    ctx.font = '900 6.5px "M PLUS Rounded 1c", sans-serif';
+    ctx.fillStyle = '#D84315';
+    ctx.font = '900 6.5px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(shelfTheme.price || '¥200', tagX + tagW / 2, tagY + 6.5);
+    ctx.fillText(shelfTheme.price || '★ $1.99', tagX + tagW / 2, tagY + 7);
 
+    // 8. 頂部深海熱帶漸層標籤條 (Top Nautical Banner)
     const topBarG = ctx.createLinearGradient(sh.x, 0, sh.x + sh.w, 0);
-    topBarG.addColorStop(0, shelfTheme.strip[0]);
-    topBarG.addColorStop(1, shelfTheme.strip[1]);
+    topBarG.addColorStop(0, '#00B4D8');
+    topBarG.addColorStop(1, '#0077B6');
     ctx.fillStyle = topBarG;
     ctx.beginPath();
-    ctx.roundRect(sh.x + 2, sh.y + 1.5, sh.w - 4, 11.5, [8, 8, 2, 2]);
+    ctx.roundRect(sh.x + 2, sh.y + 1.5, sh.w - 4, 11, [8, 8, 2, 2]);
     ctx.fill();
-    ctx.fillStyle = '#FFFDF7';
-    ctx.font = '900 8.5px "M PLUS Rounded 1c", sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 8.5px sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`✦ ${shelfTheme.tag}`, sh.x + 6, sh.y + 10);
+    ctx.fillText(`⚓ ${shelfTheme.tag || '比奇堡專櫃'}`, sh.x + 6, sh.y + 9.5);
   }
 
   drawBottomCustomers(ctx, now) {
