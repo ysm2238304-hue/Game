@@ -1,20 +1,23 @@
 // ============================================================
-// 🎨 src/themes/japanese/spriteAtlas.js — 料理精靈圖（載入 PNG）
+// 🎨 src/themes/japanese/spriteAtlas.js — 料理精靈圖（載入 PNG + 強制破除快取版）
 // ============================================================
 
 import { ITEM_DEFS } from './items.js';
 
+// 強制快取破除版號，確保手機端與電腦端立即載入最新超商圖示
+const ASSET_VER = 'v=20261108_store_goods';
+
 const FOOD_IMAGES = {
-  onigiri:    './assets/food/onigiri.png',
-  sushi:      './assets/food/sushi.png',
-  ramen:      './assets/food/ramen.png',
-  tamagoyaki: './assets/food/tamagoyaki.png',
-  takoyaki:   './assets/food/takoyaki.png',
-  yakitori:   './assets/food/yakitori.png',
-  inari:      './assets/food/inari.png',
-  ikura:      './assets/food/ikura.png',
-  daifuku:    './assets/food/daifuku.png',
-  pudding:    './assets/food/pudding.png'
+  onigiri:    `./assets/food/onigiri.png?${ASSET_VER}`,
+  sushi:      `./assets/food/sushi.png?${ASSET_VER}`,
+  ramen:      `./assets/food/ramen.png?${ASSET_VER}`,
+  tamagoyaki: `./assets/food/tamagoyaki.png?${ASSET_VER}`,
+  takoyaki:   `./assets/food/takoyaki.png?${ASSET_VER}`,
+  yakitori:   `./assets/food/yakitori.png?${ASSET_VER}`,
+  inari:      `./assets/food/inari.png?${ASSET_VER}`,
+  ikura:      `./assets/food/ikura.png?${ASSET_VER}`,
+  daifuku:    `./assets/food/daifuku.png?${ASSET_VER}`,
+  pudding:    `./assets/food/pudding.png?${ASSET_VER}`
 };
 
 export const SPRITE_RES = 140;
