@@ -451,10 +451,10 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 左右呼吸邊距 12px，加大橫向櫃間距 (12px)，確保 9 個木框邊界分明！
-    const padX = 12; 
-    const gapX = 12; // 櫃與櫃之間有 12px 明確的空隙！
-    const gapY = 16; // 層與層之間有 16px 明確的透光空隙！
+    // 1. 左右邊距 8px，木框間距 9px，最大化槽位橫向寬度
+    const padX = 8; 
+    const gapX = 9; 
+    const gapY = 16; 
 
     // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
@@ -465,8 +465,8 @@ class GameApp {
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
-    // 木框比例壓實為正方形：徹底消滅上方 70% 尷尬空白，讓放大的商品直接填滿木框內部！
-    const shelfH = Math.round(shelfW * 0.98);
+    // 扎實微方比例，剛好包覆 92px 巨型美食！
+    const shelfH = Math.round(shelfW * 1.02);
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -480,9 +480,9 @@ class GameApp {
       sh.w = shelfW;
       sh.h = shelfH;
 
-      // 4根木框內部的槽位：邊界留 5px 避開左右立木，底部對齊底木
-      const innerPadX = 5;
-      const headerH = 4;
+      // 槽位極大化：縮短內縮，讓放大的商品有足夠的伸展舞台
+      const innerPadX = 2;
+      const headerH = 2;
       const bottomPlankH = 8;
       
       const slotW = (shelfW - innerPadX * 2) / 3;
@@ -1995,7 +1995,7 @@ class GameApp {
       const px = this.dragPointer.x;
       const py = this.dragPointer.y;
       this.fxCtx.save();
-      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 88, 88, {
+      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 102, 102, {
         isBack: false, scaleX: 1.15, scaleY: 1.15, lift: 14
       });
       this.fxCtx.restore();
