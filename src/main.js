@@ -450,22 +450,22 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 左右呼吸邊距 10px，露出比奇堡深海背景、波浪與氣泡
-    const padX = 10; 
-    const gapX = 3; 
-    const gapY = 5;
+    // 1. 左右呼吸邊距 14px，完全露出兩側比奇堡深海背景、波浪光斑與氣泡
+    const padX = 14; 
+    const gapX = 6; 
+    const gapY = 16; // 樹枝層與層之間保留垂直透光空間，徹底消除壓迫感！
 
     // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
-    // 3. 徹底移除底部遮擋物（顧客與假吧台），完全解放下排貨架與底部按鈕！
-    this.topSceneH = 4; 
-    this.bottomSceneH = 4;
+    // 3. 徹底去框架化，頂底留白輕盈
+    this.topSceneH = 8; 
+    this.bottomSceneH = 8;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
-    // 依高寬比自適應：高度適中，留出充足透光空間給海底珊瑚與陽光
-    const shelfH = Math.max(shelfW, Math.min(maxGridShelfH, Math.round(shelfW * 1.28)));
+    // 高度優化：保證商品站立飽滿，同時完整露出身後海底全貌
+    const shelfH = Math.max(shelfW * 0.95, Math.min(maxGridShelfH, Math.round(shelfW * 1.18)));
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -479,10 +479,10 @@ class GameApp {
       sh.w = shelfW;
       sh.h = shelfH;
 
-      // 槽位最大化：內框與標籤極薄化，提供最大操作面積
-      const innerPadX = 1;
-      const headerH = 11;
-      const bottomPlankH = 4;
+      // 無封閉外框：槽位直達漂流木頂部
+      const innerPadX = 0;
+      const headerH = 2;
+      const bottomPlankH = 8;
       
       const slotW = (shelfW - innerPadX * 2) / 3;
       const slotH = shelfH - headerH - bottomPlankH;
@@ -569,109 +569,149 @@ class GameApp {
   }
 
   paintShelfFrame(ctx, sh) {
-    const shelfTheme = sh.theme || SHELF_THEMES[0];
+    const idx = sh.shelfIdx % 9;
 
-    // 1. 粗獷美漫外投影
-    ctx.fillStyle = 'rgba(10, 35, 55, 0.35)';
-    ctx.beginPath();
-    ctx.roundRect(sh.x, sh.y + 3.5, sh.w, sh.h, 12);
-    ctx.fill();
+    // 🌟 徹底去框架化：完全不畫封閉外框、完全不畫不透明背板！
+    // 讓比奇堡海底背景 100% 完美透出來！
 
-    // 2. 比奇堡熱帶沉船木架厚框 (Driftwood Planks)
-    const woodGrad = ctx.createLinearGradient(0, sh.y, 0, sh.y + sh.h);
-    woodGrad.addColorStop(0, '#F5A642');
-    woodGrad.addColorStop(0.3, '#E28C2B');
-    woodGrad.addColorStop(1, '#B56018');
-    ctx.fillStyle = woodGrad;
-    ctx.strokeStyle = '#251408'; // 經典美式手繪粗黑線
-    ctx.lineWidth = 2.6;
-    ctx.beginPath();
-    ctx.roundRect(sh.x, sh.y, sh.w, sh.h, 10);
-    ctx.fill(); ctx.stroke();
-
-    // 3. 四角金屬航海螺栓鉚釘 (Nautical Steel Rivets)
-    const rivets = [
-      [sh.x + 5, sh.y + 6],
-      [sh.x + sh.w - 5, sh.y + 6],
-      [sh.x + 5, sh.y + sh.h - 5],
-      [sh.x + sh.w - 5, sh.y + sh.h - 5]
-    ];
-    rivets.forEach(([rx, ry]) => {
-      ctx.fillStyle = '#B0BEC5';
-      ctx.strokeStyle = '#263238';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(rx, ry, 2.5, 0, Math.PI * 2);
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(rx - 0.7, ry - 0.7, 0.8, 0, Math.PI * 2);
-      ctx.fill();
+    // 1. 在每個槽位底層繪製柔和的深海微水光落點陰影
+    sh.slots.forEach((sl) => {
+      if (sl.queue.length > 0) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 24, 48, 0.28)';
+        ctx.beginPath();
+        ctx.ellipse(sl.x + sl.w / 2, sh.y + sh.h - 9, sl.w * 0.38, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
     });
 
-    // 4. 內層槽位底色：明亮透徹的海底白沙與碧水光澤 (Clear Sea Sand Glow)
-    const innerX = sh.x + 2.5, innerY = sh.y + 13;
-    const innerW = sh.w - 5, innerH = sh.h - 17;
-    // 槽位半透明晶瑩質感：讓後方的比奇堡深海背景、珊瑚與氣泡直接透出！
-    const recessG = ctx.createLinearGradient(0, innerY, 0, innerY + innerH);
-    recessG.addColorStop(0, 'rgba(255, 255, 255, 0.62)');
-    recessG.addColorStop(0.5, 'rgba(224, 248, 255, 0.48)');
-    recessG.addColorStop(1, 'rgba(255, 248, 230, 0.55)');
-    ctx.fillStyle = recessG;
-    ctx.strokeStyle = '#0077B6';
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.roundRect(innerX, innerY, innerW, innerH, 7);
-    ctx.fill(); ctx.stroke();
+    // 2. 繪製底部獨一無二的手繪比奇堡漂流木樹枝 (9 款不同造型)
+    this.paintDriftwoodBranch(ctx, sh, idx);
+  }
 
-    // 5. 槽位格線：碧海水波虛線
-    ctx.strokeStyle = 'rgba(0, 119, 182, 0.35)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([3, 3]);
-    for (let i = 1; i <= 2; i++) {
-      const divX = innerX + (innerW / 3) * i;
-      ctx.beginPath();
-      ctx.moveTo(divX, innerY + 3);
-      ctx.lineTo(divX, innerY + innerH - 5);
-      ctx.stroke();
-    }
-    ctx.setLineDash([]);
+  paintDriftwoodBranch(ctx, sh, idx) {
+    ctx.save();
+    const bx = sh.x - 3;
+    const by = sh.y + sh.h - 10;
+    const bw = sh.w + 6;
+    const bh = 9; // 樹枝厚度 9px
+    const LINE = '#251408'; // 比奇堡經典手繪粗墨線
 
-    // 6. 底部厚實支撐橫木 (Bottom Crossbeam)
-    ctx.fillStyle = '#9C4E15';
-    ctx.strokeStyle = '#251408';
-    ctx.lineWidth = 1.4;
+    // 1. 樹枝外投影
+    ctx.fillStyle = 'rgba(2, 24, 43, 0.45)';
     ctx.beginPath();
-    ctx.roundRect(innerX, sh.y + sh.h - 7.5, innerW, 5.5, [2, 2, 5, 5]);
-    ctx.fill(); ctx.stroke();
-
-    // 7. 價格小吊牌：比奇堡海綿黃小木板
-    const tagW = 30, tagH = 10;
-    const tagX = sh.x + sh.w - tagW - 5;
-    const tagY = sh.y + sh.h - 9;
-    ctx.fillStyle = '#FFE082';
-    ctx.strokeStyle = '#251408';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.roundRect(tagX, tagY, tagW, tagH, 2.5);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#D84315';
-    ctx.font = '900 6.5px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(shelfTheme.price || '★ $1.99', tagX + tagW / 2, tagY + 7);
-
-    // 8. 頂部深海熱帶漸層標籤條 (Top Nautical Banner)
-    const topBarG = ctx.createLinearGradient(sh.x, 0, sh.x + sh.w, 0);
-    topBarG.addColorStop(0, '#00B4D8');
-    topBarG.addColorStop(1, '#0077B6');
-    ctx.fillStyle = topBarG;
-    ctx.beginPath();
-    ctx.roundRect(sh.x + 2, sh.y + 1.5, sh.w - 4, 11, [8, 8, 2, 2]);
+    ctx.ellipse(bx + bw / 2, by + bh + 2, bw * 0.48, 3, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '900 8.5px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(`⚓ ${shelfTheme.tag || '比奇堡專櫃'}`, sh.x + 6, sh.y + 9.5);
+
+    // 2. 樹枝木紋漸層
+    const woodG = ctx.createLinearGradient(0, by, 0, by + bh);
+    woodG.addColorStop(0, '#E89846');
+    woodG.addColorStop(0.35, '#C87428');
+    woodG.addColorStop(1, '#8C4610');
+    ctx.fillStyle = woodG;
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 2.2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    // 依據 idx (0~8) 繪製 9 種不同外觀的樹枝輪廓與獨特細節！
+    ctx.beginPath();
+    switch (idx) {
+      case 0: // 右端帶小分叉樹枝
+        ctx.moveTo(bx, by + 3);
+        ctx.quadraticCurveTo(bx + bw * 0.4, by - 1, bx + bw - 6, by + 2);
+        ctx.lineTo(bx + bw + 4, by - 3); // 小分叉
+        ctx.lineTo(bx + bw + 2, by + 1);
+        ctx.lineTo(bx + bw + 6, by + 5);
+        ctx.lineTo(bx + bw - 2, by + bh + 1);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by + bh + 2, bx, by + bh - 1);
+        ctx.closePath();
+        break;
+      case 1: // 厚實平整、帶木眼年輪
+        ctx.roundRect(bx, by + 1, bw, bh, [4, 6, 5, 4]);
+        break;
+      case 2: // 帶白色小藤壺的浮木
+        ctx.moveTo(bx, by + 2);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by - 1, bx + bw, by + 1);
+        ctx.lineTo(bx + bw - 1, by + bh);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by + bh + 2, bx + 1, by + bh - 1);
+        ctx.closePath();
+        break;
+      case 3: // 纏繞海草的微彎曲樹木
+        ctx.moveTo(bx, by + 3);
+        ctx.quadraticCurveTo(bx + bw * 0.3, by + 5, bx + bw * 0.7, by);
+        ctx.lineTo(bx + bw, by + 2);
+        ctx.lineTo(bx + bw - 2, by + bh + 1);
+        ctx.quadraticCurveTo(bx + bw * 0.6, by + bh - 1, bx, by + bh);
+        ctx.closePath();
+        break;
+      case 4: // 帶金屬螺栓的沉船木板
+        ctx.roundRect(bx, by + 2, bw, bh - 1, 3);
+        break;
+      case 5: // 趴著粉紅小海星的樹樁
+        ctx.moveTo(bx, by + 1);
+        ctx.quadraticCurveTo(bx + bw * 0.4, by, bx + bw, by + 3);
+        ctx.lineTo(bx + bw - 2, by + bh);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by + bh + 2, bx + 1, by + bh);
+        ctx.closePath();
+        break;
+      case 6: // 海蝕鋸齒斷木
+        ctx.moveTo(bx + 4, by + 1);
+        ctx.lineTo(bx + bw - 4, by);
+        ctx.lineTo(bx + bw + 1, by + 4);
+        ctx.lineTo(bx + bw - 2, by + bh + 1);
+        ctx.lineTo(bx + 2, by + bh);
+        ctx.lineTo(bx - 1, by + 5);
+        ctx.closePath();
+        break;
+      case 7: // 掛貝殼吊牌的平滑浮木
+        ctx.roundRect(bx, by + 1, bw, bh, [5, 4, 3, 5]);
+        break;
+      default: // 彎曲老樹根
+        ctx.moveTo(bx, by + 2);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by + 4, bx + bw, by + 1);
+        ctx.lineTo(bx + bw - 1, by + bh);
+        ctx.quadraticCurveTo(bx + bw * 0.5, by + bh + 3, bx, by + bh - 1);
+        ctx.closePath();
+        break;
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    // 繪製各樹枝的專屬手繪小細節！
+    if (idx === 1) { // 木眼年輪
+      ctx.strokeStyle = '#6E320A'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.ellipse(bx + bw * 0.35, by + bh * 0.45, 3.5, 2, 0.2, 0, Math.PI * 2); ctx.stroke();
+    } else if (idx === 2) { // 2 個白色小藤壺
+      [bx + 12, bx + 22].forEach(fx => {
+        ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(fx, by + 1, 2.8, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#E0F2F1'; ctx.beginPath(); ctx.arc(fx, by + 0.5, 1.2, 0, Math.PI * 2); ctx.fill();
+      });
+    } else if (idx === 3) { // 飄動綠海草
+      ctx.fillStyle = '#2EC4B6'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(bx + bw * 0.6, by - 2);
+      ctx.quadraticCurveTo(bx + bw * 0.63, by + bh + 5, bx + bw * 0.65, by + bh + 8);
+      ctx.quadraticCurveTo(bx + bw * 0.61, by + bh + 3, bx + bw * 0.57, by + 1);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    } else if (idx === 4) { // 沉船金屬鉚釘
+      [bx + 8, bx + bw - 8].forEach(rx => {
+        ctx.fillStyle = '#B0BEC5'; ctx.strokeStyle = '#263238'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(rx, by + bh * 0.5, 2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      });
+    } else if (idx === 5) { // 粉紅小海星
+      const sx = bx + bw - 10, sy = by - 1;
+      ctx.fillStyle = '#FF85A1'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    } else if (idx === 7) { // 貝殼吊牌
+      const cx = bx + 14, cy = by + bh + 2;
+      ctx.fillStyle = '#FFE082'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+
+    ctx.restore();
   }
 
   drawBottomCustomers(ctx, now) {
@@ -1586,8 +1626,8 @@ class GameApp {
       const pool = openSlots.map(s => s.queue[0]).sort(() => Math.random() - 0.5);
       openSlots.forEach((s, i) => { s.queue[0] = pool[i]; this.jellyBounce(s); });
       SFX.swap();
-      this.showTopToast('🔀 全櫃重整', '所有木櫃前排料理已重新擺盤！', '擺盤煥然一新 ✦');
-      this.setMascotMood('happy', '「全木櫃前排料理重新擺盤完畢！」');
+      this.showTopToast('🌀 深海大漩渦', '所有漂流木上的商品全部重新洗牌！', '漩渦席捲 ✦');
+      this.setMascotMood('happy', '「🌀 呼啦啦！深海大漩渦把商品全部打亂囉！」');
     } else if (type === 'hammer') {
       GameState.boosters.hammer--;
       this.shelves.forEach(sh => sh.slots.forEach(sl => {

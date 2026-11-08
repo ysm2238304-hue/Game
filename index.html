@@ -436,37 +436,40 @@
         <canvas id="shelf-canvas" class="w-full h-full block"></canvas>
       </div>
 
-      <!-- 極簡底部操作塢 -->
-      <div class="relative z-10 w-full px-2 pt-1 safe-bottom bg-black/50 backdrop-blur-xl border-t border-white/20 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
-        <div class="flex items-center justify-between gap-1.5 pb-1">
+      <!-- 比奇堡深海海底操作塢 -->
+      <div class="relative z-10 w-full px-2.5 pt-1.5 safe-bottom bg-[#001D3D]/80 backdrop-blur-xl border-t-2 border-[#48CAE4]/40 shrink-0 shadow-[0_-6px_25px_rgba(0,0,0,0.6)]">
+        <div class="flex items-center justify-between gap-2 pb-1.5">
           
-          <!-- 手提籃 -->
-          <div class="flex items-center gap-1 bg-black/30 px-1.5 py-1 rounded-xl border border-white/20 shrink-0">
+          <!-- 🦪 蚌殼暫存網 -->
+          <div class="flex items-center gap-1.5 bg-[#003566]/60 px-2 py-1 rounded-2xl border border-[#48CAE4]/40 shrink-0 shadow-inner">
             <div class="flex flex-col items-start leading-none pr-0.5">
-              <span class="text-[9px] font-black text-white">🧺籃</span>
-              <span id="label-cart-capacity" class="text-[8px] font-black text-white/60 mt-0.5">2 籃位</span>
+              <span class="text-[9px] font-black text-[#FFE082] flex items-center gap-0.5"><span>🦪</span><span>暫存</span></span>
+              <span id="label-cart-capacity" class="text-[8px] font-bold text-white/70 mt-0.5">2 蚌位</span>
             </div>
-            <div id="cart-tray" class="flex items-center gap-1"></div>
+            <div id="cart-tray" class="flex items-center gap-1.5"></div>
           </div>
 
-          <!-- 三大秘技 -->
-          <div class="flex-1 grid grid-cols-3 gap-1">
-            <button id="btn-tool-shuffle" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-sm leading-none">🔀</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5">重整</span>
-              <span id="cnt-tool-shuffle" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">3</span>
+          <!-- 三大比奇堡神級道具 -->
+          <div class="flex-1 grid grid-cols-3 gap-1.5">
+            <!-- 道具 1: 🌀 深海漩渦 -->
+            <button id="btn-tool-shuffle" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#00B4D8] to-[#0077B6] border-2 border-[#90E0EF]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="深海大漩渦：商品重新洗牌">
+              <span class="text-base leading-none drop-shadow">🌀</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">漩渦</span>
+              <span id="cnt-tool-shuffle" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">3</span>
             </button>
             
-            <button id="btn-tool-hammer" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-sm leading-none">🍵</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5">融霜</span>
-              <span id="cnt-tool-hammer" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
+            <!-- 道具 2: 🔥 火山辣醬 -->
+            <button id="btn-tool-hammer" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#FF5722] to-[#D84315] border-2 border-[#FFAB91]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="特濃火山辣醬：瞬間融化冰霜">
+              <span class="text-base leading-none drop-shadow">🔥</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">辣醬</span>
+              <span id="cnt-tool-hammer" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">2</span>
             </button>
             
-            <button id="btn-tool-magnet" class="pop-btn h-10 px-1 rounded-xl bg-white/10 border border-white/30 flex flex-col items-center justify-center relative active:scale-95 transition-transform">
-              <span class="text-sm leading-none">🥢</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5">盛合</span>
-              <span id="cnt-tool-magnet" class="absolute -top-1.5 -right-1 min-w-[16px] h-4 bg-[#4A3326] text-white text-[8px] font-black px-1 rounded-full flex items-center justify-center border border-white">2</span>
+            <!-- 道具 3: 🪼 水母捕網 -->
+            <button id="btn-tool-magnet" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] border-2 border-[#E1BEE7]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="水母捕撈網：自動集齊三消">
+              <span class="text-base leading-none drop-shadow">🪼</span>
+              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">捕網</span>
+              <span id="cnt-tool-magnet" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">2</span>
             </button>
           </div>
         </div>
@@ -879,6 +882,6 @@
     </div>
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261108_bikinibottom_goods"></script>
+  <script type="module" src="./src/main.js?v=20261108_driftwood"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v65-bikinibottom-goods'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'hoshino-game-v66-driftwood-and-tools'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
