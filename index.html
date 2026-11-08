@@ -101,7 +101,7 @@
     <div class="w-full flex justify-between items-center z-10 shrink-0">
       <div class="flex items-center gap-1.5 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-        <span id="txt-store-status" class="text-[11px] font-black text-white/90 tracking-wider">星野便利 • 24H 營業中</span>
+        <span id="txt-store-status" class="text-[11px] font-black text-white/90 tracking-wider">比奇堡 • 24H 營業中</span>
       </div>
       <button id="btn-toggle-sfx" class="px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20 text-xs font-black text-white/90 shadow-lg active:scale-95 transition-transform">
         🔊 音效: 開啟
@@ -120,8 +120,8 @@
       <div class="relative w-full py-5 px-6 bg-white/10 backdrop-blur-xl border border-white/30 rounded-3xl flex items-center justify-center gap-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF85A1] to-[#FF9F68] border border-white/40 flex items-center justify-center text-white text-4xl font-black shadow-inner shrink-0 drop-shadow-md">星</div>
         <div class="flex flex-col items-start leading-none">
-          <span id="txt-title" class="text-4xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)] tracking-wider">星野物語!</span>
-          <span id="txt-subtitle" class="text-xs font-black text-white/90 tracking-wider mt-1.5 drop-shadow-md">深夜手作和食與療癒商店街</span>
+          <span id="txt-title" class="text-4xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)] tracking-wider">蟹堡王物語!</span>
+          <span id="txt-subtitle" class="text-xs font-black text-white/90 tracking-wider mt-1.5 drop-shadow-md">美味蟹堡與深海熱帶生活街</span>
         </div>
         <div class="absolute -top-3 -right-2 px-3 py-1 bg-[#A8E6CF]/90 backdrop-blur-sm text-[#1A1E36] font-black text-[10px] rounded-full border border-white/40 rotate-3 shadow-lg">
           無體力暢玩 ✦
@@ -191,17 +191,17 @@
           
           <!-- 左側店名與天數 (加入 whitespace-nowrap 強制不換行) -->
           <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-2.5 py-1 shadow-lg flex items-center gap-2 shrink-0 whitespace-nowrap">
-            <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border border-white/40 flex items-center justify-center text-xs font-black text-white shrink-0">星</span>
+            <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border border-white/40 flex items-center justify-center text-xs font-black text-white shrink-0">🍔</span>
             <div class="flex flex-col justify-center">
-              <div id="txt-lobby-store" class="text-[9px] font-black text-[#FFD166] leading-none drop-shadow-sm whitespace-nowrap">星野和風マルシェ・總店</div>
-              <div class="text-xs font-black text-white mt-0.5 drop-shadow-sm whitespace-nowrap">第 <span id="lobby-cur-stage">1</span> 號營業日</div>
+              <div id="txt-lobby-store" class="text-[9px] font-black text-[#FFD166] leading-none drop-shadow-sm whitespace-nowrap">⚓ 比奇堡・蟹堡王總店</div>
+              <div class="text-xs font-black text-white mt-0.5 drop-shadow-sm whitespace-nowrap">第 <span id="lobby-cur-stage">1</span> 個航海營業日</div>
             </div>
           </div>
 
           <!-- 右側：切換方針 (加入 whitespace-nowrap 強制不換行) -->
           <div class="flex items-center gap-1.5 shrink-0">
             <button id="btn-lobby-skill" class="pop-btn px-2.5 py-1.5 bg-white/10 backdrop-blur-md border border-white/30 text-[#FFD166] rounded-2xl flex items-center gap-1 text-xs font-black shrink-0 shadow-lg active:scale-95 transition-transform whitespace-nowrap">
-              <span>👑</span><span id="lobby-skill-name">速銷狂熱</span>
+              <span>👑</span><span id="lobby-skill-name">我準備好了！</span>
             </button>
           </div>
 
@@ -211,7 +211,7 @@
         <div class="bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 flex items-center justify-between gap-2 shadow-lg w-full">
           <div class="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span id="lobby-rank-badge" class="px-1.5 py-0.5 rounded-full bg-black/60 text-[#FFF3B0] text-[9px] font-black leading-none">Lv.1</span>
-            <span id="lobby-rank-title" class="text-[10px] font-black text-white whitespace-nowrap">街角和食小舖</span>
+            <span id="lobby-rank-title" class="text-[10px] font-black text-white whitespace-nowrap">實習洗碗海綿</span>
           </div>
           
           <!-- 進度條本體 (flex-1 讓它自動填滿剩餘空間) -->
@@ -221,7 +221,7 @@
           
           <!-- 右側文字 (加入 whitespace-nowrap 防止折行) -->
           <div class="text-[9px] font-black text-white shrink-0 whitespace-nowrap">
-            完售 <span id="lobby-total-dishes">0</span> 皿
+            已售出 <span id="lobby-total-dishes">0</span> 份蟹堡
           </div>
         </div>
       </div>
@@ -234,8 +234,8 @@
           <!-- 對話氣泡 -->
           <div class="w-full max-w-[360px] bg-black/40 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/20 shadow-xl mb-4 relative z-20">
             <div class="flex items-center justify-between mb-1">
-              <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-white/30 shadow-sm">✦ 看板娘・星野葵</span>
-              <span class="text-[9px] font-black text-white/70">💬 點擊小葵互動</span>
+              <span id="txt-mascot-name" class="px-2 py-0.5 rounded-full bg-[#FF85A1] text-white text-[9px] font-black border border-white/30 shadow-sm">✦ 金牌店員・海綿寶寶</span>
+              <span class="text-[9px] font-black text-white/70">💬 點擊海綿互動</span>
             </div>
             <p id="lobby-speech-text" class="text-[11px] font-black text-white leading-snug drop-shadow-md">
             </p>
@@ -249,9 +249,9 @@
         <div class="w-full bg-black/40 backdrop-blur-xl rounded-2xl px-3 py-2 border border-white/20 shadow-xl mb-1.5 shrink-0 relative z-20">
           <div class="flex items-center justify-between mb-1.5">
             <span class="text-[10px] font-black text-[#FF85A1] flex items-center gap-1 drop-shadow-sm">
-              <span>🔥</span><span>吧台玻璃罩 • 深夜人氣 TOP 3</span>
+              <span>🔥</span><span>🔥 蟹堡王出餐吧台 • 今日狂銷 TOP 3</span>
             </span>
-            <span class="text-[9px] font-bold text-white/70">點擊試吃</span>
+            <span class="text-[9px] font-bold text-white/70">點擊品嚐</span>
           </div>
           <div id="lobby-daily-specials" class="grid grid-cols-3 gap-1.5"></div>
         </div>
@@ -264,14 +264,14 @@
         <button data-nav="view-game" class="scene-nav-btn pop-btn w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF6B8B] to-[#FF9E7D] border border-white/30 shadow-[0_0_20px_rgba(255,107,139,0.6)] active:scale-95 transition-transform text-white flex items-center justify-between relative overflow-hidden">
           <span class="absolute top-1 inset-x-3 h-1.5 bg-white/30 rounded-full pointer-events-none"></span>
           <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm border border-white/40 flex items-center justify-center text-xl shadow-sm shrink-0">🍱</div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm border border-white/40 flex items-center justify-center text-xl shadow-sm shrink-0">🍔</div>
             <div class="flex flex-col items-start leading-tight">
-              <span class="text-[9px] font-black text-[#FFF3B0] tracking-wider">✦ OPEN COUNTER ✦</span>
-              <span class="text-base font-black drop-shadow-md">開始夜間營業 • 整理木櫃</span>
+              <span class="text-[9px] font-black text-[#FFF3B0] tracking-wider">✦ KRUSTY KRAB OPEN ✦</span>
+              <span class="text-base font-black drop-shadow-md">開始營業 • 整理漂流木</span>
             </div>
           </div>
           <div class="bg-white/20 backdrop-blur-sm text-white border border-white/30 px-2.5 py-1 rounded-xl text-xs font-black shrink-0 shadow-sm">
-            第 <span id="btn-stage-num">1</span> 日 ▶
+            第 <span id="btn-stage-num">1</span> 天 ▶
           </div>
         </button>
 
@@ -293,8 +293,8 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-map-title" class="text-xs font-black truncate drop-shadow-sm">商店街巡禮</span>
-              <span id="txt-nav-map-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">分店地圖與褒賞</span>
+              <span id="txt-nav-map-title" class="text-xs font-black truncate drop-shadow-sm">比奇堡全島地圖</span>
+              <span id="txt-nav-map-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">水母田與海之霸巡禮</span>
             </div>
           </button>
 
@@ -312,8 +312,8 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-gacha-title" class="text-xs font-black truncate drop-shadow-sm">福引轉蛋亭</span>
-              <span id="txt-nav-gacha-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">祈願抽取秘寶</span>
+              <span id="txt-nav-gacha-title" class="text-xs font-black truncate drop-shadow-sm">沉船神秘藏寶箱</span>
+              <span id="txt-nav-gacha-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">轉動鐵舵抽取秘寶</span>
             </div>
             <span id="badge-gacha-dot" class="absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF85A1] text-white text-[10px] font-black flex items-center justify-center border border-white shadow-md">!</span>
           </button>
@@ -333,12 +333,12 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-shop-title" class="text-xs font-black truncate drop-shadow-sm">職人設備工坊</span>
-              <span id="txt-nav-shop-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">改造與開運擺設</span>
+              <span id="txt-nav-shop-title" class="text-xs font-black truncate drop-shadow-sm">蟹堡廚房設備改造</span>
+              <span id="txt-nav-shop-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">煎板升級與深海水箱</span>
             </div>
           </button>
 
-          <!-- 店長室委託 -->
+          <!-- 蟹老闆每日契約 -->
           <button data-nav="view-quests" class="scene-nav-btn pop-btn nav-card rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center gap-2 relative shadow-lg active:scale-95 transition-transform">
             <div class="mini-scene" style="background:#B9DEF0;">
               <svg viewBox="0 0 44 44" preserveAspectRatio="xMidYMid slice">
@@ -351,8 +351,8 @@
               </svg>
             </div>
             <div class="flex flex-col items-start leading-none min-w-0">
-              <span id="txt-nav-quests-title" class="text-xs font-black truncate drop-shadow-sm">店長室委託</span>
-              <span id="txt-nav-quests-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">集章卡與料理圖鑑</span>
+              <span id="txt-nav-quests-title" class="text-xs font-black truncate drop-shadow-sm">蟹老闆每日契約</span>
+              <span id="txt-nav-quests-sub" class="text-[9px] font-bold text-white/70 mt-1 truncate">打卡蓋章與深海圖鑑</span>
             </div>
             <span id="badge-quest-dot" class="hidden absolute -top-1.5 -right-1 w-5 h-5 rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center border border-white shadow-md animate-bounce">!</span>
           </button>
@@ -547,7 +547,7 @@
       </div>
 
       <div class="text-center z-10 shrink-0 mt-2">
-        <h2 class="text-xl font-black text-white drop-shadow-md tracking-wider">商店街福引轉蛋亭</h2>
+        <h2 class="text-xl font-black text-white drop-shadow-md tracking-wider">商店街沉船神秘藏寶箱</h2>
         <p class="text-[11px] text-white/70 font-bold mt-0.5">投入福引代幣，抽取店長專用盛合秘技與星鑽！</p>
       </div>
 
@@ -796,7 +796,7 @@
               <div class="w-11 h-11 rounded-xl bg-[#FF85A1] anime-border text-white flex items-center justify-center text-xl shrink-0">⚡</div>
               <div>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs font-black text-[#4A3326]">速銷狂熱</span>
+                  <span class="text-xs font-black text-[#4A3326]">我準備好了！</span>
                   <span class="text-[9px] bg-[#4A3326] text-[#FFF3B0] px-1.5 py-0.5 rounded font-black">人氣推薦</span>
                 </div>
                 <p class="text-[10px] text-[#6E4F3A] font-bold mt-0.5">結帳金幣營收 +25%，三星營業評價門檻降低</p>
@@ -882,6 +882,6 @@
     </div>
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261108_maxicons_lobby"></script>
+  <script type="module" src="./src/main.js?v=20261108_bikinibottom_full_lobby"></script>
 </body>
 </html>

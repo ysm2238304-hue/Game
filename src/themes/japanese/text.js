@@ -1,35 +1,35 @@
 // ============================================================
-// 📦 src/themes/japanese/text.js — 日式主題 UI 文字 (深夜食堂版)
+// 📦 src/themes/japanese/text.js — 比奇堡海底主題 UI 文字 (Bikini Bottom Edition)
 // ============================================================
 
 export const TEXT = {
   // 扉頁
-  storeStatus: '星野食堂 • 夜間營業中',
-  title: '星野物語!',
-  subtitle: '深夜手作和食與療癒商店街',
-  enterButton: '推開木門・走入暖光',
+  storeStatus: '比奇堡 • 24H 營業中',
+  title: '蟹堡王物語!',
+  subtitle: '美味蟹堡與深海熱帶生活街',
+  enterButton: '進入比奇堡大廳 ➔',
   
   // 大廳
-  lobbyStoreName: '星野和風食堂・夜間部',
-  lobbyDayLabel: '第 {n} 夜營業',
-  lobbyMascotName: '✦ 看板娘・星野葵',
-  lobbyMascotTag: '深夜限定旬味上架',
-  lobbySpeech: '「晚安店長！今晚的厚燒玉子與海苔御飯糰已經準備好囉♪」',
+  lobbyStoreName: '⚓ 比奇堡・蟹堡王總店',
+  lobbyDayLabel: '第 {n} 個航海營業日',
+  lobbyMascotName: '✦ 金牌店員・海綿寶寶',
+  lobbyMascotTag: '熱騰騰美味蟹堡出爐',
+  lobbySpeech: '「我準備好了！我準備好了！今天也要把蟹堡全賣光～🍔」',
 
   // 遊戲
-  gameShelvesLabel: '9 座檜木櫃',
-  gameMovesLabel: '剩餘步數',
-  gameStartButton: '開始夜間營業 • 整理木櫃',
+  gameShelvesLabel: '9 座漂流木架',
+  gameMovesLabel: '剩餘時間',
+  gameStartButton: '開始營業 • 整理漂流木',
 
   // 導航卡片
-  navMapTitle: '夜巡商店街',
-  navMapSub: '分店地圖與褒賞',
-  navGachaTitle: '神社福引亭',
-  navGachaSub: '夜間祈願抽秘寶',
-  navShopTitle: '職人木工坊',
-  navShopSub: '改造與開運擺設',
-  navQuestsTitle: '店長室委託',
-  navQuestsSub: '集章卡與料理圖鑑',
+  navMapTitle: '比奇堡全島地圖',
+  navMapSub: '水母田與海之霸巡禮',
+  navGachaTitle: '沉船神秘藏寶箱',
+  navGachaSub: '轉動鐵舵抽取秘寶',
+  navShopTitle: '蟹堡廚房設備改造',
+  navShopSub: '煎板升級與深海水箱',
+  navQuestsTitle: '蟹老闆每日契約',
+  navQuestsSub: '打卡蓋章與深海圖鑑',
 
   // 其他文字
   soundOn: '🔊 音效: 開啟',

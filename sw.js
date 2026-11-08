@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshino-game-v69-maximized-icons-and-pineapple-lobby'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'hoshino-game-v70-bikinibottom-full-lobby'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

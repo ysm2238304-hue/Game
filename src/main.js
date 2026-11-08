@@ -134,10 +134,11 @@ class GameApp {
     this.shelfStaticCtx = null;
 
     this.lobbyLines = [
-      '「歡迎回來店長！今晚有熱騰騰的關東煮和花見糰子喔♪」',
-      '「夜裡的客人最喜歡我們的手作御飯糰了，趕快來補貨吧✦」',
-      '「連續完售可累積🔥繁盛熱度，夜貓子顧客們都在歡呼呢！」',
-      '「別忘了去工坊看看招財貓，牠在夜晚的燈光下特別可愛呢♪」'
+      '「我準備好了！我準備好了！今天也要把美味蟹堡全賣光～🍔」',
+      '「聞到了嗎？那是剛出爐的美味蟹堡和現炸海藻脆薯條♪」',
+      '「派大星剛剛把水母果醬偷偷藏在漂流木櫃子裡了！」',
+      '「蟹老闆說：『時間就是金錢！小夥子們手速要快！』🦀」',
+      '「連續三連完售會獎勵更多秒數，章魚哥都忍不住鼓掌了！✨」'
     ];
     this.lobbyLineIdx = 0;
 
@@ -737,7 +738,7 @@ class GameApp {
   getStoreRankInfo() {
     const d = GameState.totalDishesCleared || 0;
     const ranks = [
-      { lv: 1, title: '街角和食小舖', min: 0,   next: 30 },
+      { lv: 1, title: '實習洗碗海綿', min: 0,   next: 30 },
       { lv: 2, title: '人氣旬味食堂', min: 30,  next: 90 },
       { lv: 3, title: '商店街名物店', min: 90,  next: 180 },
       { lv: 4, title: '特選和風料亭', min: 180, next: 320 },
@@ -817,7 +818,7 @@ class GameApp {
     document.getElementById('btn-up-shelf').innerText    = `🪙 ${shelfCost} 改造`;
     document.getElementById('btn-up-cold').innerText     = `🪙 ${coldCost} 改造`;
 
-    const dirNames = { rush: '⚡速銷狂熱', storage: '🧺極限收納', tycoon: '💎商業巨頭' };
+    const dirNames = { rush: '⚡我準備好了！', storage: '🦪無限蚌位', tycoon: '🦀蟹老闆愛錢' };
     const curDirLabel = dirNames[GameState.direction] || '⚡速銷狂熱';
     document.getElementById('badge-direction-hud').innerText = curDirLabel.slice(0, 3);
     document.getElementById('lobby-skill-name').innerText = curDirLabel.slice(1);
