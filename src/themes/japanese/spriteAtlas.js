@@ -5,7 +5,7 @@
 import { ITEM_DEFS } from './items.js';
 
 // 強制快取破除版號，確保手機端與電腦端立即載入最新超商圖示
-const ASSET_VER = 'v=20261108_store_goods';
+const ASSET_VER = 'v=20261108_bikinibottom_goods_v2';
 
 const FOOD_IMAGES = {
   onigiri:    `./assets/food/onigiri.png?${ASSET_VER}`,

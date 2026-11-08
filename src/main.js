@@ -450,22 +450,22 @@ class GameApp {
     const cols = 3;
     const rows = 3;
     
-    // 1. 物理極限：左右邊距 0，水平間距 3px，垂直間距縮到 4px
-    const padX = 0; 
+    // 1. 左右呼吸邊距 10px，露出比奇堡深海背景、波浪與氣泡
+    const padX = 10; 
     const gapX = 3; 
-    const gapY = 4;
+    const gapY = 5;
 
     // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
-    // 3. 垂直空間最大化：打破死板正方形限制，徹底消滅上下大片空白！
-    this.topSceneH = 2; 
-    this.bottomSceneH = Math.min(34, Math.max(24, Math.round(this.height * 0.06)));
+    // 3. 徹底移除底部遮擋物（顧客與假吧台），完全解放下排貨架與底部按鈕！
+    this.topSceneH = 4; 
+    this.bottomSceneH = 4;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
-    // 自適應拉長放大：在直式螢幕上充分延展（最高可達 shelfW * 1.36），使觸控與拖曳熱區增加 30%+
-    const shelfH = Math.max(shelfW, Math.min(maxGridShelfH, Math.round(shelfW * 1.36)));
+    // 依高寬比自適應：高度適中，留出充足透光空間給海底珊瑚與陽光
+    const shelfH = Math.max(shelfW, Math.min(maxGridShelfH, Math.round(shelfW * 1.28)));
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -511,7 +511,7 @@ class GameApp {
 
     this.paintTopShopEaves(sctx);
     this.shelves.forEach(sh => this.paintShelfFrame(sctx, sh));
-    this.paintBottomCounterBase(sctx);
+    // this.paintBottomCounterBase(sctx); // 移除底部假吧台，不再遮擋
   }
 
   paintTopShopEaves(ctx) {
@@ -612,10 +612,11 @@ class GameApp {
     // 4. 內層槽位底色：明亮透徹的海底白沙與碧水光澤 (Clear Sea Sand Glow)
     const innerX = sh.x + 2.5, innerY = sh.y + 13;
     const innerW = sh.w - 5, innerH = sh.h - 17;
+    // 槽位半透明晶瑩質感：讓後方的比奇堡深海背景、珊瑚與氣泡直接透出！
     const recessG = ctx.createLinearGradient(0, innerY, 0, innerY + innerH);
-    recessG.addColorStop(0, '#E0F4F7');
-    recessG.addColorStop(0.5, '#FFF9EC');
-    recessG.addColorStop(1, '#FFF2D6');
+    recessG.addColorStop(0, 'rgba(255, 255, 255, 0.62)');
+    recessG.addColorStop(0.5, 'rgba(224, 248, 255, 0.48)');
+    recessG.addColorStop(1, 'rgba(255, 248, 230, 0.55)');
     ctx.fillStyle = recessG;
     ctx.strokeStyle = '#0077B6';
     ctx.lineWidth = 1.4;
@@ -1923,7 +1924,7 @@ class GameApp {
       });
     });
 
-    this.drawBottomCustomers(ctx, now);
+    // this.drawBottomCustomers(ctx, now); // 徹底移除遮擋最下排貨架的顧客立繪
     if (this.dragging) this.paintDropIndicator();
   }
 
