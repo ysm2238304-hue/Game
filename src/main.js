@@ -231,7 +231,7 @@ class GameApp {
     const todayKey = new Date().toDateString();
     try {
       if (localStorage.getItem('hoshino_daily_claim_date') === todayKey) {
-        btn.innerText = '✔ 今日出勤獎金已領取';
+        btn.innerText = '✔ 今日水手津貼已領取';
         btn.disabled = true;
         btn.classList.add('opacity-60');
       }
@@ -807,7 +807,7 @@ class GameApp {
     const dashShelf = document.getElementById('dash-shelf-bonus');
     const dashCold  = document.getElementById('dash-cold-bonus');
     if (dashReg)   dashReg.innerText   = `+${totalBonusPct}%`;
-    if (dashShelf) dashShelf.innerText = `+${extraMoves} 步`;
+    if (dashShelf) dashShelf.innerText = `+${extraMoves * 3} 秒`;
     if (dashCold)  dashCold.innerText  = `${coldRange} 櫃`;
 
     const discount = GameState.direction === 'tycoon' ? 0.8 : 1;
@@ -1189,7 +1189,7 @@ class GameApp {
         localStorage.setItem('hoshino_daily_claim_date', new Date().toDateString());
       } catch (_) {}
       this.renderHUD();
-      btn.innerText = '✔ 今日出勤獎金已領取';
+      btn.innerText = '✔ 今日水手津貼已領取';
       btn.disabled = true;
       btn.classList.add('opacity-60');
     };
