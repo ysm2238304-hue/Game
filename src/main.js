@@ -386,8 +386,12 @@ class GameApp {
       if (targetViewId === 'view-game') {
         if (this.isLevelSettled || !this.shelves || this.shelves.length === 0) {
           this.startLevel(GameState.unlockedLevel);
+        } else {
+          this.startTimer();
         }
         setTimeout(() => this.initCanvasSize(), 20);
+      } else {
+        this.stopTimer();
       }
       // 👆 修復結束 👆
 
@@ -794,13 +798,20 @@ class GameApp {
     this.combo = 0;
     this.fever = 0;
     const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
-    this.moves = cfg.moves;
+    this.moves = cfg.moves || 999;
     this.totalLevelItems = cfg.totalItems;
     this.activeOrders = cfg.orders;
-    document.getElementById('label-moves').innerText = this.moves;
+
+    // ⏰ 倒數計時系統初始化
+    this.timeLeft = cfg.timeLimit || 90;
+    this.maxTime = this.timeLeft;
+    this.stopTimer();
+    this.startTimer();
+    this.updateTimerUI();
+
     document.getElementById('label-shelves-count').innerText = `9 座檜木櫃 (${cfg.depthPerSlot}層)`;
     document.getElementById('top-combo-toast').classList.add('hidden');
-    document.getElementById('moves-badge').classList.remove('animate-pulse');
+    document.getElementById('moves-badge').classList.remove('animate-pulse', '!bg-[#FF3B30]');
     const feverBar = document.getElementById('fever-progress-bar');
     if (feverBar) feverBar.style.width = '0%';
 
@@ -935,6 +946,9 @@ class GameApp {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
         GameState.save();
+        this.stopTimer();
+      } else if (this.currentView === 'view-game' && !this.isLevelSettled) {
+        this.startTimer();
       }
     });
     window.addEventListener('pagehide', () => GameState.save());
@@ -1271,14 +1285,82 @@ class GameApp {
   }
 
   consumeMove() {
-    this.moves = Math.max(0, this.moves - 1);
-    document.getElementById('label-moves').innerText = this.moves;
-    if (this.moves <= 5 && this.moves > 0) {
-      this.setMascotMood('worry', `「店長加油！還剩下最後 ${this.moves} 步唷💦」`);
-      document.getElementById('moves-badge').classList.add('animate-pulse');
-    } else {
-      document.getElementById('moves-badge').classList.remove('animate-pulse');
+    this.movesUsed = (this.movesUsed || 0) + 1;
+  }
+
+  startTimer() {
+    this.stopTimer();
+    this.timerId = setInterval(() => {
+      if (this.currentView !== 'view-game' || this.isLevelSettled || document.hidden) return;
+      this.timeLeft = Math.max(0, this.timeLeft - 1);
+      this.updateTimerUI();
+      if (this.timeLeft <= 0) {
+        this.stopTimer();
+        this.onTimeUp();
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
     }
+  }
+
+  updateTimerUI() {
+    const el = document.getElementById('label-moves');
+    const badge = document.getElementById('moves-badge');
+    if (!el) return;
+    const m = Math.floor(this.timeLeft / 60);
+    const s = this.timeLeft % 60;
+    el.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+    if (this.timeLeft <= 10 && this.timeLeft > 0) {
+      if (badge) badge.classList.add('animate-pulse', '!bg-[#FF3B30]');
+      if (this.timeLeft <= 5) {
+        SFX.tap();
+      }
+      this.setMascotMood('worry', `「店長注意！只剩 ${this.timeLeft} 秒了💦 快快快！」`);
+    } else if (badge) {
+      badge.classList.remove('animate-pulse', '!bg-[#FF3B30]');
+    }
+  }
+
+  addTimeBonus(sec) {
+    if (this.isLevelSettled) return;
+    this.timeLeft = Math.min((this.maxTime || 90) + 30, this.timeLeft + sec);
+    this.updateTimerUI();
+    const toast = document.getElementById('toast-time-bonus');
+    if (toast) {
+      toast.innerText = `+${sec}s ⏰`;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      clearTimeout(this.toastBonusTimer);
+      this.toastBonusTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 750);
+    }
+  }
+
+  onTimeUp() {
+    if (this.isLevelSettled) return;
+    this.isLevelSettled = true;
+    this.stopTimer();
+    SFX.fail();
+    document.getElementById('settle-badge').innerText = '本日打烊時間到';
+    document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('worry', false);
+    document.getElementById('settle-title').innerText = '營業時間終了 ⏰';
+    document.getElementById('settle-stars').innerText = '☆☆☆';
+    document.getElementById('settle-desc').innerText = '營業時間結束囉！別氣餒店長，連續三連消除可獎勵秒數，再來挑戰一次吧！';
+    document.getElementById('settle-coin-text').innerText = '🪙 +30 (出勤津貼)';
+    document.getElementById('settle-diam-text').innerText = '💎 +0';
+    GameState.coins += 30;
+    GameState.save();
+    this.renderHUD();
+    document.getElementById('btn-settle-action').innerText = '立即重試本關 ↻';
+    document.getElementById('modal-settle').classList.remove('hidden');
   }
 
   renderCartUI() {
@@ -1346,6 +1428,10 @@ class GameApp {
     shelf.slots.forEach(slot => { slot.queue.shift(); this.jellyBounce(slot); });
     this.damageNearbyIce(shelf.shelfIdx);
 
+    // ⏰ 消除三連完售：自動獎勵時間 +2 秒（Combo 連擊時 +3 秒）
+    const bonusSec = this.combo > 1 ? 3 : 2;
+    this.addTimeBonus(bonusSec);
+
     const def = ITEM_DEFS.find(d => d.id === typeId) || ITEM_DEFS[0];
     let feverBonusCoins = 0;
     if (this.fever >= 100) {
@@ -1403,11 +1489,12 @@ class GameApp {
     const remainingItems = this.updateClearProgress();
     if (remainingItems === 0) {
       this.isLevelSettled = true;
+      this.stopTimer();
       SFX.win();
       GameState.unlockedLevel = Math.max(GameState.unlockedLevel, this.curLevel + 1);
-      const star3Threshold = GameState.direction === 'rush' ? 4 : 7;
-      const star2Threshold = GameState.direction === 'rush' ? 1 : 3;
-      const stars = this.moves >= star3Threshold ? 3 : (this.moves >= star2Threshold ? 2 : 1);
+      // 星級評價：依據剩餘時間比例（剩餘 >= 40% 為 3 星，>= 15% 為 2 星）
+      const ratio = this.timeLeft / (this.maxTime || 90);
+      const stars = ratio >= 0.40 ? 3 : (ratio >= 0.15 ? 2 : 1);
       GameState.stars[this.curLevel] = Math.max(GameState.stars[this.curLevel] || 0, stars);
 
       const orderAllDone = this.activeOrders.every(o => o.done >= o.req);
@@ -1441,22 +1528,7 @@ class GameApp {
       }, 360);
       return;
     }
-    if (this.moves <= 0) {
-      this.isLevelSettled = true;
-      SFX.fail();
-      document.getElementById('settle-badge').innerText = '本日打烊時間到';
-      document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('worry', false);
-      document.getElementById('settle-title').innerText = '營業步數耗盡💦';
-      document.getElementById('settle-stars').innerText = '☆☆☆';
-      document.getElementById('settle-desc').innerText = '別氣餒店長！無體力限制，善用竹編手提籃與秘技再挑戰一次吧！';
-      document.getElementById('settle-coin-text').innerText = '🪙 +30 (出勤津貼)';
-      document.getElementById('settle-diam-text').innerText = '💎 +0';
-      GameState.coins += 30;
-      GameState.save();
-      this.renderHUD();
-      document.getElementById('btn-settle-action').innerText = '立即重試本關 ↻';
-      document.getElementById('modal-settle').classList.remove('hidden');
-    }
+    // 純時間限制模式：失敗由 onTimeUp 倒數歸零觸發
   }
 
   useTool(type) {
