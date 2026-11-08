@@ -464,7 +464,8 @@ class GameApp {
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const maxGridShelfH = (availH - gapY * (rows - 1)) / rows;
-    const shelfH = Math.max(shelfW * 0.98, Math.min(maxGridShelfH, Math.round(shelfW * 1.20)));
+    // 木框比例壓實為正方形：徹底消滅上方 70% 尷尬空白，讓放大的商品直接填滿木框內部！
+    const shelfH = Math.round(shelfW * 0.98);
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -1909,8 +1910,9 @@ class GameApp {
           ctx.arc(slot.x + slot.w / 2 - 6 + d * 4.2, slot.y + 4, 1.8, 0, Math.PI * 2);
           ctx.fill();
         }
-        const foodCY = slot.y + slot.h - 18;
-        const backFoodCY = slot.y + slot.h - 26;
+        // 垂直對齊：商品底部踏在底木上，頂部飽滿延伸至頂木下方，填滿木框 85% 空間
+        const foodCY = slot.y + slot.h / 2 + 1;
+        const backFoodCY = slot.y + slot.h / 2 - 8;
 
         if (slot.queue.length > 1) {
           CozyFoodRenderer.drawFood(ctx, slot.queue[1], slot.x + slot.w / 2 + 1, backFoodCY, slot.w, slot.h, { isBack: true });
@@ -1992,7 +1994,7 @@ class GameApp {
       const px = this.dragPointer.x;
       const py = this.dragPointer.y;
       this.fxCtx.save();
-      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 82, 82, {
+      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 88, 88, {
         isBack: false, scaleX: 1.15, scaleY: 1.15, lift: 14
       });
       this.fxCtx.restore();

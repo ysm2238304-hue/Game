@@ -63,7 +63,8 @@ export class CozyFoodRenderer {
     
     // 基礎大小 (維持 1.15 倍，確保格子內飽滿)
     // 基礎大小最大化：配合大槽位放大，讓料理視覺更加飽滿大氣、觸控拖曳更靈敏
-    const baseSize = Math.min(w * 1.72, h * 1.35);
+    // 圖示極限最大化：以槽位寬度 2.38 倍計算（約 80px~84px），讓美食無比飽滿、填滿木框核心！
+    const baseSize = Math.max(78, Math.min(84, Math.round(w * 2.38)));
 
     ctx.save();
     ctx.translate(cx, cy);
