@@ -918,9 +918,10 @@ class GameApp {
       const el = document.getElementById(id);
       if (el) el.innerText = val;
     };
+    const unlocked = GameState.unlockedLevel || this.curLevel || 1;
     setTxt('label-level', this.curLevel);
-    setTxt('btn-stage-num', this.curLevel);
-    setTxt('lobby-cur-stage', this.curLevel);
+    setTxt('btn-stage-num', unlocked);
+    setTxt('lobby-cur-stage', unlocked);
     setTxt('cnt-tool-shuffle', GameState.boosters.shuffle || 0);
     setTxt('cnt-tool-magnet',  GameState.boosters.magnet || 0);
     setTxt('cnt-tool-undo',    GameState.boosters.undo !== undefined ? GameState.boosters.undo : 3);
@@ -1354,12 +1355,16 @@ class GameApp {
     document.getElementById('btn-settle-action').onclick = () => {
       SFX.tap();
       document.getElementById('modal-settle').classList.add('hidden');
+      this.curLevel = GameState.unlockedLevel;
+      this.renderHUD();
       this.startLevel(GameState.unlockedLevel);
     };
     const sLobby = document.getElementById('btn-settle-lobby');
     if (sLobby) sLobby.onclick = () => {
       SFX.tap();
       document.getElementById('modal-settle').classList.add('hidden');
+      this.curLevel = GameState.unlockedLevel;
+      this.renderHUD();
       this.navigateTo('view-lobby');
     };
 
@@ -1775,11 +1780,17 @@ class GameApp {
       this.isLevelSettled = true;
       this.stopTimer();
       SFX.win();
-      GameState.unlockedLevel = Math.max(GameState.unlockedLevel, this.curLevel + 1);
+      const finishedLevel = this.curLevel;
+      const nextLevel = finishedLevel + 1;
+      GameState.unlockedLevel = Math.max(GameState.unlockedLevel, nextLevel);
+      
       // 星級評價：依據剩餘時間比例（剩餘 >= 40% 為 3 星，>= 15% 為 2 星）
       const ratio = this.timeLeft / (this.maxTime || 90);
       const stars = ratio >= 0.40 ? 3 : (ratio >= 0.15 ? 2 : 1);
-      GameState.stars[this.curLevel] = Math.max(GameState.stars[this.curLevel] || 0, stars);
+      GameState.stars[finishedLevel] = Math.max(GameState.stars[finishedLevel] || 0, stars);
+      
+      // 即時推進當前關卡至下一關，確保大廳與所有 HUD 毫秒級即時同步！
+      this.curLevel = GameState.unlockedLevel;
 
       const orderAllDone = this.activeOrders.every(o => o.done >= o.req);
       let baseCoins = 180 + this.curLevel * 20 + (orderAllDone ? 90 : 0);

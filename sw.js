@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v89-tuxedocat-and-cartoon-chunky-buttons'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v90-lobby-stage-sync-fixed'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
