@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikinibottom-v86-longer-timer-and-darker-beige-shelf'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'bikinibottom-v87-pirate-chest-and-haptic-combo-burst'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

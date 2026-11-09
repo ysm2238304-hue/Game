@@ -424,116 +424,146 @@
       </button>
     </div>
   </section>
-<section id="view-gacha" class="view-panel flex-1 relative hidden flex-col items-center justify-between px-3.5 py-2 safe-bottom text-white overflow-hidden">
-      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#1A1E36]">
-        <img src="./assets/bg-gacha.jpg" class="w-full h-full object-cover" alt="轉蛋背景">
-        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1123]/40 via-transparent to-[#0F1123]/80 pointer-events-none"></div>
+<section id="view-gacha" class="view-panel flex-1 relative hidden flex-col items-center justify-between px-3.5 py-2 safe-bottom text-white overflow-hidden select-none">
+      <!-- 滿版海盜沉船海底背景 -->
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#001D3D]">
+        <img src="./assets/bg-gacha.jpg" class="w-full h-full object-cover animate-ken-burns" alt="海盜沉船背景">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#001D3D]/50 via-transparent to-[#000814]/85 pointer-events-none"></div>
       </div>
 
+      <!-- 頂部導航 -->
       <div class="w-full h-10 flex items-center justify-between gap-2 z-10 shrink-0">
-        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl flex items-center gap-1">
+        <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-3 py-1.5 bg-black/50 backdrop-blur-md border-2 border-white/40 text-white font-black text-xs rounded-xl flex items-center gap-1 active:scale-95 shadow">
           <span>◀</span> 大廳
         </button>
-        <span class="px-3 py-1 rounded-full bg-[#FF85A1] text-white border border-white/30 font-black text-[10px] shadow-lg">✦ 100% 必中秘寶 ✦</span>
-        <button data-guide="gacha" class="btn-open-guide pop-btn px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-xs rounded-xl">？ 指南</button>
+        <span class="px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-[#251408] border-2 border-[#251408] font-black text-xs shadow-lg animate-pulse">✦ 🏴‍☠️ 100% 必得戰鬥秘寶 ✦</span>
+        <button data-guide="gacha" class="btn-open-guide pop-btn px-2.5 py-1.5 bg-black/50 backdrop-blur-md border-2 border-white/40 text-white font-black text-xs rounded-xl">？</button>
       </div>
 
-      <div class="text-center z-10 shrink-0 mt-2">
-        <h2 class="text-xl font-black text-white drop-shadow-md tracking-wider">商店街沉船神秘藏寶箱</h2>
-        <p class="text-[11px] text-white/70 font-bold mt-0.5">投入福引代幣，抽取店長專用盛合秘技與星鑽！</p>
+      <!-- 標題 -->
+      <div class="text-center z-10 shrink-0 mt-1">
+        <h2 class="text-xl font-black text-[#FFE082] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wider flex items-center justify-center gap-1.5">
+          <span>🏴‍☠️</span><span>比奇堡沉船古董寶箱</span><span>🏴‍☠️</span>
+        </h2>
+        <p class="text-[11px] text-white/90 font-bold mt-0.5 drop-shadow">轉動深海船舵 • 啟封海盜遺留的戰鬥秘寶！</p>
       </div>
 
-      <div class="relative z-10 w-full rounded-2xl p-2 bg-black/40 backdrop-blur-xl border border-white/20 shadow-xl shrink-0 mt-2">
-        <div class="flex items-center justify-between mb-1 px-1">
-          <span class="text-[10px] font-black text-[#FFD166]">🏮 神社奉納・福引景品一覽</span>
-          <span class="text-[9px] font-bold text-white/60">特賞機率 UP</span>
+      <!-- 景品一覽（海盜風格） -->
+      <div class="relative z-10 w-full rounded-2xl p-2.5 bg-black/50 backdrop-blur-xl border-2 border-[#FFE082]/40 shadow-2xl shrink-0 mt-1">
+        <div class="flex items-center justify-between mb-1.5 px-1">
+          <span class="text-[10px] font-black text-[#FFE082] flex items-center gap-1">
+            <span>⚓</span><span>沉船秘寶景品庫</span>
+          </span>
+          <span class="text-[9px] font-bold text-[#A8E6CF]">特賞機率 UP</span>
         </div>
         <div class="grid grid-cols-5 gap-1.5 text-center">
-          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#FF85A1] text-white px-1 rounded">特賞</span>
-            <span class="text-sm my-0.5">🥢</span>
-            <span class="text-[9px] font-black leading-none">盛合</span>
-            <span id="gacha-stock-magnet" class="text-[8px] font-bold text-white/70 mt-0.5">持有:2</span>
+          <div class="bg-gradient-to-b from-white/15 to-black/30 rounded-xl p-1 border border-[#FFE082]/40 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#E63946] text-white px-1 rounded-full">特賞</span>
+            <span class="text-lg my-0.5">💡</span>
+            <span class="text-[9px] font-black text-[#FFE082]">探照燈</span>
+            <span id="gacha-stock-magnet" class="text-[8px] font-bold text-white/80 mt-0.5">持有:2</span>
           </div>
-          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
-            <span class="text-[8px] font-black bg-[#FF85A1] text-white px-1 rounded">特賞</span>
-            <span class="text-sm my-0.5">💎</span>
-            <span class="text-[9px] font-black leading-none">星鑽</span>
-            <span class="text-[8px] font-bold text-white/70 mt-0.5">×100</span>
+          <div class="bg-gradient-to-b from-white/15 to-black/30 rounded-xl p-1 border border-[#FFE082]/40 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#E63946] text-white px-1 rounded-full">特賞</span>
+            <span class="text-lg my-0.5">↩️</span>
+            <span class="text-[9px] font-black text-[#FFE082]">時光螺</span>
+            <span id="gacha-stock-undo" class="text-[8px] font-bold text-white/80 mt-0.5">持有:3</span>
           </div>
-          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
-            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">一番</span>
-            <span class="text-sm my-0.5">🍵</span>
-            <span class="text-[9px] font-black leading-none">融霜</span>
-            <span id="gacha-stock-hammer" class="text-[8px] font-bold text-white/70 mt-0.5">持有:2</span>
+          <div class="bg-gradient-to-b from-white/15 to-black/30 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#0096C7] text-white px-1 rounded-full">一番</span>
+            <span class="text-lg my-0.5">🔀</span>
+            <span class="text-[9px] font-black text-white">大漩渦</span>
+            <span id="gacha-stock-shuffle" class="text-[8px] font-bold text-white/80 mt-0.5">持有:3</span>
           </div>
-          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
-            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">一番</span>
-            <span class="text-sm my-0.5">🔀</span>
-            <span class="text-[9px] font-black leading-none">重整</span>
-            <span id="gacha-stock-shuffle" class="text-[8px] font-bold text-white/70 mt-0.5">持有:3</span>
+          <div class="bg-gradient-to-b from-white/15 to-black/30 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#0096C7] text-white px-1 rounded-full">一番</span>
+            <span class="text-lg my-0.5">💎</span>
+            <span class="text-[9px] font-black text-white">黑珍珠</span>
+            <span class="text-[8px] font-bold text-white/80 mt-0.5">×50</span>
           </div>
-          <div class="bg-white/10 rounded-xl p-1 border border-white/20 flex flex-col items-center">
-            <span class="text-[8px] font-black bg-white/30 text-white px-1 rounded">二番</span>
-            <span class="text-sm my-0.5">🪙</span>
-            <span class="text-[9px] font-black leading-none">資金</span>
-            <span class="text-[8px] font-bold text-white/70 mt-0.5">×600</span>
+          <div class="bg-gradient-to-b from-white/15 to-black/30 rounded-xl p-1 border border-white/20 flex flex-col items-center">
+            <span class="text-[8px] font-black bg-[#8D6E63] text-white px-1 rounded-full">二番</span>
+            <span class="text-lg my-0.5">🪙</span>
+            <span class="text-[9px] font-black text-white">金幣袋</span>
+            <span class="text-[8px] font-bold text-white/80 mt-0.5">×300</span>
           </div>
         </div>
       </div>
 
-      <!-- 扭蛋機圖片展示區 -->
-      <div class="relative w-full flex items-center justify-center my-auto z-10">
+      <!-- 🏴‍☠️ 海盜古董大寶箱與旋轉鐵舵舞台 🏴‍☠️ -->
+      <div class="relative w-full flex-1 flex items-center justify-center my-auto z-10 min-h-[160px]">
         
-        <!-- 左右兩側裝飾 (保留) -->
-        <div class="flex flex-col items-center gap-2 mr-2">
-          <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm -rotate-6">
-            <div class="text-xs">⛩️</div>
-            <div class="text-[9px] font-black text-white leading-tight mt-0.5">商売繁盛</div>
+        <!-- 左側海盜裝飾：沉船鐵錨 -->
+        <div class="flex flex-col items-center gap-1.5 mr-2">
+          <div class="w-12 py-2 px-1 bg-black/50 backdrop-blur-md border-2 border-[#FFE082]/40 rounded-2xl text-center shadow-lg -rotate-12">
+            <div class="text-xl">⚓</div>
+            <div class="text-[8px] font-black text-[#FFE082] leading-tight mt-0.5">海盜鐵錨</div>
           </div>
         </div>
 
-        <!-- 👇 扭蛋機本體 (換成圖片) 👇 -->
-        <div id="gacha-machine-wrapper" class="relative flex flex-col items-center drop-shadow-2xl transition-transform">
-          <img src="./assets/gacha-machine.png" class="w-56 h-auto object-contain" alt="扭蛋機">
+        <!-- 🏴‍☠️ 沉船寶箱本體 ＋ 旋轉鐵舵 🏴‍☠️ -->
+        <div id="gacha-machine-wrapper" class="relative flex flex-col items-center transition-transform">
+          <!-- 旋轉航海鐵舵 -->
+          <div id="ship-helm-wheel" class="absolute -top-10 w-24 h-24 rounded-full border-4 border-[#8C4610] bg-gradient-to-br from-[#FFCA28] to-[#C87428] shadow-[0_0_20px_rgba(255,202,40,0.6)] flex items-center justify-center text-3xl font-black text-[#251408] transition-transform duration-700 z-0">
+            ☸️
+          </div>
+
+          <!-- 沉船大寶箱本體 (海盜實木金屬寶箱) -->
+          <div class="relative z-10 w-44 h-36 rounded-3xl bg-gradient-to-b from-[#C87428] via-[#8C4610] to-[#4A2508] border-4 border-[#251408] shadow-[0_12px_0_#251408,0_20px_35px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between p-2.5 overflow-hidden">
+            <div class="w-full flex justify-between items-center px-1">
+              <span class="w-3 h-3 rounded-full bg-[#FFE082] border border-[#251408] shadow-xs"></span>
+              <span class="w-3 h-3 rounded-full bg-[#FFE082] border border-[#251408] shadow-xs"></span>
+            </div>
+            
+            <div class="flex flex-col items-center my-auto">
+              <div class="w-14 h-14 rounded-2xl bg-[#FFE082] border-3 border-[#251408] flex items-center justify-center text-3xl shadow-inner animate-pulse">
+                🏴‍☠️
+              </div>
+              <div class="text-[9px] font-black text-[#FFE082] tracking-wider mt-1 drop-shadow">PIRATE CHEST</div>
+            </div>
+
+            <div class="w-full h-3 bg-gradient-to-r from-[#FFD166] via-[#FFE082] to-[#FFD166] rounded-md border border-[#251408]"></div>
+          </div>
           
-          <!-- 掉落動畫專用容器 -->
-          <div id="gacha-ball-drop" class="absolute bottom-4 w-8 h-8 rounded-full bg-gradient-to-br from-[#FF85A1] to-[#FFAE6B] border-2 border-[#4A3326] shadow-lg opacity-0 z-50 pointer-events-none">
-            <!-- 扭蛋上的白色高光 -->
-            <div class="absolute top-1 left-1 w-2 h-2 bg-white/60 rounded-full"></div>
+          <!-- 寶箱開啟掉落秘寶光球動畫容器 -->
+          <div id="gacha-ball-drop" class="absolute bottom-6 w-12 h-12 rounded-full bg-gradient-to-br from-[#FFE082] via-[#FFD166] to-[#FF9E7D] border-3 border-[#251408] shadow-[0_0_25px_rgba(255,224,130,0.8)] opacity-0 z-50 pointer-events-none flex items-center justify-center text-2xl">
+            🎁
           </div>
         </div>
-        <!-- 👆 替換結束 👆 -->
 
-        <!-- 右側裝飾 (保留) -->
-        <div class="flex flex-col items-center gap-2 ml-2">
-          <div class="w-14 py-2 px-1 bg-black/40 backdrop-blur-md border border-white/30 rounded-xl text-center shadow-sm rotate-6">
-            <div class="text-xs">🌸</div>
-            <div class="text-[9px] font-black text-white leading-tight mt-0.5">千客萬來</div>
+        <!-- 右側海盜裝飾：藏寶圖 -->
+        <div class="flex flex-col items-center gap-1.5 ml-2">
+          <div class="w-12 py-2 px-1 bg-black/50 backdrop-blur-md border-2 border-[#FFE082]/40 rounded-2xl text-center shadow-lg rotate-12">
+            <div class="text-xl">🗺️</div>
+            <div class="text-[8px] font-black text-[#FFE082] leading-tight mt-0.5">航海密圖</div>
           </div>
         </div>
       </div>
 
-      <!-- 下方按鈕區 (保持不變，放在扭蛋機下方) -->
+      <!-- 底部開箱按鈕區 -->
       <div class="w-full flex flex-col items-center gap-1.5 z-10 shrink-0">
-        <!-- ... 原本的祈願值與按鈕 ... -->
-
-      <div class="w-full flex flex-col items-center gap-1.5 z-10 shrink-0">
-        <div class="w-full rounded-2xl px-3 py-1.5 bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-between gap-2 shadow-lg">
-          <span class="text-[10px] font-black text-[#FF85A1] shrink-0">⛩️ 開運祈願值</span>
-          <div class="flex-1 h-3 bg-black/50 rounded-full p-0.5 border border-white/20 overflow-hidden">
-            <div id="gacha-pity-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFD166] rounded-full transition-all duration-300" style="width: 0%"></div>
+        <div class="w-full rounded-2xl px-3 py-1.5 bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-between gap-2 shadow-lg">
+          <span class="text-[10px] font-black text-[#FFE082] shrink-0">🏴‍☠️ 沉船幸運值</span>
+          <div class="flex-1 h-3 bg-black/60 rounded-full p-0.5 border border-white/25 overflow-hidden">
+            <div id="gacha-pity-bar" class="h-full bg-gradient-to-r from-[#FFE082] to-[#FF85A1] rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
           <span id="gacha-pity-text" class="text-[10px] font-black text-white shrink-0">0/5</span>
         </div>
-        <div class="text-[11px] font-black text-white/80">每次消耗 🎫 1 張（或 💎 30 星鑽）</div>
-        <button id="btn-draw-gacha" class="pop-btn w-full py-3.5 bg-gradient-to-r from-[#FF6B8B] to-[#FF9E7D] text-white font-black text-base rounded-2xl flex items-center justify-center gap-2 border border-white/30 shadow-[0_0_20px_rgba(255,107,139,0.6)] active:scale-95 transition-transform">
-          <span>🎐</span> 轉動福引扭蛋！(1回祈願)
+
+        <div class="text-[11px] font-black text-white/90 drop-shadow flex items-center gap-1.5">
+          <span>每次消耗 🎫 1 張</span>
+          <span class="text-white/60">或</span>
+          <span>💎 30 珍珠</span>
+        </div>
+
+        <!-- 巨型海盜開箱按鈕 -->
+        <button id="btn-draw-gacha" class="pop-btn w-full py-4 bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#E63946] text-[#251408] font-black text-base rounded-2xl flex items-center justify-center gap-2 border-3 border-[#251408] shadow-[0_6px_0_#251408,0_12px_25px_rgba(251,133,0,0.6)] active:scale-95 active:translate-y-1 transition-all">
+          <span class="text-xl">⚓</span>
+          <span class="tracking-wider">轉動鐵舵 • 開啟沉船寶箱！</span>
         </button>
       </div>
     </section>
-    
-    <!-- ============================================================
+<!-- ============================================================
          工坊 (#view-shop) - 毛玻璃版
          ============================================================ -->
     <section id="view-shop" class="view-panel flex-1 relative hidden flex-col px-3.5 py-2 safe-bottom overflow-y-auto no-scrollbar allow-scroll-y justify-between text-white">
@@ -763,61 +793,16 @@
       </div>
     </div>
 
-    <div id="modal-gacha-reward" class="fixed inset-0 z-50 bg-[#4A3326]/60 hidden flex items-center justify-center p-4">
-      <div class="w-full max-w-xs anime-panel rounded-3xl p-5 flex flex-col items-center text-center">
-        <span id="gacha-rarity-badge" class="px-3 py-0.5 rounded-full bg-[#FFF3B0] text-[#4A3326] font-black text-xs anime-border mb-2">✦ 特賞・超稀有秘寶 ✦</span>
-        <div id="gacha-reward-icon" class="w-20 h-20 rounded-3xl bg-[#FFE5EC] anime-border flex items-center justify-center text-4xl mb-2 animate-bounce shadow">🎁</div>
-        <h3 id="gacha-reward-name" class="text-lg font-black text-[#4A3326]">極速盛合秘技 × 2</h3>
-        <p id="gacha-reward-desc" class="text-xs font-bold text-[#6E4F3A] mt-1 mb-4">可直接從店內集齊 3 份同款和食瞬間完售！</p>
-        <button id="btn-close-gacha-reward" class="anime-btn w-full py-2.5 bg-[#FF85A1] text-white font-black rounded-xl text-xs">太棒了！收進倉庫</button>
+    <div id="modal-gacha-reward" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-4 backdrop-blur-md">
+      <div class="w-full max-w-xs rounded-3xl p-5 bg-gradient-to-b from-[#251408] via-[#4A2508] to-[#1A0C03] border-4 border-[#FFE082] flex flex-col items-center text-center shadow-[0_15px_40px_rgba(0,0,0,0.9)] text-white">
+        <span id="gacha-rarity-badge" class="px-3.5 py-1 rounded-full bg-[#FFE082] text-[#251408] font-black text-xs border-2 border-[#251408] mb-3 shadow-md animate-pulse">✦ 🏴‍☠️ 啟封海盜秘寶 ✦</span>
+        <div id="gacha-reward-icon" class="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#FFCA28] to-[#FF85A1] border-3 border-[#251408] flex items-center justify-center text-5xl mb-2.5 animate-bounce shadow-2xl">🎁</div>
+        <h3 id="gacha-reward-name" class="text-lg font-black text-[#FFE082] drop-shadow-md">水母探照燈 (提示) × 2</h3>
+        <p id="gacha-reward-desc" class="text-xs font-bold text-white/80 mt-1 mb-4 leading-snug">可直接從貨架自動吸附 3 份同款美食瞬間三消！</p>
+        <button id="btn-close-gacha-reward" class="pop-btn w-full py-3.5 bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-[#251408] font-black rounded-2xl text-sm border-2 border-[#251408] active:scale-95 transition-transform shadow-lg">⚓ 太棒了！收進船艙・出發理貨！</button>
       </div>
     </div>
-  </div> <!-- 這是 #app 的結尾 -->
-
-  <script type="module" src="./src/main.js?v=20261109_longer_timer_darker_beige_v86"></script>
-</body>
-</html><div id="modal-settle" class="fixed inset-0 z-50 bg-[#4A3326]/25 hidden flex flex-col justify-between p-3.5 safe-top safe-bottom pointer-events-auto">
-      <div class="w-full max-w-sm mx-auto mt-10 anime-panel rounded-2xl py-2.5 px-4 bg-gradient-to-r from-[#FFF3B0] via-[#FFE5EC] to-[#FFF3B0] flex items-center justify-between shadow-lg">
-        <span class="text-xl">🎊</span>
-        <div class="text-center">
-          <div id="settle-badge" class="text-[10px] font-black text-[#D94E67]">✦ 本日營業圓滿達成 ✦</div>
-          <div id="settle-title" class="text-base font-black text-[#4A3326]">大繁盛！全櫃完售！</div>
-        </div>
-        <span class="text-xl">🎊</span>
-      </div>
-
-      <div class="flex-1 pointer-events-none"></div>
-
-      <div class="w-full max-w-sm mx-auto anime-panel rounded-3xl p-4 flex flex-col items-center text-center shadow-2xl mb-1">
-        <div class="flex items-center gap-3 w-full mb-2.5">
-          <div id="settle-mascot" class="w-20 h-20 shrink-0"></div>
-          <div class="flex flex-col items-start text-left flex-1">
-            <div id="settle-stars" class="text-2xl text-[#FFB800] anime-stroke-sm tracking-widest leading-none">★★★</div>
-            <p id="settle-desc" class="text-xs font-bold text-[#6E4F3A] mt-1 leading-snug">所有手繪和食皆已結帳完畢，顧客大滿足！</p>
-          </div>
-        </div>
-
-        <div id="settle-reward-box" class="w-full py-2 px-3 bg-[#FFF3B0] rounded-xl anime-border mb-3 text-xs font-black text-[#4A3326] flex justify-around">
-          <span id="settle-coin-text">🪙 +180</span>
-          <span id="settle-diam-text">💎 +12</span>
-        </div>
-
-        <div class="w-full flex gap-2.5">
-          <button id="btn-settle-lobby" class="pop-btn flex-1 py-3 bg-[#0077B6] border-2 border-white/40 text-white font-black rounded-2xl text-xs active:scale-95 transition-transform shadow-md">🏠 返回大廳</button>
-          <button id="btn-settle-action" class="pop-btn flex-[2] py-3 bg-gradient-to-r from-[#FFB703] to-[#FB8500] border-2 border-[#251408] text-[#251408] font-black rounded-2xl text-sm active:scale-95 transition-transform shadow-lg">👉 挑戰下一關 ➔</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="modal-gacha-reward" class="fixed inset-0 z-50 bg-[#4A3326]/60 hidden flex items-center justify-center p-4">
-      <div class="w-full max-w-xs anime-panel rounded-3xl p-5 flex flex-col items-center text-center">
-        <span id="gacha-rarity-badge" class="px-3 py-0.5 rounded-full bg-[#FFF3B0] text-[#4A3326] font-black text-xs anime-border mb-2">✦ 特賞・超稀有秘寶 ✦</span>
-        <div id="gacha-reward-icon" class="w-20 h-20 rounded-3xl bg-[#FFE5EC] anime-border flex items-center justify-center text-4xl mb-2 animate-bounce shadow">🎁</div>
-        <h3 id="gacha-reward-name" class="text-lg font-black text-[#4A3326]">極速盛合秘技 × 2</h3>
-        <p id="gacha-reward-desc" class="text-xs font-bold text-[#6E4F3A] mt-1 mb-4">可直接從店內集齊 3 份同款和食瞬間完售！</p>
-        <button id="btn-close-gacha-reward" class="anime-btn w-full py-2.5 bg-[#FF85A1] text-white font-black rounded-xl text-xs">太棒了！收進倉庫</button>
-      </div>
-    </div>
+</div>
   
   <!-- 隱藏相容容器 -->
   <div id="legacy-shims" class="hidden" style="display:none!important">
@@ -839,6 +824,6 @@
 
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261109_longer_timer_darker_beige_v86"></script>
+  <script type="module" src="./src/main.js?v=20261109_pirate_chest_and_haptic_combo_v87"></script>
 </body>
 </html>

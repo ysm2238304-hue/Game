@@ -124,6 +124,7 @@ class GameApp {
 
     this.particles = [];
     this.flyers = [];
+    this.comics = [];
     this.dragging = null;
     this.dragPointer = { x: 0, y: 0 };
     this.appRect = null;
@@ -1117,6 +1118,14 @@ class GameApp {
     setTimeout(() => { slot.scaleX = 1; slot.scaleY = 1; }, 220);
   }
 
+  spawnFloatingComic(x, y, text) {
+    this.comics.push({
+      x, y, text,
+      startTime: performance.now(),
+      duration: 750
+    });
+  }
+
   spawnParticles(x, y, color = '#FFF3B0', count = 14) {
     const palette = [color, '#FF85A1', '#FFD166', '#A8E6CF', '#FFFDF7'];
     for (let i = 0; i < count; i++) {
@@ -1450,6 +1459,7 @@ class GameApp {
           this.cartSlots[drag.cartIdx] = targetCartItem;
         }
         SFX.drop();
+        if ('vibrate' in navigator) navigator.vibrate(15);
         this.renderCartUI();
         this.checkMatches();
         return;
@@ -1493,6 +1503,7 @@ class GameApp {
             this.renderCartUI();
           }
           SFX.swap();
+          if ('vibrate' in navigator) navigator.vibrate(15);
           this.checkMatches();
           return;
         }
@@ -1673,12 +1684,32 @@ class GameApp {
     const centerX = (cRect.left - appRect.left) + centerSlot.x + centerSlot.w / 2;
     const centerY = (cRect.top  - appRect.top)  + centerSlot.y + centerSlot.h / 2;
 
+    // 📳 觸控震動反饋 (Haptic Feedback)
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate([22, 35, 28]);
+    }
+
     [shelf.slots[0], shelf.slots[2]].forEach(sl => {
       const sx = (cRect.left - appRect.left) + sl.x + sl.w / 2;
       const sy = (cRect.top  - appRect.top)  + sl.y + sl.h / 2;
       this.spawnFlyer(typeId, sx, sy, centerX, centerY, null, 130);
     });
-    shelf.slots.forEach(slot => { slot.queue.shift(); this.jellyBounce(slot); });
+    
+    // 💥 三消達成：Q 彈蓄力 ➔ 爆破並觸發後排商品平滑向前滑動 (Slide-Forward)
+    const nowTime = performance.now();
+    shelf.slots.forEach(slot => {
+      slot.queue.shift();
+      slot.slideTime = nowTime;
+      slot.slideDur = 160;
+      this.jellyBounce(slot);
+    });
+
+    // 💬 連擊美漫讚賞浮動標籤 (Comic Floating Text)
+    if (this.combo >= 2) {
+      const praiseTexts = ['🫧 GOOD! +2s', '✦ GREAT! +3s', '🌟 AMAZING! +3s', '🔥 KRABBY FEVER! +3s'];
+      const txt = praiseTexts[Math.min(this.combo - 2, praiseTexts.length - 1)];
+      this.spawnFloatingComic(centerX, centerY - 28, txt);
+    }
     this.damageNearbyIce(shelf.shelfIdx);
 
     // ⏰ 消除三連完售：自動獎勵時間 +2 秒（Combo 連擊時 +3 秒）
@@ -1894,7 +1925,12 @@ class GameApp {
     
     if (drawBtn) drawBtn.disabled = true;
     
-    // 1. 扭蛋機開始晃動
+    // 1. 旋轉航海鐵舵 ＋ 寶箱劇烈晃動 ＋ 手機震動
+    const wheel = document.getElementById('ship-helm-wheel');
+    if (wheel) wheel.style.transform = 'rotate(720deg)';
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate([30, 40, 50]);
+    }
     machine.classList.add('gacha-shaking');
     
     // 2. 0.5 秒後，扭蛋掉出來
@@ -2133,15 +2169,28 @@ class GameApp {
         const foodCY = plankY - Math.min(42, Math.round(slot.h * 0.34));
         const backFoodCY = foodCY - 16;
 
+        // 🌟 平滑向前滑動插值 (Smooth Slide-Forward Tween)
+        let curFoodCY = foodCY;
+        let curScaleX = slot.scaleX || 1;
+        let curScaleY = slot.scaleY || 1;
+        if (slot.slideTime) {
+          const p = Math.min(1, (now - slot.slideTime) / (slot.slideDur || 160));
+          const ease = 1 - Math.pow(1 - p, 3);
+          curFoodCY = backFoodCY + (foodCY - backFoodCY) * ease;
+          curScaleX = (slot.scaleX || 1) * (0.80 + 0.20 * ease);
+          curScaleY = (slot.scaleY || 1) * (0.80 + 0.20 * ease);
+          if (p >= 1) slot.slideTime = null;
+        }
+
         if (slot.queue.length > 1) {
           CozyFoodRenderer.drawFood(ctx, slot.queue[1], slot.x + slot.w / 2 + 1, backFoodCY, slot.w, slot.h, { isBack: true });
         }
         const isDraggingThis = this.dragging && this.dragging.sourceType === 'shelf' && this.dragging.fromSlot === slot;
         if (slot.queue.length > 0 && !isDraggingThis) {
-          CozyFoodRenderer.drawFood(ctx, slot.queue[0], slot.x + slot.w / 2, foodCY, slot.w, slot.h, {
+          CozyFoodRenderer.drawFood(ctx, slot.queue[0], slot.x + slot.w / 2, curFoodCY, slot.w, slot.h, {
             isBack: false,
-            scaleX: slot.scaleX || 1,
-            scaleY: slot.scaleY || 1,
+            scaleX: curScaleX,
+            scaleY: curScaleY,
             iceHp: slot.iceHp || 0
           });
         }
@@ -2209,6 +2258,34 @@ class GameApp {
       this.fxCtx.drawImage(sp.cvs, p.x - sz / 2, p.y - sz / 2, sz, sz);
       this.fxCtx.globalAlpha = 1;
     }
+    // 💬 繪製美漫連擊讚賞浮動文字 (Floating Comic Text)
+    for (let i = this.comics.length - 1; i >= 0; i--) {
+      const cm = this.comics[i];
+      const p = Math.min(1, (now - cm.startTime) / cm.duration);
+      if (p >= 1) { this.comics.splice(i, 1); continue; }
+      
+      const ease = 1 - Math.pow(1 - p, 3);
+      const curY = cm.y - ease * 36;
+      const scale = p < 0.25 ? (0.6 + (p / 0.25) * 0.5) : (1.1 - (p - 0.25) * 0.15);
+      const alpha = p > 0.7 ? (1 - (p - 0.7) / 0.3) : 1;
+      
+      this.fxCtx.save();
+      this.fxCtx.globalAlpha = alpha;
+      this.fxCtx.translate(cm.x, curY);
+      this.fxCtx.scale(scale, scale);
+      this.fxCtx.font = '900 16px "Arial Black", sans-serif';
+      this.fxCtx.textAlign = 'center';
+      this.fxCtx.textBaseline = 'middle';
+      
+      this.fxCtx.strokeStyle = '#251408';
+      this.fxCtx.lineWidth = 4;
+      this.fxCtx.strokeText(cm.text, 0, 0);
+      
+      this.fxCtx.fillStyle = '#FFE082';
+      this.fxCtx.fillText(cm.text, 0, 0);
+      this.fxCtx.restore();
+    }
+
     if (this.dragging) {
       const px = this.dragPointer.x;
       const py = this.dragPointer.y;
