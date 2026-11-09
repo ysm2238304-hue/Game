@@ -194,7 +194,13 @@ class GameApp {
     setText('txt-subtitle',        txt.subtitle);
     setText('txt-enter-button',    txt.enterButton);
     setText('txt-lobby-store',     txt.lobbyStoreName);
-    setText('txt-mascot-name',     txt.lobbyMascotName);
+    // Preserve inner 3D icon inside txt-mascot-name if present
+    const mNameEl = document.getElementById('txt-mascot-name');
+    if (mNameEl && txt.lobbyMascotName) {
+      const spanChild = mNameEl.querySelector('span:last-child');
+      if (spanChild) spanChild.innerText = txt.lobbyMascotName.replace(/[✦🐾]/g, '').trim();
+      else mNameEl.innerText = txt.lobbyMascotName;
+    }
     setText('txt-mascot-tag',      txt.lobbyMascotTag);
     setText('txt-nav-map-title',   txt.navMapTitle);
     setText('txt-nav-map-sub',     txt.navMapSub);
@@ -208,7 +214,10 @@ class GameApp {
     const speechEl = document.getElementById('lobby-speech-text');
     if (speechEl && txt.lobbySpeech) speechEl.innerText = txt.lobbySpeech;
     const sfxBtn = document.getElementById('btn-toggle-sfx');
-    if (sfxBtn && txt.soundOn) sfxBtn.innerText = SFX.enabled ? txt.soundOn : '🔇 音效: 關閉';
+    if (sfxBtn) {
+      const sfxSpan = sfxBtn.querySelector('span:last-child');
+      if (sfxSpan) sfxSpan.innerText = SFX.enabled ? '音效: 開啟' : '音效: 關閉';
+    }
   }
 
   initMascots() {

@@ -165,15 +165,79 @@
         <span id="txt-store-status" class="text-xs font-black text-[#FFE082] tracking-wider drop-shadow">🐾 喵喵超商 • 24H 萌萌營業中 🫧</span>
       </div>
       <button id="btn-toggle-sfx" class="pop-btn px-3 py-1 bg-[#FFB703] text-[#251408] rounded-xl text-xs font-black shadow-md flex items-center gap-1.5">
-        <img src="./assets/icons/icon-voucher.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] shrink-0" alt="抽獎券">
+        <svg class="w-5 h-5 shrink-0 drop-shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 12H11L18 6V26L11 20H6C4.89543 20 4 19.1046 4 18V14C4 12.8954 4.89543 12 6 12Z" fill="#FFE082" stroke="#251408" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M22 11C23.5 12.5 24.5 14.2 24.5 16C24.5 17.8 23.5 19.5 22 21" stroke="#251408" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M25 8C27.5 10.5 28.5 13.2 28.5 16C28.5 18.8 27.5 21.5 25 24" stroke="#251408" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+        <span>音效: 開啟</span>
+      </button>
+    </div>
+
+    <!-- 中央卡通主標題區塊 -->
+    <div class="relative flex-1 flex flex-col items-center justify-center z-10 w-full max-w-[340px] mx-auto my-2">
+      <div class="px-4 py-1.5 bg-[#0077B6]/90 backdrop-blur-md border border-white/50 text-[#FFE082] text-[11px] font-black tracking-widest rounded-full mb-3 shadow-[0_4px_15px_rgba(0,180,216,0.5)] flex items-center gap-1.5">
+        <img src="./assets/icons/icon-catpaw.png" class="w-5 h-5 object-contain drop-shadow-sm shrink-0" alt="貓爪">
+        <span>TUXEDO CAT OCEAN MART</span>
+      </div>
+
+      <div class="relative w-full py-5 px-4 bg-gradient-to-b from-[#FFE082] via-[#FFCA28] to-[#FFB703] border-4 border-[#251408] rounded-3xl flex items-center justify-center gap-3.5 shadow-[0_10px_0_#251408,0_16px_25px_rgba(0,0,0,0.6)]">
+        <img src="./assets/icons/icon-catpaw.png" class="w-16 h-16 object-contain drop-shadow-[0_6px_10px_rgba(37,20,8,0.35)] shrink-0 animate-bounce" alt="立體肉球">
+        <div class="flex flex-col items-start leading-tight">
+          <span id="txt-title" class="text-3xl font-black text-[#251408] tracking-wider drop-shadow-[0_2px_0_#FFF]">喵喵超商物語</span>
+          <span id="txt-subtitle" class="text-[11px] font-black text-[#8C4610] tracking-wide mt-1">✦ 賓士貓的深海貨架大冒險 ✦</span>
+        </div>
+        <div class="absolute -top-3.5 -right-2 px-3 py-1 bg-[#FF6B8B] text-white font-black text-[10px] rounded-full border-2 border-[#251408] rotate-6 shadow-md">
+          純粹三消 ✦
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部行動按鈕區 -->
+    <div class="w-full max-w-[340px] mx-auto flex flex-col gap-2.5 z-10 shrink-0">
+      <!-- 無框立體融入肉球的巨型按鈕 -->
+      <button id="btn-enter-lobby" class="pop-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#E63946] text-[#251408] font-black text-base rounded-2xl flex items-center justify-between relative overflow-hidden">
+        <span class="absolute top-1 inset-x-4 h-1.5 bg-white/40 rounded-full pointer-events-none"></span>
+        <div class="flex items-center gap-2.5">
+          <img src="./assets/icons/icon-catpaw.png" class="w-10 h-10 object-contain drop-shadow-[0_4px_6px_rgba(37,20,8,0.4)] shrink-0 animate-bounce" alt="立體肉球">
+          <span class="tracking-wider text-base drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)] font-black">喵～我準備好了！進入大廳</span>
+        </div>
+        <div class="w-7 h-7 rounded-lg bg-[#251408] text-[#FFE082] flex items-center justify-center text-sm font-black shrink-0 shadow-md">
+          ▶
+        </div>
+      </button>
+
+      <button id="btn-google-login" class="w-full py-2 bg-black/40 backdrop-blur-md border border-white/30 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+        <svg class="w-4 h-4 bg-white rounded-full p-0.5" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <span id="login-btn-text">使用 Google 帳號同步進度</span>
+      </button>
+    </div>
+  </section>
+  <header id="top-resource-bar" class="z-30 px-3 py-1.5 safe-top bg-[#001D3D]/95 backdrop-blur-md border-b-2 border-[#48CAE4]/40 text-white flex items-center justify-between gap-2 shrink-0 shadow-md select-none">
+    <div class="flex-1 flex items-center justify-between gap-2">
+      <!-- 稱號 (無框立體肉球融入) -->
+      <div class="flex items-center gap-1.5 bg-[#003566]/85 px-2.5 py-1 rounded-xl border border-[#48CAE4]/35 shadow-xs">
+        <img src="./assets/icons/icon-catpaw.png" class="w-5 h-5 object-contain drop-shadow-sm shrink-0" alt="肉球稱號">
+        <span id="lobby-rank-title" class="text-xs font-black text-[#FFE082]">實習肉球喵</span>
+      </div>
+
+      <!-- 貨幣資產 (無框 3D 圖示自然融入) -->
+      <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1 bg-black/45 px-2 py-0.5 rounded-xl border border-white/15 shadow-xs">
+          <img src="./assets/icons/icon-voucher.png" class="w-5 h-5 object-contain drop-shadow-sm shrink-0" alt="抽獎券">
           <span id="res-vouchers" class="text-xs font-black text-[#FFE082]">5</span>
         </div>
-        <div class="flex items-center gap-1 bg-black/50 px-2 py-0.5 rounded-xl border border-white/20 shadow-xs">
-          <img src="./assets/icons/icon-gold-coin.png" class="w-5 h-5 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] shrink-0" alt="金幣">
+        <div class="flex items-center gap-1 bg-black/45 px-2 py-0.5 rounded-xl border border-white/15 shadow-xs">
+          <img src="./assets/icons/icon-gold-coin.png" class="w-5 h-5 object-contain drop-shadow-sm shrink-0" alt="金幣">
           <span id="res-coins" class="text-xs font-black text-white">17,151</span>
         </div>
-        <div class="flex items-center gap-1 bg-black/50 px-2 py-0.5 rounded-lg border border-white/20 shadow-xs">
-          <img src="./assets/icons/icon-pearl.png" class="w-5 h-5 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] shrink-0" alt="珍珠">
+        <div class="flex items-center gap-1 bg-black/45 px-2 py-0.5 rounded-xl border border-white/15 shadow-xs">
+          <img src="./assets/icons/icon-pearl.png" class="w-5 h-5 object-contain drop-shadow-sm shrink-0" alt="珍珠">
           <span id="res-diamonds" class="text-xs font-black text-[#A8E6CF]">260</span>
         </div>
       </div>
@@ -190,23 +254,10 @@
 
     <!-- 頂層店鋪資訊條 (內嵌徽章) -->
     <div class="relative z-10 px-3 pt-2 flex items-center justify-between gap-2 shrink-0 w-full">
-      <div class="bg-black/45 backdrop-blur-md border border-white/30 rounded-2xl px-3 py-1.5 shadow-lg flex items-center gap-2">
-        <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#FFB703] to-[#FB8500] border-2 border-[#251408] flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 shrink-0 drop-shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="16" cy="20" rx="6.5" ry="5.5" fill="#FFE082" stroke="#251408" stroke-width="2.5"/>
-      <ellipse cx="16" cy="20.5" rx="4.5" ry="3.5" fill="#FF85A1"/>
-      <circle cx="9" cy="13" r="2.8" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="9" cy="13" r="1.8" fill="#FF85A1"/>
-      <circle cx="14" cy="10" r="3" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="14" cy="10" r="2" fill="#FF85A1"/>
-      <circle cx="19" cy="10" r="3" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="19" cy="10" r="2" fill="#FF85A1"/>
-      <circle cx="23.5" cy="13" r="2.8" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="23.5" cy="13" r="1.8" fill="#FF85A1"/>
-    </svg>
-        </div>
+      <div class="bg-black/45 backdrop-blur-md border border-white/25 rounded-2xl px-3 py-1.5 shadow-lg flex items-center gap-2">
+        <img src="./assets/icons/icon-catpaw.png" class="w-7 h-7 object-contain drop-shadow-sm shrink-0" alt="總店徽章">
         <div class="flex flex-col justify-center leading-none">
-          <span id="txt-lobby-store" class="text-[10px] font-black text-[#FFD166] drop-shadow-sm">🐾 深海貓咪超商・總店</span>
+          <span id="txt-lobby-store" class="text-[10px] font-black text-[#FFD166] drop-shadow-sm">深海貓咪超商・總店</span>
           <span class="text-xs font-black text-white mt-1">第 <span id="lobby-cur-stage">1</span> 關理貨巡迴</span>
         </div>
       </div>
@@ -230,20 +281,9 @@
         <!-- 卡通對話氣泡 -->
         <div class="w-full bg-gradient-to-r from-black/65 to-black/45 backdrop-blur-xl rounded-2xl px-4 py-2.5 border-3 border-[#FFE082] shadow-[0_8px_20px_rgba(0,0,0,0.6)] mb-3 relative z-20 transition-transform active:scale-98">
           <div class="flex items-center justify-between mb-1">
-            <span id="txt-mascot-name" class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-[#251408] text-[10px] font-black border border-[#251408] shadow-sm flex items-center gap-1">
-              <svg class="w-6 h-6 shrink-0 drop-shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="16" cy="20" rx="6.5" ry="5.5" fill="#FFE082" stroke="#251408" stroke-width="2.5"/>
-      <ellipse cx="16" cy="20.5" rx="4.5" ry="3.5" fill="#FF85A1"/>
-      <circle cx="9" cy="13" r="2.8" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="9" cy="13" r="1.8" fill="#FF85A1"/>
-      <circle cx="14" cy="10" r="3" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="14" cy="10" r="2" fill="#FF85A1"/>
-      <circle cx="19" cy="10" r="3" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="19" cy="10" r="2" fill="#FF85A1"/>
-      <circle cx="23.5" cy="13" r="2.8" fill="#FFE082" stroke="#251408" stroke-width="2.2"/>
-      <circle cx="23.5" cy="13" r="1.8" fill="#FF85A1"/>
-    </svg>
-              <span>實習店長・賓士喵 🐾</span>
+            <span id="txt-mascot-name" class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-[#251408] text-[10px] font-black shadow-sm flex items-center gap-1">
+              <img src="./assets/icons/icon-catpaw.png" class="w-4 h-4 object-contain drop-shadow-xs shrink-0" alt="肉球">
+              <span>實習店長・賓士喵</span>
             </span>
             <span class="text-[9px] font-black text-[#FFE082] animate-pulse">💬 點擊肉球互動</span>
           </div>
@@ -266,7 +306,7 @@
     <!-- 底部行動塢：巨型開始營業按鈕 ＋ 唯一沉船藏寶箱卡片 (嚴選內嵌圖徽) -->
     <div class="relative z-10 w-full px-4 pb-3 flex flex-col gap-2.5 shrink-0">
       
-      <!-- 🌟 巨型英雄開始理貨按鈕 (內嵌黃金肉球基座) 🌟 -->
+      <!-- 🌟 巨型英雄開始理貨按鈕 (無框 3D 肉球自然融入) 🌟 -->
       <button data-nav="view-game" class="scene-nav-btn pop-btn w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#E63946] text-[#251408] flex items-center justify-between relative overflow-hidden">
         <span class="absolute top-1 inset-x-4 h-1.5 bg-white/40 rounded-full pointer-events-none"></span>
         <div class="flex items-center gap-3">
@@ -282,11 +322,11 @@
         </div>
       </button>
 
-      <!-- 🌟 唯一的經典功能卡片：🏴‍☠️ 沉船神秘古董寶箱 (內嵌海盜金骷髏基座) 🌟 -->
+      <!-- 🌟 唯一的經典功能卡片：沉船神秘古董寶箱 (無框 3D 海盜金幣自然融入) 🌟 -->
       <button data-nav="view-gacha" class="scene-nav-btn pop-btn w-full p-3 rounded-2xl bg-gradient-to-r from-[#7B1FA2] via-[#9C27B0] to-[#BA68C8] text-white flex items-center justify-between relative">
         <span class="absolute top-1 inset-x-4 h-1 bg-white/30 rounded-full pointer-events-none"></span>
         
-        <!-- 左側內嵌圖徽與標題 -->
+        <!-- 左側立體圖示與標題 -->
         <div class="flex items-center gap-3">
           <img src="./assets/icons/icon-skull-coin.png" class="w-10 h-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] shrink-0" alt="海盜金骷髏">
           <div class="flex flex-col items-start leading-tight">
@@ -412,25 +452,25 @@
       <canvas id="shelf-canvas" class="block" style="width: 100%; height: 100%;"></canvas>
     </div>
 
-    <!-- 🌟 底部極簡休閒三道具列（內嵌時光海螺、深海大漩渦、水母探照燈向量圖徽） 🌟 -->
+    <!-- 🌟 底部極簡休閒三道具列（無框 3D 時光海螺、深海大漩渦、水母探照燈自然融入） 🌟 -->
     <div class="relative z-20 w-full px-4 py-2 safe-bottom bg-[#001D3D]/85 backdrop-blur-xl border-t-2 border-[#48CAE4]/40 shrink-0 flex items-center justify-center gap-5 shadow-[0_-4px_20px_rgba(0,0,0,0.6)]">
-      <!-- 道具 1: ↩️ 撤銷 (時光海螺) -->
+      <!-- 道具 1: 撤銷 (時光海螺) -->
       <button id="btn-tool-undo" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#48CAE4] to-[#0096C7] text-white active:scale-95" title="上一步：撤銷剛才的移動">
-        <img src="./assets/icons/icon-undo-shell.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] shrink-0" alt="撤銷">
+        <img src="./assets/icons/icon-undo-shell.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="撤銷">
         <span class="text-xs font-black leading-none drop-shadow-sm">撤銷</span>
         <span id="cnt-tool-undo" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
       </button>
 
-      <!-- 道具 2: 🔀 洗牌 (深海大漩渦) -->
+      <!-- 道具 2: 洗牌 (深海大漩渦) -->
       <button id="btn-tool-shuffle" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#00B4D8] to-[#0077B6] text-white active:scale-95" title="洗牌：重新打亂前排商品">
-        <img src="./assets/icons/icon-shuffle-swirl.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] shrink-0" alt="洗牌">
+        <img src="./assets/icons/icon-shuffle-swirl.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="洗牌">
         <span class="text-xs font-black leading-none drop-shadow-sm">洗牌</span>
         <span id="cnt-tool-shuffle" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
       </button>
 
-      <!-- 道具 3: 💡 提示 (水母探照燈) -->
+      <!-- 道具 3: 提示 (水母探照燈) -->
       <button id="btn-tool-magnet" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] text-white active:scale-95" title="提示：自動吸附集齊三消">
-        <img src="./assets/icons/icon-hint-jellyfish.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] shrink-0" alt="提示">
+        <img src="./assets/icons/icon-hint-jellyfish.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="提示">
         <span class="text-xs font-black leading-none drop-shadow-sm">提示</span>
         <span id="cnt-tool-magnet" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
       </button>
@@ -531,8 +571,8 @@
         </div>
 
         <!-- 巨型海盜開箱按鈕 -->
-        <button id="btn-draw-gacha" class="pop-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#E63946] text-[#251408] font-black text-base rounded-2xl flex items-center justify-center gap-2.5 relative shadow-lg active:scale-95 transition-transform">
-          <img src="./assets/icons/icon-skull-coin.png" class="w-8 h-8 object-contain drop-shadow-[0_2px_4px_rgba(37,20,8,0.4)] shrink-0" alt="轉動鐵舵">
+        <button id="btn-draw-gacha" class="pop-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#E63946] text-[#251408] font-black text-base rounded-2xl flex items-center justify-center gap-2.5 border-3 border-[#251408] shadow-[0_6px_0_#251408,0_12px_25px_rgba(251,133,0,0.6)] active:scale-95 active:translate-y-1 transition-all">
+          <img src="./assets/icons/icon-skull-coin.png" class="w-8 h-8 object-contain drop-shadow-[0_2px_4px_rgba(37,20,8,0.4)] shrink-0" alt="海盜金幣">
           <span class="tracking-wider">轉動鐵舵 • 開啟沉船寶箱！</span>
         </button>
       </div>
@@ -756,8 +796,8 @@
         </div>
 
         <div id="settle-reward-box" class="w-full py-2 px-3 bg-[#FFF3B0] rounded-xl anime-border mb-3 text-xs font-black text-[#4A3326] flex justify-around">
-          <span id="settle-coin-text" class="flex items-center gap-1"><img src="./assets/icons/icon-gold-coin.png" class="w-4 h-4 object-contain inline-block"> +180</span>
-          <span id="settle-diam-text" class="flex items-center gap-1"><img src="./assets/icons/icon-pearl.png" class="w-4 h-4 object-contain inline-block"> +12</span>
+          <span id="settle-coin-text">🪙 +180</span>
+          <span id="settle-diam-text">💎 +12</span>
         </div>
 
         <div class="w-full flex gap-2.5">
@@ -798,6 +838,6 @@
 
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261109_seamless_integrated_3d_icons_v92"></script>
+  <script type="module" src="./src/main.js?v=20261109_welcome_fixed_seamless_icons_v93"></script>
 </body>
 </html>
