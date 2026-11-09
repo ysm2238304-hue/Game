@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikinibottom-v78-hawaiian-bgm-and-juicy-sfx'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'bikinibottom-v79-carrefour-maximized-icons'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

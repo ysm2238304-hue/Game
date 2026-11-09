@@ -1,5 +1,5 @@
 // ============================================================
-// 🎨 src/render/foodRenderer.js — 料理渲染器（含快取查詢與多主題相容保護）
+// 🎨 src/render/foodRenderer.js — 料理渲染器（家樂福風格：等比例最大化 + 零重疊）
 // ============================================================
 
 import { getActiveTheme } from '../themes/index.js';
@@ -18,7 +18,6 @@ function getSpriteFromAtlas(typeId) {
   if (cache[typeId]) return cache[typeId];
   if (cache.onigiri) return cache.onigiri;
 
-  // 若切換至其他主題（例如夜市主題沒有 onigiri），自動取用第一個可用圖示防止空白
   if (!cachedFallbackKey || !cache[cachedFallbackKey]) {
     const keys = Object.keys(cache);
     cachedFallbackKey = keys.length > 0 ? keys[0] : null;
@@ -27,27 +26,28 @@ function getSpriteFromAtlas(typeId) {
 }
 
 export class CozyFoodRenderer {
-  static drawIceOverlay(ctx, size, hp) {
+  static drawIceOverlay(ctx, drawW, drawH, hp) {
     ctx.save();
     ctx.fillStyle = hp >= 2 ? 'rgba(168,230,207,0.65)' : 'rgba(224,244,255,0.55)';
     ctx.strokeStyle = '#4A3326';
     ctx.lineWidth = 2;
-    const box = size * 0.82;
+    const boxW = drawW * 0.92;
+    const boxH = drawH * 0.92;
     ctx.beginPath();
-    ctx.roundRect(-box / 2, -box / 2, box, box, 10);
+    ctx.roundRect(-boxW / 2, -boxH / 2, boxW, boxH, 8);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#FFF3B0';
     ctx.beginPath();
-    ctx.roundRect(-16, -box / 2 - 4, 32, 13, 5);
+    ctx.roundRect(-15, -boxH / 2 - 4, 30, 12, 4);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#4A3326';
     ctx.font = '900 8px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('❄️×' + hp, 0, -box / 2 + 5.5);
+    ctx.fillText('❄️×' + hp, 0, -boxH / 2 + 5);
     ctx.restore();
   }
 
@@ -60,57 +60,64 @@ export class CozyFoodRenderer {
     const scaleY = opts.scaleY || 1;
     const lift = opts.lift || 0;
     const iceHp = opts.iceHp || 0;
+
+    // 🌟 家樂福等比例最大化算法：
+    // slotW 限制最大寬度防止相鄰槽位重疊，slotH 提供充足垂直縱深
+    const slotW = Math.max(34, w);
+    const slotH = Math.max(60, h);
     
-    // 基礎大小 (維持 1.15 倍，確保格子內飽滿)
-    // 基礎大小最大化：配合大槽位放大，讓料理視覺更加飽滿大氣、觸控拖曳更靈敏
-    // 圖示極限最大化：以槽位寬度 2.38 倍計算（約 80px~84px），讓美食無比飽滿、填滿木框核心！
-    // 圖示巨無霸最大化：直徑提升至 92px~96px，飽滿塞滿木框，立體多汁！
-    // 🌟 家樂福黃金比例校準：單件寬度 34px~36px，高度 60px~64px，3件並列零重疊、整齊直立！
-    const baseSize = Math.max(58, Math.min(65, Math.round(w * 1.72)));
+    const maxW = Math.round(slotW * 0.96);
+    const maxH = Math.round(slotH * 0.72);
+
+    const imgRatio = (sprite.width || 1) / (sprite.height || 1);
+    let drawW, drawH;
+
+    if (imgRatio >= 1) {
+      // 橫向商品（漢堡、披薩、甜甜圈）：寬度填滿槽位，高度等比例縮放
+      drawW = maxW;
+      drawH = Math.round(maxW / imgRatio);
+    } else {
+      // 直向商品（飲料、冰淇淋、串燒、奶茶）：高度拉長至極致，寬度不超過槽位
+      drawH = Math.min(maxH, Math.round(maxW / imgRatio));
+      drawW = Math.round(drawH * imgRatio);
+      if (drawW > maxW) {
+        drawW = maxW;
+        drawH = Math.round(maxW / imgRatio);
+      }
+    }
 
     ctx.save();
     ctx.translate(cx, cy);
 
     if (isBack) {
-      ctx.scale(0.75, 0.75);
+      // 後排商品：縮小 20%，微露在後方，半透明帶出立體景深
+      ctx.scale(0.80, 0.80);
       ctx.globalAlpha = 0.52;
     } else {
-      const shadowScale = Math.max(0.5, 1 - lift * 0.015);
+      // 前排商品：底部接觸陰影
+      const shadowScale = Math.max(0.4, 1 - lift * 0.015);
       ctx.beginPath();
       ctx.ellipse(
         0,
-        baseSize * 0.34 + lift * 0.3,
-        baseSize * 0.34 * shadowScale,
-        baseSize * 0.09 * shadowScale,
+        drawH * 0.48 + lift * 0.25,
+        drawW * 0.44 * shadowScale,
+        Math.max(3, drawW * 0.12 * shadowScale),
         0,
         0,
         Math.PI * 2
       );
-      ctx.fillStyle = 'rgba(74,51,38,0.22)';
+      ctx.fillStyle = 'rgba(25, 12, 6, 0.26)';
       ctx.fill();
     }
 
     ctx.translate(0, -lift);
     ctx.scale(scaleX, scaleY);
 
-    // 核心修改：等比例縮放，保證長條圖不會變形，也不會被裁切！
-    const imgRatio = sprite.width / sprite.height;
-    let drawW = baseSize;
-    let drawH = baseSize;
-    
-    if (imgRatio > 1) {
-      // 如果圖片是橫向長條（例如太卷），限制寬度，高度縮小
-      drawH = baseSize / imgRatio;
-    } else {
-      // 如果圖片是直向長條，限制高度，寬度縮小
-      drawW = baseSize * imgRatio;
-    }
-
     ctx.drawImage(sprite, -drawW / 2, -drawH / 2, drawW, drawH);
 
     if (iceHp > 0 && !isBack) {
-      this.drawIceOverlay(ctx, baseSize, iceHp);
+      this.drawIceOverlay(ctx, drawW, drawH, iceHp);
     }
     ctx.restore();
   }
-} // 👈 就是這個大括號！沒有它整個遊戲會崩潰
+}

@@ -385,117 +385,89 @@
     <!-- ============================================================
          遊戲主舞台 (#view-game) - 毛玻璃版
          ============================================================ -->
-    <section id="view-game" class="view-panel flex-1 relative hidden flex-col justify-between overflow-hidden">
-      
+    <section id="view-game" class="view-panel flex-1 relative hidden flex-col w-full h-full overflow-hidden select-none">
       <!-- 滿版背景圖（比奇堡深海海底實景） -->
       <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#0077B6]">
         <img src="./assets/bg-game.jpg" class="w-full h-full object-cover" alt="比奇堡深海背景">
         <div class="absolute inset-0 bg-gradient-to-b from-[#0096C7]/15 via-transparent to-[#03045E]/30 pointer-events-none"></div>
       </div>
 
-      <!-- 極簡頂部 HUD -->
-      <div class="relative z-10 w-full px-2 pt-1.5 pb-1 bg-black/50 backdrop-blur-md border-b border-white/20 shrink-0 shadow-lg">
-        <div class="flex items-center justify-between gap-2">
-          <!-- 左側：返回與指南 -->
-          <div class="flex gap-1 shrink-0">
-            <button data-nav="view-lobby" class="scene-nav-btn pop-btn px-2 py-1.5 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none active:scale-95 transition-transform">
-              <span>🏠</span><span>大廳</span>
-            </button>
-            <button data-guide="game" class="btn-open-guide pop-btn px-2 py-1.5 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none active:scale-95 transition-transform" title="玩法指南">
-              <span>？</span>
-            </button>
-            <button id="btn-toggle-fullscreen" class="pop-btn px-2 py-1.5 rounded-lg bg-white/10 border border-white/30 text-white text-[10px] font-black flex items-center justify-center gap-0.5 leading-none active:scale-95 transition-transform" title="最大化全螢幕">
-              <span>⛶</span>
-            </button>
-          </div>
-
-          <!-- 中間：天數與訂單資訊 -->
-          <div class="flex-1 flex flex-col min-w-0 bg-black/30 px-2 py-1 rounded-xl border border-white/20">
-            <div class="flex items-center justify-between">
-              <span class="px-1.5 py-0.5 bg-[#FF85A1] text-white text-[9px] font-black rounded leading-none">第<span id="label-level">1</span>日</span>
-              <div id="order-items" class="flex items-center gap-1"></div>
-            </div>
-            <!-- 隱藏原本的看板娘對話，避免排版錯亂 -->
-            <p id="mascot-speech" class="hidden">「同櫃擺滿3份相同料理就能完售囉♪」</p>
-            <div id="hud-mascot-face" class="hidden"></div>
-            <span id="badge-direction-hud" class="hidden"></span>
-            <span id="label-shelves-count" class="hidden"></span>
-          </div>
-
-          <!-- 右側：營業倒數計時器 -->
-          <div id="moves-badge" class="relative flex flex-col items-center justify-center bg-gradient-to-r from-[#FF6B8B] to-[#FF85A1] text-white px-2.5 py-1 rounded-xl border border-white/30 shrink-0 shadow-md min-w-[58px] transition-all">
-            <span class="text-[8px] font-black leading-none text-white/90 flex items-center gap-0.5"><span>⏳</span><span>倒數</span></span>
-            <span id="label-moves" class="text-sm font-black leading-tight drop-shadow-md mt-0.5 tracking-wider font-mono">01:30</span>
-            <div id="toast-time-bonus" class="pointer-events-none absolute -bottom-5 right-1 px-1.5 py-0.5 rounded-full bg-[#A8E6CF] text-[#4A3326] text-[9px] font-black shadow-md opacity-0 transition-opacity duration-200">+2s ⏰</div>
-          </div>
+      <!-- 🌟 極簡頂部 HUD（僅 40px，省下所有空間給大貨架） -->
+      <div class="relative z-20 w-full px-3 py-1.5 bg-black/45 backdrop-blur-md border-b border-white/20 shrink-0 shadow-md flex items-center justify-between">
+        <!-- 左側：關卡進度標籤 -->
+        <div class="flex items-center gap-1.5">
+          <span class="px-2.5 py-1 bg-gradient-to-r from-[#0096C7] to-[#0077B6] text-white text-xs font-black rounded-xl border border-white/30 shadow-xs flex items-center gap-1">
+            <span>⚓</span><span>第 <span id="label-level">1</span> 關</span>
+          </span>
         </div>
 
-        <!-- 進度條 (壓縮成一條細線) -->
-        <div class="w-full mt-1.5 flex items-center gap-2">
-          <div class="flex-1 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/20">
-            <div id="fever-progress-bar" class="h-full bg-gradient-to-r from-[#FF85A1] to-[#FFF3B0] rounded-full transition-all duration-300" style="width: 0%"></div>
-          </div>
-          <div class="flex-1 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/20">
-            <div id="clear-progress-bar" class="h-full bg-gradient-to-r from-[#A8E6CF] to-[#FFF3B0] rounded-full transition-all duration-300" style="width: 0%"></div>
-          </div>
-          <span id="clear-progress-text" class="text-[9px] font-black text-white min-w-[24px] text-right">0%</span>
+        <!-- 中間：大字體倒數計時器 -->
+        <div class="flex items-center gap-1.5 px-3.5 py-1 bg-black/50 rounded-xl border border-white/25 shadow-inner">
+          <span class="text-xs">⏱️</span>
+          <span id="label-moves" class="text-base font-black text-[#FFE082] font-mono tracking-wider drop-shadow">01:30</span>
+          <div id="toast-time-bonus" class="pointer-events-none absolute -bottom-5 right-1 px-1.5 py-0.5 rounded-full bg-[#A8E6CF] text-[#4A3326] text-[9px] font-black shadow-md opacity-0 transition-opacity duration-200">+2s ⏰</div>
         </div>
+
+        <!-- 右側：音效與全螢幕按鈕 -->
+        <div class="flex items-center gap-1.5">
+          <button id="btn-hud-sfx" class="pop-btn px-2.5 py-1 rounded-xl bg-white/15 border border-white/30 text-white text-xs font-black flex items-center justify-center active:scale-95 transition-transform" title="音效開關">
+            <span>🔊</span>
+          </button>
+          <button id="btn-toggle-fullscreen" class="pop-btn px-2.5 py-1 rounded-xl bg-white/15 border border-white/30 text-white text-xs font-black flex items-center justify-center active:scale-95 transition-transform" title="最大化全螢幕">
+            <span>⛶</span>
+          </button>
+        </div>
+
+        <!-- 隱藏但保留 DOM 元素供 JS 存取避免報錯 -->
+        <div id="order-items" class="hidden"></div>
+        <p id="mascot-speech" class="hidden"></p>
+        <div id="hud-mascot-face" class="hidden"></div>
+        <span id="badge-direction-hud" class="hidden"></span>
+        <span id="label-shelves-count" class="hidden"></span>
+        <div id="fever-progress-bar" class="hidden"></div>
+        <div id="clear-progress-bar" class="hidden"></div>
+        <span id="clear-progress-text" class="hidden">0%</span>
+        <div id="cart-tray" class="hidden"></div>
+        <span id="label-cart-capacity" class="hidden"></span>
       </div>
 
-      <!-- 👇 懸浮通知條 (獨立拉出來，不會遮擋任何 UI) 👇 -->
-      <div id="top-combo-toast" class="pointer-events-none absolute top-[52px] inset-x-2 h-9 hidden z-50 flex justify-center">
+      <!-- 懸浮連擊通知條 (不佔據版面空間) -->
+      <div id="top-combo-toast" class="pointer-events-none absolute top-[48px] inset-x-2 h-9 hidden z-50 flex justify-center">
         <div id="top-combo-box" class="w-full max-w-[340px] h-full px-3 rounded-xl bg-gradient-to-r from-[#FF85A1] via-[#FFB86B] to-[#FFF3B0] border-2 border-white/50 shadow-[0_4px_15px_rgba(0,0,0,0.4)] flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="px-1.5 py-0.5 bg-[#4A3326] text-[#FFF3B0] text-[10px] font-black rounded-md leading-none" id="combo-maintext">COMBO ×1</span>
             <span id="combo-subtext" class="text-xs font-black text-[#4A3326]">✦ 絕品三連完售!!</span>
           </div>
-          <span id="combo-dish-name" class="text-[10px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">雙味海苔御飯糰 ✦</span>
+          <span id="combo-dish-name" class="text-[10px] font-black text-[#4A3326] bg-white/95 px-2 py-0.5 rounded-full border border-[#4A3326] truncate max-w-[130px]">美味蟹堡 ✦</span>
         </div>
       </div>
-      <!-- 👆 懸浮通知條結束 👆 -->
 
-      <!-- 貨架畫布區 -->
+      <!-- 🛒 超市大貨架畫布舞台區（佔據全螢幕 88% 以上極大化視野） -->
       <div id="shelves-stage-container" class="relative z-10 w-full flex-1 overflow-hidden flex items-center justify-center min-h-0">
         <canvas id="shelf-canvas" class="w-full h-full block"></canvas>
       </div>
 
-      <!-- 比奇堡深海海底操作塢 -->
-      <div class="relative z-10 w-full px-2.5 pt-1.5 safe-bottom bg-[#001D3D]/80 backdrop-blur-xl border-t-2 border-[#48CAE4]/40 shrink-0 shadow-[0_-6px_25px_rgba(0,0,0,0.6)]">
-        <div class="flex items-center justify-between gap-2 pb-1.5">
-          
-          <!-- 🦪 蚌殼暫存網 -->
-          <div class="flex items-center gap-1.5 bg-[#003566]/60 px-2 py-1 rounded-2xl border border-[#48CAE4]/40 shrink-0 shadow-inner">
-            <div class="flex flex-col items-start leading-none pr-0.5">
-              <span class="text-[9px] font-black text-[#FFE082] flex items-center gap-0.5"><span>🦪</span><span>暫存</span></span>
-              <span id="label-cart-capacity" class="text-[8px] font-bold text-white/70 mt-0.5">2 蚌位</span>
-            </div>
-            <div id="cart-tray" class="flex items-center gap-1.5"></div>
-          </div>
+      <!-- 🌟 底部極簡休閒三道具列（僅 48px，家樂福標準配置） -->
+      <div class="relative z-20 w-full px-4 py-2 safe-bottom bg-[#001D3D]/80 backdrop-blur-xl border-t border-[#48CAE4]/30 shrink-0 flex items-center justify-center gap-6 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <!-- 道具 1: ↩️ 撤銷 (Undo) -->
+        <button id="btn-tool-undo" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#48CAE4] to-[#0096C7] border border-white/40 shadow-md active:scale-95 transition-transform" title="上一步：撤銷剛才的移動">
+          <span class="text-base leading-none">↩️</span>
+          <span class="text-xs font-black text-white leading-none">撤銷</span>
+        </button>
 
-          <!-- 三大比奇堡神級道具 -->
-          <div class="flex-1 grid grid-cols-3 gap-1.5">
-            <!-- 道具 1: 🌀 深海漩渦 -->
-            <button id="btn-tool-shuffle" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#00B4D8] to-[#0077B6] border-2 border-[#90E0EF]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="深海大漩渦：商品重新洗牌">
-              <span class="text-base leading-none drop-shadow">🌀</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">漩渦</span>
-              <span id="cnt-tool-shuffle" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">3</span>
-            </button>
-            
-            <!-- 道具 2: 🔥 火山辣醬 -->
-            <button id="btn-tool-hammer" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#FF5722] to-[#D84315] border-2 border-[#FFAB91]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="特濃火山辣醬：瞬間融化冰霜">
-              <span class="text-base leading-none drop-shadow">🔥</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">辣醬</span>
-              <span id="cnt-tool-hammer" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">2</span>
-            </button>
-            
-            <!-- 道具 3: 🪼 水母捕網 -->
-            <button id="btn-tool-magnet" class="pop-btn h-11 px-1 rounded-2xl bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] border-2 border-[#E1BEE7]/60 flex flex-col items-center justify-center relative active:scale-95 transition-transform shadow-md" title="水母捕撈網：自動集齊三消">
-              <span class="text-base leading-none drop-shadow">🪼</span>
-              <span class="text-[9px] font-black text-white leading-none mt-0.5 drop-shadow">捕網</span>
-              <span id="cnt-tool-magnet" class="absolute -top-1.5 -right-1 min-w-[17px] h-[17px] bg-[#FFE082] text-[#D84315] text-[9px] font-black px-1 rounded-full flex items-center justify-center border-2 border-[#251408] shadow">2</span>
-            </button>
-          </div>
-        </div>
+        <!-- 道具 2: 🔀 洗牌 (Shuffle) -->
+        <button id="btn-tool-shuffle" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#00B4D8] to-[#0077B6] border border-white/40 shadow-md active:scale-95 transition-transform" title="洗牌：重新打亂前排商品">
+          <span class="text-base leading-none">🔀</span>
+          <span class="text-xs font-black text-white leading-none">洗牌</span>
+          <span id="cnt-tool-shuffle" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
+        </button>
+
+        <!-- 道具 3: 💡 提示 (Hint / Magnet) -->
+        <button id="btn-tool-magnet" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] border border-white/40 shadow-md active:scale-95 transition-transform" title="提示：自動吸附集齊三消">
+          <span class="text-base leading-none">💡</span>
+          <span class="text-xs font-black text-white leading-none">提示</span>
+          <span id="cnt-tool-magnet" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
+        </button>
       </div>
     </section>
     <!-- ============================================================

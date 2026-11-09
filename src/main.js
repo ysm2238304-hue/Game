@@ -383,6 +383,11 @@ class GameApp {
       if (targetEl) { targetEl.classList.remove('hidden'); targetEl.classList.add('flex'); }
       this.currentView = targetViewId;
       
+      const resBar = document.getElementById('top-resource-bar');
+      if (resBar) {
+        if (targetViewId === 'view-game') resBar.classList.add('hidden');
+        else resBar.classList.remove('hidden');
+      }
       // 👇 修復 Bug：當切換進入遊戲畫面時，若上一局已結算完畢，自動開始最新關卡並補貨 👇
       if (targetViewId === 'view-game') {
         if (this.isLevelSettled || !this.shelves || this.shelves.length === 0) {
@@ -451,10 +456,10 @@ class GameApp {
     const cols = 3;
     const rows = 4; // 🌟 升級為 4 層深海整合型大貨架（看齊家樂福/萬家福）！
     
-    // 1. 左右邊距 8px，木框間距 9px，最大化槽位橫向寬度
-    const padX = 8; 
-    const gapX = 9; 
-    const gapY = 16; 
+    // 1. 左右邊距 5px，木框間距 6px，最大化槽位橫向寬度
+    const padX = 5; 
+    const gapX = 6; 
+    const gapY = 12; 
 
     // 2. 寬度基準：左右各留 10px，兩列間隙 6px，充分利用水平寬度
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
@@ -1125,7 +1130,7 @@ class GameApp {
       SFX.tap();
       BGM.play();
       document.getElementById('view-title').classList.add('hidden');
-      this.renderHUD();
+      this.switchScene('view-game');
     };
 
     const updateSfxButtons = () => {
@@ -1266,6 +1271,8 @@ class GameApp {
       };
     }
 
+    const uBtn = document.getElementById('btn-tool-undo');
+    if (uBtn) uBtn.onclick = () => this.undoMove();
     document.getElementById('btn-tool-shuffle').onclick = () => this.useTool('shuffle');
     document.getElementById('btn-tool-hammer').onclick  = () => this.useTool('hammer');
     document.getElementById('btn-tool-magnet').onclick  = () => this.useTool('magnet');
@@ -1404,6 +1411,15 @@ class GameApp {
           }
           this.consumeMove();
           const displacedItem = slot.queue.length > 0 ? slot.queue[0] : null;
+          if (drag.sourceType === 'shelf') {
+            this.moveHistory = this.moveHistory || [];
+            this.moveHistory.push({
+              fromSlot: drag.fromSlot,
+              toSlot: slot,
+              movedItem: drag.typeId,
+              displacedItem: displacedItem
+            });
+          }
           if (displacedItem) slot.queue[0] = drag.typeId;
           else slot.queue.unshift(drag.typeId);
           this.jellyBounce(slot);
@@ -1422,6 +1438,30 @@ class GameApp {
       }
     }
     this.cancelDragReturn(drag);
+  }
+
+  undoMove() {
+    if (this.isLevelSettled) return;
+    if (!this.moveHistory || this.moveHistory.length === 0) {
+      SFX.cancel();
+      return;
+    }
+    const last = this.moveHistory.pop();
+    const { fromSlot, toSlot, movedItem, displacedItem } = last;
+    if (toSlot.queue.length > 0 && toSlot.queue[0] === movedItem) {
+      if (displacedItem) toSlot.queue[0] = displacedItem;
+      else toSlot.queue.shift();
+      this.jellyBounce(toSlot);
+
+      if (displacedItem) fromSlot.queue[0] = movedItem;
+      else fromSlot.queue.unshift(movedItem);
+      this.jellyBounce(fromSlot);
+
+      SFX.swap();
+      this.checkMatches();
+    } else {
+      SFX.cancel();
+    }
   }
 
   cancelDragReturn(drag) {
@@ -2022,9 +2062,10 @@ class GameApp {
           ctx.arc(slot.x + slot.w / 2 - 6 + d * 4.2, slot.y + 4, 1.8, 0, Math.PI * 2);
           ctx.fill();
         }
-        // 垂直對齊：商品立正站在木層板上，與上層層板緊湊咬合，零重疊！
-        const foodCY = slot.y + slot.h - 18;
-        const backFoodCY = slot.y + slot.h - 26;
+        // 垂直對齊：以底層木板為基準，前排立正站立，後排微露其後
+        const plankY = sh.y + sh.h - 8;
+        const foodCY = plankY - Math.min(42, Math.round(slot.h * 0.34));
+        const backFoodCY = foodCY - 16;
 
         if (slot.queue.length > 1) {
           CozyFoodRenderer.drawFood(ctx, slot.queue[1], slot.x + slot.w / 2 + 1, backFoodCY, slot.w, slot.h, { isBack: true });
