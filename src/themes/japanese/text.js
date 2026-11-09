@@ -1,35 +1,29 @@
 // ============================================================
-// 📦 src/themes/japanese/text.js — 比奇堡海底主題 UI 文字 (Bikini Bottom Edition)
+// 📦 喵喵超商主題 UI 文字 (Tuxedo Cat Mart Edition)
 // ============================================================
 
 export const TEXT = {
   // 扉頁
-  storeStatus: '比奇堡 • 24H 營業中',
-  title: '蟹堡王物語!',
-  subtitle: '美味蟹堡與深海熱帶生活街',
-  enterButton: '進入比奇堡大廳 ➔',
+  storeStatus: '深海貓咪超商 • 24H 萌萌營業中 🫧',
+  title: '喵喵超商物語',
+  subtitle: '✦ 賓士貓的深海貨架大冒險 ✦',
+  enterButton: '🐾 喵～我準備好了！進入大廳 ▶',
   
   // 大廳
-  lobbyStoreName: '⚓ 比奇堡・蟹堡王總店',
-  lobbyDayLabel: '第 {n} 個航海營業日',
-  lobbyMascotName: '✦ 金牌店員・海綿寶寶',
-  lobbyMascotTag: '熱騰騰美味蟹堡出爐',
-  lobbySpeech: '「我準備好了！我準備好了！今天也要把蟹堡全賣光～🍔」',
+  lobbyStoreName: '🐾 深海貓咪超商・總店',
+  lobbyDayLabel: '第 {n} 關理貨巡迴',
+  lobbyMascotName: '✦ 實習超商店長・賓士喵 🐾',
+  lobbyMascotTag: '肉球理貨大師',
+  lobbySpeech: '「喵～今天也要把零食貨架整理得整整齊齊！🐾」',
 
   // 遊戲
-  gameShelvesLabel: '9 座漂流木架',
+  gameShelvesLabel: '4 層超商大貨架',
   gameMovesLabel: '剩餘時間',
-  gameStartButton: '開始營業 • 整理漂流木',
+  gameStartButton: '開始理貨 • 整理超商貨架',
 
   // 導航卡片
-  navMapTitle: '比奇堡全島地圖',
-  navMapSub: '水母田與海之霸巡禮',
-  navGachaTitle: '沉船神秘藏寶箱',
-  navGachaSub: '轉動鐵舵抽取秘寶',
-  navShopTitle: '蟹堡廚房設備改造',
-  navShopSub: '煎板升級與深海水箱',
-  navQuestsTitle: '蟹老闆每日契約',
-  navQuestsSub: '打卡蓋章與深海圖鑑',
+  navGachaTitle: '沉船神秘古董寶箱',
+  navGachaSub: '抽取戰鬥神級道具 (撤銷/洗牌/提示)',
 
   // 其他文字
   soundOn: '🔊 音效: 開啟',

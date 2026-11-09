@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikinibottom-v88-real-pirate-chest-png'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v89-tuxedocat-and-cartoon-chunky-buttons'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -9,7 +9,10 @@ const PRECACHE_ASSETS = [
   './assets/mascot/spongebob-happy.png',
   './assets/mascot/spongebob-star.png',
   './assets/mascot/spongebob-worry.png',
-  './assets/pirate-chest.png'
+  './assets/pirate-chest.png',
+  './assets/mascot/tuxedocat-happy.png',
+  './assets/mascot/tuxedocat-star.png',
+  './assets/mascot/tuxedocat-worry.png'
 ];
 
 // 1. 安裝階段：容錯預載入資源

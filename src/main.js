@@ -135,11 +135,11 @@ class GameApp {
     this.shelfStaticCtx = null;
 
     this.lobbyLines = [
-      '「我準備好了！我準備好了！今天也要把美味蟹堡全賣光～🍔」',
-      '「聞到了嗎？那是剛出爐的美味蟹堡和現炸海藻脆薯條♪」',
-      '「派大星剛剛把水母果醬偷偷藏在漂流木櫃子裡了！」',
-      '「蟹老闆說：『時間就是金錢！小夥子們手速要快！』🦀」',
-      '「連續三連完售會獎勵更多秒數，章魚哥都忍不住鼓掌了！✨」'
+      '「喵～今天也要把零食貨架整理得整整齊齊！🐾」',
+      '「肉球踩踏中！整理貨架的感覺最舒服了喵～✨」',
+      '「聞到香味了嗎？那是剛出爐的起司披薩與美味點心♪」',
+      '「卡關時別忘了使用撤銷與洗牌，本喵店長會幫你加油的！❤️」',
+      '「快去沉船藏寶箱開寶，裡面有超厲害的戰鬥道具喵！🏴‍☠️」'
     ];
     this.lobbyLineIdx = 0;
 
@@ -892,11 +892,11 @@ class GameApp {
   getStoreRankInfo() {
     const d = GameState.totalDishesCleared || 0;
     const ranks = [
-      { lv: 1, title: '實習洗碗海綿', min: 0,   next: 30 },
-      { lv: 2, title: '榮譽鏟堡大師', min: 30,  next: 90 },
-      { lv: 3, title: '水母田大霸主', min: 90,  next: 180 },
-      { lv: 4, title: '蟹老闆金牌特廚', min: 180, next: 320 },
-      { lv: 5, title: '比奇堡商業傳奇 ✦', min: 320, next: 500 }
+      { lv: 1, title: '實習肉球喵 🐾', min: 0,   next: 30 },
+      { lv: 2, title: '榮譽理貨喵 ✨', min: 30,  next: 90 },
+      { lv: 3, title: '水手金牌店長 ⚓', min: 90,  next: 180 },
+      { lv: 4, title: '喵喵商業大亨 👑', min: 180, next: 320 },
+      { lv: 5, title: '深海傳奇貓神 ✦', min: 320, next: 500 }
     ];
     let cur = ranks[0];
     for (const r of ranks) {
