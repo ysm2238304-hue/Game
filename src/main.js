@@ -142,17 +142,17 @@ class GameApp {
     ];
     this.lobbyLineIdx = 0;
 
-    this.applyThemeText();
-    this.initMascots();
-    this.initCartSlots();
-    this.bindEvents();
-    this.syncDailyClaimState();
-    this.renderLobbyShowcase();
-    this.renderShopDecors();
-    this.renderEncyclopedia();
-    this.renderHUD();
-    this.renderRoadmap();
-    this.renderQuests();
+    try { this.applyThemeText(); } catch (e) { console.warn(e); }
+    try { this.initMascots(); } catch (e) { console.warn(e); }
+    try { this.initCartSlots(); } catch (e) { console.warn(e); }
+    try { this.bindEvents(); } catch (e) { console.warn(e); }
+    try { this.syncDailyClaimState(); } catch (e) { console.warn(e); }
+    try { this.renderLobbyShowcase(); } catch (e) { console.warn(e); }
+    try { this.renderShopDecors(); } catch (e) { console.warn(e); }
+    try { this.renderEncyclopedia(); } catch (e) { console.warn(e); }
+    try { this.renderHUD(); } catch (e) { console.warn(e); }
+    try { this.renderRoadmap(); } catch (e) { console.warn(e); }
+    try { this.renderQuests(); } catch (e) { console.warn(e); }
     this.startLevel(this.curLevel);
     this.startLoop();
 
@@ -944,9 +944,9 @@ class GameApp {
     if (rankBar)    rankBar.style.width = `${rank.pct}%`;
     if (rankDishes) rankDishes.innerText = rank.total;
 
-    document.getElementById('cnt-tool-shuffle').innerText = GameState.boosters.shuffle;
-    document.getElementById('cnt-tool-hammer').innerText  = GameState.boosters.hammer;
-    document.getElementById('cnt-tool-magnet').innerText  = GameState.boosters.magnet;
+    setTxt('cnt-tool-shuffle', GameState.boosters.shuffle);
+    setTxt('cnt-tool-hammer',  GameState.boosters.hammer);
+    setTxt('cnt-tool-magnet',  GameState.boosters.magnet);
     const gStockMag = document.getElementById('gacha-stock-magnet');
     const gStockHam = document.getElementById('gacha-stock-hammer');
     const gStockShu = document.getElementById('gacha-stock-shuffle');
@@ -967,8 +967,8 @@ class GameApp {
     setTxt('up-reg-val', GameState.upgrades.register);
     setTxt('up-reg-pct', GameState.upgrades.register * 25);
     setTxt('up-shelf-val', GameState.upgrades.shelf);
-    document.getElementById('up-shelf-moves').innerText = extraMoves;
-    document.getElementById('up-cold-val').innerText    = GameState.upgrades.cold;
+    setTxt('up-shelf-moves', extraMoves);
+    setTxt('up-cold-val', GameState.upgrades.cold);
 
     const dashReg   = document.getElementById('dash-reg-bonus');
     const dashShelf = document.getElementById('dash-shelf-bonus');
@@ -987,8 +987,8 @@ class GameApp {
 
     const dirNames = { rush: '⚡我準備好了！', storage: '🦪無限蚌位', tycoon: '🦀蟹老闆愛錢' };
     const curDirLabel = dirNames[GameState.direction] || '⚡速銷狂熱';
-    document.getElementById('badge-direction-hud').innerText = curDirLabel.slice(0, 3);
-    document.getElementById('lobby-skill-name').innerText = curDirLabel.slice(1);
+    setTxt('badge-direction-hud', curDirLabel.slice(0, 3));
+    setTxt('lobby-skill-name', curDirLabel.slice(1));
 
     const hasClaimableQuest = GameState.quests.some(q => q.cur >= q.target && !q.claimed) || (GameState.stampCount >= 5);
     const questDot = document.getElementById('badge-quest-dot');
@@ -1333,7 +1333,7 @@ class GameApp {
     const uBtn = document.getElementById('btn-tool-undo');
     if (uBtn) uBtn.onclick = () => this.undoMove();
     document.getElementById('btn-tool-shuffle').onclick = () => this.useTool('shuffle');
-    document.getElementById('btn-tool-hammer').onclick  = () => this.useTool('hammer');
+    const hBtn = document.getElementById('btn-tool-hammer'); if (hBtn) hBtn.onclick = () => this.useTool('hammer');
     document.getElementById('btn-tool-magnet').onclick  = () => this.useTool('magnet');
     const gBtn = document.getElementById('btn-draw-gacha'); if (gBtn) gBtn.onclick = () => this.triggerGacha();
     const cgBtn = document.getElementById('btn-close-gacha-reward');
