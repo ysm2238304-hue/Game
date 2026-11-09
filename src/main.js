@@ -72,7 +72,7 @@ class GameApp {
     this.appEl = document.getElementById('app');
     this.stageContainer = document.getElementById('shelves-stage-container');
 
-    this.currentView = 'view-lobby';
+    this.currentView = 'view-game';
     this.isTransitioning = false;
     this.isLevelSettled = false;
     this.isDrawingGacha = false;
@@ -873,12 +873,17 @@ class GameApp {
   }
 
   renderHUD() {
-    document.getElementById('res-coins').innerText = GameState.coins.toLocaleString();
-    document.getElementById('res-diamonds').innerText = GameState.diamonds.toLocaleString();
-    document.getElementById('res-vouchers').innerText = GameState.vouchers;
-    document.getElementById('label-level').innerText = this.curLevel;
-    document.getElementById('lobby-cur-stage').innerText = GameState.unlockedLevel;
-    document.getElementById('btn-stage-num').innerText = this.curLevel;
+    const setTxt = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = val;
+    };
+    setTxt('label-level', this.curLevel);
+    setTxt('cnt-tool-shuffle', GameState.boosters.shuffle);
+    setTxt('cnt-tool-magnet',  GameState.boosters.magnet);
+    setTxt('cnt-tool-hammer',  GameState.boosters.hammer);
+    setTxt('res-coins', GameState.coins.toLocaleString());
+    setTxt('res-diamonds', GameState.diamonds.toLocaleString());
+    setTxt('res-vouchers', GameState.vouchers);
 
     const rank = this.getStoreRankInfo();
     const rankBadge  = document.getElementById('lobby-rank-badge');
@@ -910,9 +915,9 @@ class GameApp {
     const extraMoves = GameState.upgrades.shelf * 2;
     const coldRange = 1 + Math.floor((GameState.upgrades.cold - 1) / 1);
 
-    document.getElementById('up-reg-val').innerText     = GameState.upgrades.register;
-    document.getElementById('up-reg-pct').innerText     = GameState.upgrades.register * 25;
-    document.getElementById('up-shelf-val').innerText   = GameState.upgrades.shelf;
+    setTxt('up-reg-val', GameState.upgrades.register);
+    setTxt('up-reg-pct', GameState.upgrades.register * 25);
+    setTxt('up-shelf-val', GameState.upgrades.shelf);
     document.getElementById('up-shelf-moves').innerText = extraMoves;
     document.getElementById('up-cold-val').innerText    = GameState.upgrades.cold;
 
@@ -1276,9 +1281,11 @@ class GameApp {
     document.getElementById('btn-tool-shuffle').onclick = () => this.useTool('shuffle');
     document.getElementById('btn-tool-hammer').onclick  = () => this.useTool('hammer');
     document.getElementById('btn-tool-magnet').onclick  = () => this.useTool('magnet');
-    document.getElementById('btn-draw-gacha').onclick   = () => this.triggerGacha();
-    document.getElementById('btn-close-gacha-reward').onclick = () => {
-      document.getElementById('modal-gacha-reward').classList.add('hidden');
+    const gBtn = document.getElementById('btn-draw-gacha'); if (gBtn) gBtn.onclick = () => this.triggerGacha();
+    const cgBtn = document.getElementById('btn-close-gacha-reward');
+    if (cgBtn) cgBtn.onclick = () => {
+      const m = document.getElementById('modal-gacha-reward');
+      if (m) m.classList.add('hidden');
     };
 
     document.getElementById('btn-settle-action').onclick = () => {
@@ -1286,15 +1293,15 @@ class GameApp {
       document.getElementById('modal-settle').classList.add('hidden');
       this.startLevel(GameState.unlockedLevel);
     };
-    document.getElementById('btn-settle-lobby').onclick = () => {
+    const sLobby = document.getElementById('btn-settle-lobby');
+    if (sLobby) sLobby.onclick = () => {
       SFX.tap();
       document.getElementById('modal-settle').classList.add('hidden');
-      // 👇 提前把下一關的貨架補滿，這樣從大廳點進來時，連載入延遲都沒有 👇
-      this.startLevel(GameState.unlockedLevel); 
-      this.navigateTo('view-lobby');
+      this.startLevel(this.curLevel);
     };
 
-    document.getElementById('btn-daily-claim').onclick = () => {
+    const dClaim = document.getElementById('btn-daily-claim');
+    if (dClaim) dClaim.onclick = () => {
       const btn = document.getElementById('btn-daily-claim');
       if (btn.disabled) return;
       SFX.win();
