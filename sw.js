@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikinibottom-v83-warm-beige-shelf-backboard-and-canvas-guarantee'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'bikinibottom-v84-canvas-width-zero-fixed-and-warm-beige-shelf'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

@@ -439,9 +439,13 @@ class GameApp {
     const ch = this.stageContainer ? this.stageContainer.clientHeight : 0;
     const winW = typeof window !== 'undefined' ? window.innerWidth : 360;
     const winH = typeof window !== 'undefined' ? window.innerHeight : 640;
-    const appW = this.appEl ? this.appEl.clientWidth : winW;
-    this.width  = cw > 0 ? cw : Math.min(appW, winW);
-    this.height = ch > 0 ? ch : Math.max(480, winH - 96);
+    const appW = (this.appEl && this.appEl.clientWidth > 0) ? this.appEl.clientWidth : winW;
+    
+    // 🛡️ 致命防禦：禁止 Math.min(0, winW) 算出 width = 0 的世紀大 Bug！
+    const validW = cw > 0 ? cw : (appW > 0 ? Math.min(appW, winW) : winW);
+    const validH = ch > 0 ? ch : (winH > 0 ? winH - 96 : 580);
+    this.width  = Math.max(320, validW || 360);
+    this.height = Math.max(480, validH || 580);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
     this.canvas.width  = Math.round(this.width  * dpr);
@@ -2108,6 +2112,9 @@ class GameApp {
   }
 
   drawShelvesCanvas(now = performance.now()) {
+    if (!this.width || this.width < 100 || !this.height || this.height < 100) {
+      this.initCanvasSize();
+    }
     this.ctx.clearRect(0, 0, this.width, this.height);
     // 直接在主畫布繪製大貨架背板與層板，杜絕離線畫布尺寸為0崩潰
     this.paintSupermarketShelfUnit(this.ctx);
