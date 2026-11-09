@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikinibottom-v82-pure-cartoon-interactive-stage-and-single-chest'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'bikinibottom-v83-warm-beige-shelf-backboard-and-canvas-guarantee'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

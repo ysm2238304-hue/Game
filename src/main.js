@@ -391,11 +391,13 @@ class GameApp {
       // 👇 修復 Bug：當切換進入遊戲畫面時，若上一局已結算完畢，自動開始最新關卡並補貨 👇
       if (targetViewId === 'view-game') {
         if (this.isLevelSettled || !this.shelves || this.shelves.length === 0) {
-          this.startLevel(GameState.unlockedLevel);
+          this.startLevel(GameState.unlockedLevel || this.curLevel || 1);
         } else {
           this.startTimer();
         }
-        setTimeout(() => this.initCanvasSize(), 20);
+        this.initCanvasSize();
+        setTimeout(() => this.initCanvasSize(), 50);
+        setTimeout(() => this.initCanvasSize(), 220);
       } else {
         this.stopTimer();
       }
@@ -444,6 +446,8 @@ class GameApp {
     this.dpr = dpr;
     this.canvas.width  = Math.round(this.width  * dpr);
     this.canvas.height = Math.round(this.height * dpr);
+    this.canvas.style.width = this.width + 'px';
+    this.canvas.style.height = this.height + 'px';
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
     this.appRect = this.appEl.getBoundingClientRect();
@@ -544,13 +548,41 @@ class GameApp {
     woodG.addColorStop(0.35, '#C87428');
     woodG.addColorStop(1, '#8C4610');
 
-    // 1. 整座大貨架的深海陰影
-    ctx.fillStyle = 'rgba(2, 24, 43, 0.40)';
+    const shelfWidth = (shelfRight - shelfLeft);
+    const shelfHeight = (shelfBottom - shelfTop);
+
+    // 1. 整座大貨架的深海大投影
+    ctx.fillStyle = 'rgba(2, 24, 43, 0.45)';
     ctx.beginPath();
-    ctx.roundRect(shelfLeft - 3, shelfTop - 1, (shelfRight - shelfLeft) + 6, (shelfBottom - shelfTop) + 8, 8);
+    ctx.roundRect(shelfLeft - 4, shelfTop - 2, shelfWidth + 8, shelfHeight + 12, 14);
     ctx.fill();
 
-    // 2. 繪製 4 層橫樑層板 (頂板 + 4 層隔板)
+    // 🌟 2. 繪製實木外框 (Wood Border)
+    ctx.fillStyle = woodG;
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.roundRect(shelfLeft - 3, shelfTop - 4, shelfWidth + 6, shelfHeight + 8, 12);
+    ctx.fill(); ctx.stroke();
+
+    // 🌟 3. 家樂福大貨架溫暖米色內背板 (Warm Beige #FFF8E7 - 商品對比度直接拉滿！)
+    ctx.fillStyle = '#FFF8E7';
+    ctx.beginPath();
+    ctx.roundRect(shelfLeft, shelfTop, shelfWidth, shelfHeight, 8);
+    ctx.fill();
+
+    // 🌟 4. 為每個格子繪製柔和凹槽微陰影 (Subtle Recessed Shelf Pockets)
+    for (let s = 0; s < this.shelves.length; s++) {
+      const sh = this.shelves[s];
+      ctx.fillStyle = '#F7EBD4'; // 溫暖原木淺米色
+      ctx.strokeStyle = 'rgba(74, 51, 38, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(sh.x + 1, sh.y + 2, sh.w - 2, sh.h - 9, 6);
+      ctx.fill(); ctx.stroke();
+    }
+
+    // 5. 繪製 4 層橫樑層板 (頂板 + 4 層隔板)
     // 頂板
     ctx.fillStyle = woodG;
     ctx.strokeStyle = LINE;
@@ -2077,9 +2109,8 @@ class GameApp {
 
   drawShelvesCanvas(now = performance.now()) {
     this.ctx.clearRect(0, 0, this.width, this.height);
-    if (this.shelfStatic) {
-      this.ctx.drawImage(this.shelfStatic, 0, 0, this.width, this.height);
-    }
+    // 直接在主畫布繪製大貨架背板與層板，杜絕離線畫布尺寸為0崩潰
+    this.paintSupermarketShelfUnit(this.ctx);
     const ctx = this.ctx;
     this.shelves.forEach(sh => {
       sh.slots.forEach(slot => {
