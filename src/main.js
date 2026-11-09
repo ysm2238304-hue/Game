@@ -72,7 +72,7 @@ class GameApp {
     this.appEl = document.getElementById('app');
     this.stageContainer = document.getElementById('shelves-stage-container');
 
-    this.currentView = 'view-game';
+    this.currentView = 'view-lobby';
     this.isTransitioning = false;
     this.isLevelSettled = false;
     this.isDrawingGacha = false;
@@ -432,10 +432,14 @@ class GameApp {
   }
 
   initCanvasSize() {
-    const cw = this.stageContainer.clientWidth;
-    const ch = this.stageContainer.clientHeight;
-    this.width  = cw > 0 ? cw : 360;
-    this.height = ch > 0 ? ch : 440;
+    if (!this.stageContainer) this.stageContainer = document.getElementById('shelves-stage-container');
+    const cw = this.stageContainer ? this.stageContainer.clientWidth : 0;
+    const ch = this.stageContainer ? this.stageContainer.clientHeight : 0;
+    const winW = typeof window !== 'undefined' ? window.innerWidth : 360;
+    const winH = typeof window !== 'undefined' ? window.innerHeight : 640;
+    const appW = this.appEl ? this.appEl.clientWidth : winW;
+    this.width  = cw > 0 ? cw : Math.min(appW, winW);
+    this.height = ch > 0 ? ch : Math.max(480, winH - 96);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
     this.canvas.width  = Math.round(this.width  * dpr);
@@ -878,12 +882,21 @@ class GameApp {
       if (el) el.innerText = val;
     };
     setTxt('label-level', this.curLevel);
-    setTxt('cnt-tool-shuffle', GameState.boosters.shuffle);
-    setTxt('cnt-tool-magnet',  GameState.boosters.magnet);
-    setTxt('cnt-tool-hammer',  GameState.boosters.hammer);
-    setTxt('res-coins', GameState.coins.toLocaleString());
-    setTxt('res-diamonds', GameState.diamonds.toLocaleString());
-    setTxt('res-vouchers', GameState.vouchers);
+    setTxt('btn-stage-num', this.curLevel);
+    setTxt('lobby-cur-stage', this.curLevel);
+    setTxt('cnt-tool-shuffle', GameState.boosters.shuffle || 0);
+    setTxt('cnt-tool-magnet',  GameState.boosters.magnet || 0);
+    setTxt('cnt-tool-undo',    GameState.boosters.undo !== undefined ? GameState.boosters.undo : 3);
+    setTxt('res-coins', (GameState.coins || 0).toLocaleString());
+    setTxt('res-diamonds', (GameState.diamonds || 0).toLocaleString());
+    setTxt('res-vouchers', GameState.vouchers || 0);
+
+    // 🔴 打點提醒 (Red Dot Badges)：當有免費券或鑽石足夠時亮起紅點
+    const canDraw = (GameState.vouchers > 0) || (GameState.diamonds >= 30);
+    const gDot = document.getElementById('badge-gacha-dot');
+    if (gDot) gDot.classList.toggle('hidden', !canDraw);
+    const hudDot = document.getElementById('hud-lobby-dot');
+    if (hudDot) hudDot.classList.toggle('hidden', !canDraw);
 
     const rank = this.getStoreRankInfo();
     const rankBadge  = document.getElementById('lobby-rank-badge');
@@ -967,9 +980,12 @@ class GameApp {
     this.startTimer();
     this.updateTimerUI();
 
-    document.getElementById('label-shelves-count').innerText = `9 座檜木櫃 (${cfg.depthPerSlot}層)`;
-    document.getElementById('top-combo-toast').classList.add('hidden');
-    document.getElementById('moves-badge').classList.remove('animate-pulse', '!bg-[#FF3B30]');
+    const lsc = document.getElementById('label-shelves-count');
+    if (lsc) lsc.innerText = `4 層深海大貨架 (${cfg.depthPerSlot}層)`;
+    const tct = document.getElementById('top-combo-toast');
+    if (tct) tct.classList.add('hidden');
+    const mb = document.getElementById('moves-badge');
+    if (mb) mb.classList.remove('animate-pulse', '!bg-[#FF3B30]');
     const feverBar = document.getElementById('fever-progress-bar');
     if (feverBar) feverBar.style.width = '0%';
 
@@ -1135,7 +1151,7 @@ class GameApp {
       SFX.tap();
       BGM.play();
       document.getElementById('view-title').classList.add('hidden');
-      this.switchScene('view-game');
+      this.navigateTo('view-lobby');
     };
 
     const updateSfxButtons = () => {
@@ -1145,6 +1161,8 @@ class GameApp {
     };
     document.getElementById('btn-toggle-sfx').onclick = () => { SFX.toggle(); updateSfxButtons(); };
     document.getElementById('btn-hud-sfx').onclick    = () => { SFX.toggle(); updateSfxButtons(); };
+    const sfxLobby = document.getElementById('btn-hud-sfx-lobby');
+    if (sfxLobby) sfxLobby.onclick = () => { SFX.toggle(); updateSfxButtons(); };
 
     // 👇👇👇 新增的 BGM 與簽到事件 👇👇👇
     const bgmBtn = document.getElementById('btn-hud-bgm');
@@ -1297,7 +1315,7 @@ class GameApp {
     if (sLobby) sLobby.onclick = () => {
       SFX.tap();
       document.getElementById('modal-settle').classList.add('hidden');
-      this.startLevel(this.curLevel);
+      this.navigateTo('view-lobby');
     };
 
     const dClaim = document.getElementById('btn-daily-claim');
@@ -1703,6 +1721,7 @@ class GameApp {
 
       GameState.coins += baseCoins;
       GameState.diamonds += diamReward;
+      GameState.vouchers = (GameState.vouchers || 0) + 1; // 🏆 通關獎勵 1 張沉船寶箱抽卡券！
       GameState.stampCount = Math.min(5, (GameState.stampCount || 0) + 1);
       if (GameState.quests[0]) GameState.quests[0].cur += 1;
       GameState.save();
@@ -1866,11 +1885,11 @@ class GameApp {
         this.isDrawingGacha = false;
 
         const pool = [
-          { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '🥢', name: '極速盛合秘技 × 2', desc: '直接從全店集齊 3 份同款和食瞬間完售！', fn: () => GameState.boosters.magnet += 2 },
-          { special: true,  rarity: '✦ 特賞・超稀有秘寶 ✦', icon: '💎', name: '璀璨星鑽禮盒 × 100', desc: '商店街自治會特別頒發的高額星鑽獎勵！', fn: () => GameState.diamonds += 100 },
-          { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🍵', name: '暖茶融霜秘技 × 2', desc: '瞬間融化全場結霜並完售一組料理！', fn: () => GameState.boosters.hammer += 2 },
-          { special: false, rarity: '✦ 一番賞・特級秘技 ✦', icon: '🔀', name: '全櫃重整秘技 × 3', desc: '隨時重新調度所有木櫃上的料理位置！', fn: () => GameState.boosters.shuffle += 3 },
-          { special: false, rarity: '✦ 二番賞・營業資金 ✦', icon: '🪙', name: '店鋪營業資金 × 600', desc: '可用於職人木工坊升級收銀台與開運擺設！', fn: () => GameState.coins += 600 }
+          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', icon: '💡', name: '水母探照燈 (提示) × 2', desc: '自動鎖定場上同款美食並直接集齊三消！', fn: () => GameState.boosters.magnet = (GameState.boosters.magnet || 0) + 2 },
+          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', icon: '↩️', name: '時光海螺 (撤銷) × 3', desc: '手滑放錯格子？一鍵退回上一步移位！', fn: () => GameState.boosters.undo = (GameState.boosters.undo || 0) + 3 },
+          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', icon: '🔀', name: '深海大漩渦 (洗牌) × 3', desc: '卡關時重新隨機打亂調度貨架上的所有商品！', fn: () => GameState.boosters.shuffle = (GameState.boosters.shuffle || 0) + 3 },
+          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', icon: '💎', name: '璀璨深海珍珠 × 50', desc: '比奇堡海底最閃耀的珍珠寶石！', fn: () => GameState.diamonds = (GameState.diamonds || 0) + 50 },
+          { special: false, rarity: '✦ 二番賞・蟹老闆私房錢 ✦', icon: '🪙', name: '蟹老闆黃金錢袋 × 300', desc: '沉船寶箱裡的閃亮亮黃金金幣！', fn: () => GameState.coins = (GameState.coins || 0) + 300 }
         ];
 
         let rew;
@@ -1909,6 +1928,7 @@ class GameApp {
 
   renderRoadmap() {
     const container = document.getElementById('roadmap-nodes');
+    if (!container) return;
     container.innerHTML = '';
     let totalStars = 0;
     Object.values(GameState.stars || {}).forEach(s => { totalStars += s; });
@@ -1998,6 +2018,7 @@ class GameApp {
 
   renderQuests() {
     const box = document.getElementById('quests-container');
+    if (!box) return;
     box.innerHTML = '';
     GameState.quests.forEach(q => {
       const can = q.cur >= q.target && !q.claimed;
