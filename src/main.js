@@ -1202,8 +1202,16 @@ class GameApp {
 
     const updateSfxButtons = () => {
       const on = SFX.enabled;
-      document.getElementById('btn-toggle-sfx').innerText = on ? '🔊 音效: 開啟' : '🔇 音效: 關閉';
-      document.getElementById('btn-hud-sfx').innerText = on ? '🔊' : '🔇';
+      const b1 = document.getElementById('btn-toggle-sfx');
+      if (b1) {
+        const txt = b1.querySelector('span:last-child');
+        if (txt) txt.innerText = on ? '音效: 開啟' : '音效: 關閉';
+        b1.classList.toggle('opacity-60', !on);
+      }
+      const b2 = document.getElementById('btn-hud-sfx');
+      if (b2) b2.classList.toggle('opacity-50', !on);
+      const b3 = document.getElementById('btn-hud-sfx-lobby');
+      if (b3) b3.classList.toggle('opacity-50', !on);
     };
     document.getElementById('btn-toggle-sfx').onclick = () => { SFX.toggle(); updateSfxButtons(); };
     document.getElementById('btn-hud-sfx').onclick    = () => { SFX.toggle(); updateSfxButtons(); };
@@ -1968,11 +1976,11 @@ class GameApp {
         this.isDrawingGacha = false;
 
         const pool = [
-          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', icon: '💡', name: '水母探照燈 (提示) × 2', desc: '自動鎖定場上同款美食並直接集齊三消！', fn: () => GameState.boosters.magnet = (GameState.boosters.magnet || 0) + 2 },
-          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', icon: '↩️', name: '時光海螺 (撤銷) × 3', desc: '手滑放錯格子？一鍵退回上一步移位！', fn: () => GameState.boosters.undo = (GameState.boosters.undo || 0) + 3 },
-          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', icon: '🔀', name: '深海大漩渦 (洗牌) × 3', desc: '卡關時重新隨機打亂調度貨架上的所有商品！', fn: () => GameState.boosters.shuffle = (GameState.boosters.shuffle || 0) + 3 },
-          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', icon: '💎', name: '璀璨深海珍珠 × 50', desc: '比奇堡海底最閃耀的珍珠寶石！', fn: () => GameState.diamonds = (GameState.diamonds || 0) + 50 },
-          { special: false, rarity: '✦ 二番賞・蟹老闆私房錢 ✦', icon: '🪙', name: '蟹老闆黃金錢袋 × 300', desc: '沉船寶箱裡的閃亮亮黃金金幣！', fn: () => GameState.coins = (GameState.coins || 0) + 300 }
+          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', iconImg: './assets/icons/icon-hint-jellyfish.png', name: '水母探照燈 (提示) × 2', desc: '自動鎖定場上同款零食並直接集齊三消！', fn: () => GameState.boosters.magnet = (GameState.boosters.magnet || 0) + 2 },
+          { special: true,  rarity: '✦ 特賞・深海神級秘寶 ✦', iconImg: './assets/icons/icon-undo-shell.png', name: '時光海螺 (撤銷) × 3', desc: '手滑放錯格子？一鍵退回上一步移位！', fn: () => GameState.boosters.undo = (GameState.boosters.undo || 0) + 3 },
+          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', iconImg: './assets/icons/icon-shuffle-swirl.png', name: '深海大漩渦 (洗牌) × 3', desc: '卡關時重新隨機打亂調度貨架上的所有商品！', fn: () => GameState.boosters.shuffle = (GameState.boosters.shuffle || 0) + 3 },
+          { special: false, rarity: '✦ 一番賞・深海大道具 ✦', iconImg: './assets/icons/icon-pearl.png', name: '璀璨深海珍珠 × 50', desc: '深海貓咪超商裡最閃耀的粉漾珍珠！', fn: () => GameState.diamonds = (GameState.diamonds || 0) + 50 },
+          { special: false, rarity: '✦ 二番賞・貓掌黃金錢袋 ✦', iconImg: './assets/icons/icon-gold-coin.png', name: '肉球金幣 × 300', desc: '沉船寶箱裡的閃亮亮黃金肉球金幣！', fn: () => GameState.coins = (GameState.coins || 0) + 300 }
         ];
 
         let rew;
@@ -1990,7 +1998,10 @@ class GameApp {
         this.renderHUD();
         
         document.getElementById('gacha-rarity-badge').innerText = rew.rarity;
-        document.getElementById('gacha-reward-icon').innerText  = rew.icon;
+        const rewardIconEl = document.getElementById('gacha-reward-icon');
+        if (rewardIconEl) {
+          rewardIconEl.innerHTML = '<img src="' + rew.iconImg + '" class="w-14 h-14 object-contain drop-shadow-[0_6px_12px_rgba(0,0,0,0.5)] animate-bounce" alt="秘寶獎勵">';
+        }
         document.getElementById('gacha-reward-name').innerText  = rew.name;
         document.getElementById('gacha-reward-desc').innerText  = rew.desc;
         document.getElementById('modal-gacha-reward').classList.remove('hidden');

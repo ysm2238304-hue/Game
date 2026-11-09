@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v90-lobby-stage-sync-fixed'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v92-seamless-integrated-3d-icons'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -10,6 +10,14 @@ const PRECACHE_ASSETS = [
   './assets/mascot/spongebob-star.png',
   './assets/mascot/spongebob-worry.png',
   './assets/pirate-chest.png',
+  './assets/icons/icon-catpaw.png',
+  './assets/icons/icon-skull-coin.png',
+  './assets/icons/icon-voucher.png',
+  './assets/icons/icon-gold-coin.png',
+  './assets/icons/icon-pearl.png',
+  './assets/icons/icon-undo-shell.png',
+  './assets/icons/icon-shuffle-swirl.png',
+  './assets/icons/icon-hint-jellyfish.png',
   './assets/mascot/tuxedocat-happy.png',
   './assets/mascot/tuxedocat-star.png',
   './assets/mascot/tuxedocat-worry.png'
