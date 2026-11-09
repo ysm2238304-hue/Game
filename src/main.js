@@ -569,18 +569,18 @@ class GameApp {
     ctx.roundRect(shelfLeft - 3, shelfTop - 4, shelfWidth + 6, shelfHeight + 8, 12);
     ctx.fill(); ctx.stroke();
 
-    // 🌟 3. 家樂福大貨架溫暖米色內背板 (Warm Beige #FFF8E7 - 商品對比度直接拉滿！)
-    ctx.fillStyle = '#FFF8E7';
+    // 🌟 3. 家樂福大貨架沉穩溫潤米褐背板 (#E5D3B8 - 柔和不刺眼，媲美超商真實原木！)
+    ctx.fillStyle = '#E5D3B8';
     ctx.beginPath();
     ctx.roundRect(shelfLeft, shelfTop, shelfWidth, shelfHeight, 8);
     ctx.fill();
 
-    // 🌟 4. 為每個格子繪製柔和凹槽微陰影 (Subtle Recessed Shelf Pockets)
+    // 🌟 4. 為每個格子繪製沉穩原木凹槽 (#D8C2A4 - 加深對比度，白色食物也清晰可辨！)
     for (let s = 0; s < this.shelves.length; s++) {
       const sh = this.shelves[s];
-      ctx.fillStyle = '#F7EBD4'; // 溫暖原木淺米色
-      ctx.strokeStyle = 'rgba(74, 51, 38, 0.12)';
-      ctx.lineWidth = 1;
+      ctx.fillStyle = '#D8C2A4'; // 稍暗沉穩的天然原木米褐色
+      ctx.strokeStyle = 'rgba(74, 51, 38, 0.22)';
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.roundRect(sh.x + 1, sh.y + 2, sh.w - 2, sh.h - 9, 6);
       ctx.fill(); ctx.stroke();

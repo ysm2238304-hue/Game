@@ -62,11 +62,11 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const iceCount = Math.min(shelfCount - 2, Math.floor((safeLevelId + 1) / 2));
   const moves = 999; // 開啟純秒數倒數模式，步數充裕不卡關
   // 關卡倒數秒數配置：基礎 75 秒 + 根據三連組數與貨架升級動態調配（60s ~ 150s）
-  // ⚡ 1~300 關秒數遞減模型（每 5 關為一階平滑遞減，合理緊湊）：
-  // 第 1~5 關基準 75 秒，每過 5 關微減 0.5 秒（每 10 關減 1 秒），第 300 關保底 45 秒！
+  // ⚡ 1~300 關秒數寬裕升級模型（大幅拉長時間，休閒不焦慮）：
+  // 第 1~5 關充足 105 秒 (1分45秒)，每 5 關微減 0.75 秒，第 300 關保底 60 秒！
   const tier = Math.floor((safeLevelId - 1) / 5); // 0 ~ 59
-  const baseTimer = Math.max(45, 75 - tier * 0.5);
-  const shelfBonus = (safeShelfLv - 1) * 1.5;
+  const baseTimer = Math.max(60, 105 - tier * 0.75);
+  const shelfBonus = (safeShelfLv - 1) * 2;
   const timeLimit = Math.round(baseTimer + shelfBonus);
   const uniqueTypes = [...new Set(chosenTypes)];
   const orderCount = Math.min(uniqueTypes.length, safeLevelId >= 10 ? 3 : 2);
