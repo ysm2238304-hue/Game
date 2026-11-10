@@ -1,11 +1,14 @@
 // ============================================================
-// 📦 src/logic/levelGen.js — 300 關休閒舒壓難度曲線配置
+// 📦 src/logic/levelGen.js — 1~300 關六大階梯式難度平衡系統
 // ============================================================
 //
-// 職責：依關卡編號產生關卡配置（充裕時間、舒適層數、少冰霜、多留空位）
-//
-// 對外提供：
-//   - generateLevelConfig(levelId, shelfUpgradeLevel)
+// 六大難度階梯：
+//   - 1~50 關   : 新手 (Beginner)
+//   - 51~100 關 : 簡單 (Easy)
+//   - 101~150 關: 普通 (Normal)
+//   - 151~200 關: 困難 (Hard)
+//   - 201~250 關: 更困難 (Very Hard)
+//   - 251~300 關: 地獄 (Hell)
 // ============================================================
 
 import { getActiveTheme } from '../themes/index.js';
@@ -19,9 +22,78 @@ function mulberry32(a) {
   };
 }
 
+export function getDifficultyTierInfo(levelId) {
+  const lv = Math.max(1, Math.floor(Number(levelId) || 1));
+  if (lv <= 50) {
+    return {
+      key: 'beginner',
+      label: '新手',
+      badgeText: '✦ 新手理貨區',
+      colorClass: 'bg-[#A8E6CF] text-[#1B4332] border-[#1B4332]',
+      rewardMult: 1.0,
+      baseBonusSec: 4,
+      comboBonusSec: 5
+    };
+  }
+  if (lv <= 100) {
+    return {
+      key: 'easy',
+      label: '簡單',
+      badgeText: '✦ 簡單理貨區',
+      colorClass: 'bg-[#90E0EF] text-[#03045E] border-[#03045E]',
+      rewardMult: 1.15,
+      baseBonusSec: 3,
+      comboBonusSec: 4
+    };
+  }
+  if (lv <= 150) {
+    return {
+      key: 'normal',
+      label: '普通',
+      badgeText: '✦ 普通理貨區',
+      colorClass: 'bg-[#FFE082] text-[#251408] border-[#251408]',
+      rewardMult: 1.3,
+      baseBonusSec: 3,
+      comboBonusSec: 4
+    };
+  }
+  if (lv <= 200) {
+    return {
+      key: 'hard',
+      label: '困難',
+      badgeText: '✦ 困難挑戰區',
+      colorClass: 'bg-[#FFB703] text-[#251408] border-[#251408]',
+      rewardMult: 1.5,
+      baseBonusSec: 2,
+      comboBonusSec: 3
+    };
+  }
+  if (lv <= 250) {
+    return {
+      key: 'very_hard',
+      label: '更困難',
+      badgeText: '✦ 更困難深水區',
+      colorClass: 'bg-[#FB8500] text-white border-[#251408]',
+      rewardMult: 1.8,
+      baseBonusSec: 2,
+      comboBonusSec: 3
+    };
+  }
+  return {
+    key: 'hell',
+    label: '地獄',
+    badgeText: '✦ 地獄殿堂區',
+    colorClass: 'bg-[#E63946] text-white border-[#FFE082]',
+    rewardMult: 2.2,
+    baseBonusSec: 2,
+    comboBonusSec: 3
+  };
+}
+
 export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const safeLevelId = Math.max(1, Math.floor(Number(levelId) || 1));
   const safeShelfLv = Math.max(1, Math.floor(Number(shelfUpgradeLevel) || 1));
+  const tierInfo = getDifficultyTierInfo(safeLevelId);
 
   const activeTheme = getActiveTheme();
   const ITEM_DEFS = Array.isArray(activeTheme?.items) && activeTheme.items.length > 0
@@ -34,13 +106,78 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const shelfCount = 12;
   const totalSlots = shelfCount * 3; // 36 格
 
-  // 🌿 難度全面調降 1：商品縱深層數大幅放緩
-  // 第 1~40 關維持 2 層（輕快好上手），第 41~140 關為 3 層，第 141~300 關才進入 4 層
-  const depthPerSlot = safeLevelId >= 141 ? 4 : (safeLevelId >= 41 ? 3 : 2);
-  const rawCapacity = totalSlots * depthPerSlot;
+  let depthPerSlot = 2;
+  let emptyBuffer = 9;
+  let frontEmptySlots = 5;
+  let varietyCount = 4;
+  let iceCount = 0;
+  let iceHp = 1;
+  let baseTimer = 150;
 
-  // 🌿 難度全面調降 2：預留充足空位（前排至少空出 6~9 格），移動商品更自由不卡死
-  const emptyBuffer = safeLevelId <= 30 ? 9 : 6;
+  if (safeLevelId <= 50) {
+    // 🌱 1-50 關：新手 (Beginner)
+    const p = (safeLevelId - 1) / 49; // 0 ~ 1
+    depthPerSlot = 2;
+    emptyBuffer = 9;
+    frontEmptySlots = 5;
+    varietyCount = safeLevelId <= 20 ? 4 : 5;
+    iceCount = 0;
+    iceHp = 1;
+    baseTimer = Math.round(150 - p * 10); // 150s -> 140s
+  } else if (safeLevelId <= 100) {
+    // 🍀 51-100 關：簡單 (Easy)
+    const p = (safeLevelId - 51) / 49;
+    depthPerSlot = safeLevelId <= 75 ? 2 : 3;
+    emptyBuffer = 9;
+    frontEmptySlots = 4;
+    varietyCount = safeLevelId <= 75 ? 5 : 6;
+    iceCount = safeLevelId <= 70 ? 1 : 2;
+    iceHp = 1;
+    baseTimer = Math.round(135 - p * 10); // 135s -> 125s
+  } else if (safeLevelId <= 150) {
+    // ⚓ 101-150 關：普通 (Normal)
+    const p = (safeLevelId - 101) / 49;
+    depthPerSlot = 3;
+    emptyBuffer = 6;
+    frontEmptySlots = 3;
+    varietyCount = safeLevelId <= 125 ? 7 : 8;
+    iceCount = Math.min(4, 2 + Math.floor(p * 2.5)); // 2 ~ 4 格
+    iceHp = 1;
+    baseTimer = Math.round(120 - p * 10); // 120s -> 110s
+  } else if (safeLevelId <= 200) {
+    // 🔥 151-200 關：困難 (Hard)
+    const p = (safeLevelId - 151) / 49;
+    depthPerSlot = safeLevelId <= 175 ? 3 : 4;
+    emptyBuffer = 6;
+    frontEmptySlots = 3;
+    varietyCount = safeLevelId <= 175 ? 8 : 9;
+    iceCount = safeLevelId <= 175 ? 4 : 5;
+    iceHp = safeLevelId <= 175 ? 1 : 2;
+    baseTimer = Math.round(105 - p * 10); // 105s -> 95s
+  } else if (safeLevelId <= 250) {
+    // ⚡ 201-250 關：更困難 (Very Hard)
+    const p = (safeLevelId - 201) / 49;
+    depthPerSlot = 4;
+    emptyBuffer = safeLevelId <= 225 ? 6 : 3;
+    frontEmptySlots = safeLevelId <= 225 ? 3 : 2;
+    varietyCount = safeLevelId <= 220 ? 9 : 10;
+    iceCount = Math.min(7, 5 + Math.floor(p * 2.5)); // 5 ~ 7 格
+    iceHp = 2;
+    baseTimer = Math.round(90 - p * 8); // 90s -> 82s
+  } else {
+    // 🏴‍☠️ 251-300 關：地獄 (Hell)
+    const p = Math.min(1, (safeLevelId - 251) / 49);
+    depthPerSlot = 4;
+    emptyBuffer = 3;
+    frontEmptySlots = 2;
+    varietyCount = 10;
+    iceCount = Math.min(9, 7 + Math.floor(p * 2.5)); // 7 ~ 9 格
+    iceHp = 2;
+    baseTimer = Math.round(80 - p * 10); // 80s -> 70s
+  }
+
+  varietyCount = Math.min(ITEM_DEFS.length, varietyCount);
+  const rawCapacity = totalSlots * depthPerSlot;
   const totalItems = Math.max(18, Math.floor((rawCapacity - emptyBuffer) / 3) * 3);
   const matchTriplets = totalItems / 3;
 
@@ -51,9 +188,6 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
 
-  // 🌿 難度全面調降 3：減少同場商品花色種類，讓相同商品更容易湊成三連
-  // 第 1~10 關僅 4~5 種花色，隨關卡緩步增加，滿上限最多 9 種
-  const varietyCount = Math.min(pool.length, Math.min(9, 4 + Math.floor(safeLevelId / 12)));
   const chosenTypes = [];
   for (let i = 0; i < matchTriplets; i++) {
     chosenTypes.push(pool[i % varietyCount].id);
@@ -67,31 +201,25 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
     [itemPool[i], itemPool[j]] = [itemPool[j], itemPool[i]];
   }
 
-  // 🌿 難度全面調降 4：冰封障礙大幅減少
-  // 第 1~10 關 0 冰塊；11 關後緩慢增加，最多不超過 4 格冰塊
-  const iceCount = safeLevelId <= 10 ? 0 : Math.min(4, Math.floor((safeLevelId - 5) / 15));
   const moves = 999;
-
-  // 🌿 難度全面調降 5：1~300 關超寬裕倒數時間（150 秒 ～ 保底 105 秒）
-  // 第 1~5 關高達 150 秒 (2分30秒)，每 5 關僅微減 0.5 秒，第 300 關依然保底 105 秒！
-  const tier = Math.floor((safeLevelId - 1) / 5); // 0 ~ 59
-  const baseTimer = Math.max(105, 150 - tier * 0.5);
   const shelfBonus = (safeShelfLv - 1) * 3;
   const timeLimit = Math.round(baseTimer + shelfBonus);
-
   const uniqueTypes = [...new Set(chosenTypes)];
   const orderCount = Math.min(uniqueTypes.length, safeLevelId >= 15 ? 3 : 2);
   const orders = uniqueTypes.slice(0, orderCount).map((id) => ({ id, req: 3, done: 0 }));
 
   return {
     levelId: safeLevelId,
+    tierInfo,
     rows,
     cols,
     shelfCount,
     depthPerSlot,
+    frontEmptySlots,
     itemPool,
     totalItems,
     iceCount,
+    iceHp,
     moves,
     timeLimit,
     orders

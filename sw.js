@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v94-distinct-transparent-icons-easy300'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v95-6tier-difficulty-balance'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

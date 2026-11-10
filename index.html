@@ -258,7 +258,7 @@
         <img src="./assets/icons/icon-store-bell.png" class="w-7 h-7 object-contain drop-shadow-sm shrink-0" alt="超商總店">
         <div class="flex flex-col justify-center leading-none">
           <span id="txt-lobby-store" class="text-[10px] font-black text-[#FFD166] drop-shadow-sm">深海貓咪超商・總店</span>
-          <span class="text-xs font-black text-white mt-1">第 <span id="lobby-cur-stage">1</span> 關理貨巡迴</span>
+          <span class="text-xs font-black text-white mt-1 flex items-center gap-1.5"><span>第 <span id="lobby-cur-stage">1</span> 關</span><span id="lobby-diff-badge" class="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-[#A8E6CF] text-[#1B4332] border border-[#1B4332]">新手</span></span>
         </div>
       </div>
 
@@ -312,7 +312,7 @@
         <div class="flex items-center gap-3">
           <img src="./assets/icons/icon-catpaw.png" class="w-11 h-11 object-contain drop-shadow-[0_4px_8px_rgba(37,20,8,0.4)] shrink-0 animate-bounce" alt="立體肉球">
           <div class="flex flex-col items-start leading-tight">
-            <span class="text-[9px] font-black text-[#251408]/80 tracking-wider">✦ TUXEDO CAT MART OPEN ✦</span>
+            <span id="btn-diff-subtitle" class="text-[9px] font-black text-[#251408]/90 tracking-wider">✦ 新手理貨區 (1~50關) ✦</span>
             <span class="text-base font-black drop-shadow-sm">開始理貨 • 挑戰第 <span id="btn-stage-num">1</span> 關</span>
           </div>
         </div>
@@ -386,7 +386,7 @@
       <polygon points="5,17 7,20 3,20" fill="#251408"/>
       <polygon points="27,17 29,20 25,20" fill="#251408"/>
     </svg>
-          <span>第 <span id="label-level">1</span> 關</span>
+          <span>第 <span id="label-level">1</span> 關</span><span id="hud-diff-badge" class="ml-1 px-1.5 py-0.5 text-[9px] font-black rounded bg-[#A8E6CF] text-[#1B4332]">新手</span>
         </span>
       </div>
 
@@ -838,6 +838,6 @@
 
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261110_distinct_transparent_icons_easy300_v94"></script>
+  <script type="module" src="./src/main.js?v=20261110_6tier_difficulty_balance_v95"></script>
 </body>
 </html>

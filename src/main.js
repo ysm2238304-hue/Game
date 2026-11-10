@@ -1,5 +1,5 @@
 import { getActiveTheme, getActiveThemeId, setActiveTheme, getAllThemes } from './themes/index.js';
-import { generateLevelConfig } from './logic/levelGen.js';
+import { generateLevelConfig, getDifficultyTierInfo } from './logic/levelGen.js';
 import { SFX } from './audio/sfx.js';
 import { BGM } from './audio/bgm.js';
 import { GameState } from './state/GameState.js';
@@ -931,6 +931,24 @@ class GameApp {
     setTxt('label-level', this.curLevel);
     setTxt('btn-stage-num', unlocked);
     setTxt('lobby-cur-stage', unlocked);
+
+    // 🎯 同步 1~300 關六大難度階梯徽章 (大廳與遊戲 HUD)
+    const lobbyTier = getDifficultyTierInfo(unlocked);
+    const gameTier  = getDifficultyTierInfo(this.curLevel || unlocked);
+    const lobbyDiffEl = document.getElementById('lobby-diff-badge');
+    if (lobbyDiffEl) {
+      lobbyDiffEl.innerText = lobbyTier.label;
+      lobbyDiffEl.className = `px-1.5 py-0.5 text-[9px] font-black rounded-md border ${lobbyTier.colorClass}`;
+    }
+    const btnDiffSub = document.getElementById('btn-diff-subtitle');
+    if (btnDiffSub) {
+      btnDiffSub.innerText = `${lobbyTier.badgeText} • 挑戰限時理貨 ✦`;
+    }
+    const hudDiffEl = document.getElementById('hud-diff-badge');
+    if (hudDiffEl) {
+      hudDiffEl.innerText = gameTier.label;
+      hudDiffEl.className = `ml-1 px-1.5 py-0.5 text-[9px] font-black rounded border ${gameTier.colorClass}`;
+    }
     setTxt('cnt-tool-shuffle', GameState.boosters.shuffle || 0);
     setTxt('cnt-tool-magnet',  GameState.boosters.magnet || 0);
     setTxt('cnt-tool-undo',    GameState.boosters.undo !== undefined ? GameState.boosters.undo : 3);
@@ -1016,6 +1034,7 @@ class GameApp {
     this.combo = 0;
     this.fever = 0;
     const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
+    this.levelCfg = cfg;
     this.moves = cfg.moves || 999;
     this.totalLevelItems = cfg.totalItems;
     this.activeOrders = cfg.orders;
@@ -1066,15 +1085,17 @@ class GameApp {
     }
     const allSlots = [];
     this.shelves.forEach(sh => sh.slots.forEach(sl => allSlots.push(sl)));
+    const frontEmpty = cfg.frontEmptySlots || 3;
     let poolIdx = 0;
     for (let layer = 0; layer < cfg.depthPerSlot; layer++) {
       for (let i = 0; i < allSlots.length; i++) {
-        if (layer === 0 && i >= allSlots.length - 4) continue; // 🌿 前排保留 4 個空位方便輕鬆騰挪
+        if (layer === 0 && i >= allSlots.length - frontEmpty) continue;
         if (poolIdx < cfg.itemPool.length) allSlots[i].queue.push(cfg.itemPool[poolIdx++]);
       }
     }
+    const maxFillIdx = Math.max(1, allSlots.length - frontEmpty);
     while (poolIdx < cfg.itemPool.length) {
-      const target = allSlots[poolIdx % (allSlots.length - 1)];
+      const target = allSlots[poolIdx % maxFillIdx];
       target.queue.push(cfg.itemPool[poolIdx++]);
     }
     this.shelves.forEach(sh => {
@@ -1088,10 +1109,18 @@ class GameApp {
         }
       }
     });
-    const filledSlots = allSlots.filter(s => s.queue.length > 0);
-    for (let i = 0; i < cfg.iceCount && i < filledSlots.length; i++) {
-      const target = filledSlots[(i * 5 + 3) % filledSlots.length];
-      target.iceHp = 1; // 🌿 難度調降：冰塊只需鄰近 1 次消除即可破除
+    // 🛡️ 防死局冰封保護：每個貨架最多只冰封 1 格，且保留前 2 個貨架無冰塊供開局破冰
+    const candidateIceSlots = [];
+    this.shelves.forEach((sh, sIdx) => {
+      if (sIdx >= 2) {
+        const filledInShelf = sh.slots.filter(s => s.queue.length > 0);
+        if (filledInShelf.length > 0) candidateIceSlots.push(filledInShelf[sIdx % filledInShelf.length]);
+      }
+    });
+    const iceHpVal = cfg.iceHp || 1;
+    for (let i = 0; i < cfg.iceCount && i < candidateIceSlots.length; i++) {
+      const target = candidateIceSlots[(i * 3 + 1) % candidateIceSlots.length];
+      target.iceHp = GameState.upgrades.cold >= 3 ? Math.max(1, iceHpVal - 1) : iceHpVal;
     }
   }
 
@@ -1726,16 +1755,19 @@ class GameApp {
       this.jellyBounce(slot);
     });
 
+    // ⏰ 依據六大難度階梯動態計算消除加時（高連擊 Combo >= 3 額外續命 +1s）
+    const tierInfo = (this.levelCfg && this.levelCfg.tierInfo) || getDifficultyTierInfo(this.curLevel);
+    const baseBonus = tierInfo.baseBonusSec || 3;
+    const comboBonus = tierInfo.comboBonusSec || 4;
+    const bonusSec = this.combo >= 3 ? (comboBonus + 1) : (this.combo === 2 ? comboBonus : baseBonus);
+
     // 💬 連擊美漫讚賞浮動標籤 (Comic Floating Text)
     if (this.combo >= 2) {
-      const praiseTexts = ['🫧 GOOD! +3s', '✦ GREAT! +4s', '🌟 AMAZING! +4s', '🔥 MEOW FEVER! +4s'];
+      const praiseTexts = [`🫧 GOOD! +${bonusSec}s`, `✦ GREAT! +${bonusSec}s`, `🌟 AMAZING! +${bonusSec}s`, `🔥 MEOW FEVER! +${bonusSec}s`];
       const txt = praiseTexts[Math.min(this.combo - 2, praiseTexts.length - 1)];
       this.spawnFloatingComic(centerX, centerY - 28, txt);
     }
     this.damageNearbyIce(shelf.shelfIdx);
-
-    // ⏰ 消除三連完售：自動獎勵時間 +2 秒（Combo 連擊時 +3 秒）
-    const bonusSec = this.combo > 1 ? 4 : 3;
     this.addTimeBonus(bonusSec);
 
     const def = ITEM_DEFS.find(d => d.id === typeId) || ITEM_DEFS[0];
@@ -1809,14 +1841,17 @@ class GameApp {
       // 即時推進當前關卡至下一關，確保大廳與所有 HUD 毫秒級即時同步！
       this.curLevel = GameState.unlockedLevel;
 
+      const clearedTier = getDifficultyTierInfo(finishedLevel);
       const orderAllDone = this.activeOrders.every(o => o.done >= o.req);
-      let baseCoins = 180 + this.curLevel * 20 + (orderAllDone ? 90 : 0);
+      let baseCoins = (180 + finishedLevel * 20 + (orderAllDone ? 90 : 0)) * (clearedTier.rewardMult || 1);
       baseCoins = Math.round(baseCoins * (1 + this.getTotalCoinBonusPct() / 100));
-      const diamReward = GameState.direction === 'tycoon' ? 24 : 12;
+      const baseDiam = GameState.direction === 'tycoon' ? 24 : 12;
+      const diamReward = Math.round(baseDiam * (clearedTier.rewardMult || 1));
+      const voucherBonus = (finishedLevel > 200 && finishedLevel % 5 === 0) ? 2 : 1;
 
       GameState.coins += baseCoins;
       GameState.diamonds += diamReward;
-      GameState.vouchers = (GameState.vouchers || 0) + 1; // 🏆 通關獎勵 1 張沉船寶箱抽卡券！
+      GameState.vouchers = (GameState.vouchers || 0) + voucherBonus;
       GameState.stampCount = Math.min(5, (GameState.stampCount || 0) + 1);
       if (GameState.quests[0]) GameState.quests[0].cur += 1;
       GameState.save();
@@ -1834,8 +1869,8 @@ class GameApp {
         document.getElementById('settle-desc').innerText = orderAllDone
           ? '全木櫃完售＋顧客指定點單達成！獲得特別營業獎金與自治會印章！'
           : '所有木櫃和食皆已結帳完畢！顧客滿意離開店鋪♪';
-        document.getElementById('settle-coin-text').innerText = `🪙 +${baseCoins}`;
-        document.getElementById('settle-diam-text').innerText = `💎 +${diamReward}`;
+        document.getElementById('settle-coin-text').innerHTML = `<img src="./assets/icons/icon-gold-coin.png" class="w-4 h-4 object-contain inline-block mr-1"> +${baseCoins}`;
+        document.getElementById('settle-diam-text').innerHTML = `<img src="./assets/icons/icon-pearl.png" class="w-4 h-4 object-contain inline-block mr-1"> +${diamReward}`;
         document.getElementById('btn-settle-action').innerText = '下一營業日 ➔';
         document.getElementById('modal-settle').classList.remove('hidden');
       }, 360);
