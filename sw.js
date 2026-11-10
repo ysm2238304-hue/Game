@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v93-welcome-restored-and-3d-icons'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v94-distinct-transparent-icons-easy300'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -10,6 +10,10 @@ const PRECACHE_ASSETS = [
   './assets/mascot/spongebob-star.png',
   './assets/mascot/spongebob-worry.png',
   './assets/pirate-chest.png',
+  './assets/icons/icon-crown.png',
+  './assets/icons/icon-store-bell.png',
+  './assets/icons/icon-captain-hat.png',
+  './assets/icons/icon-helm.png',
   './assets/icons/icon-catpaw.png',
   './assets/icons/icon-skull-coin.png',
   './assets/icons/icon-voucher.png',

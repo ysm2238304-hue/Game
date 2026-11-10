@@ -1069,7 +1069,7 @@ class GameApp {
     let poolIdx = 0;
     for (let layer = 0; layer < cfg.depthPerSlot; layer++) {
       for (let i = 0; i < allSlots.length; i++) {
-        if (layer === 0 && i >= allSlots.length - 2) continue;
+        if (layer === 0 && i >= allSlots.length - 4) continue; // 🌿 前排保留 4 個空位方便輕鬆騰挪
         if (poolIdx < cfg.itemPool.length) allSlots[i].queue.push(cfg.itemPool[poolIdx++]);
       }
     }
@@ -1091,7 +1091,7 @@ class GameApp {
     const filledSlots = allSlots.filter(s => s.queue.length > 0);
     for (let i = 0; i < cfg.iceCount && i < filledSlots.length; i++) {
       const target = filledSlots[(i * 5 + 3) % filledSlots.length];
-      target.iceHp = GameState.upgrades.cold >= 2 ? 1 : 2;
+      target.iceHp = 1; // 🌿 難度調降：冰塊只需鄰近 1 次消除即可破除
     }
   }
 
@@ -1728,14 +1728,14 @@ class GameApp {
 
     // 💬 連擊美漫讚賞浮動標籤 (Comic Floating Text)
     if (this.combo >= 2) {
-      const praiseTexts = ['🫧 GOOD! +2s', '✦ GREAT! +3s', '🌟 AMAZING! +3s', '🔥 KRABBY FEVER! +3s'];
+      const praiseTexts = ['🫧 GOOD! +3s', '✦ GREAT! +4s', '🌟 AMAZING! +4s', '🔥 MEOW FEVER! +4s'];
       const txt = praiseTexts[Math.min(this.combo - 2, praiseTexts.length - 1)];
       this.spawnFloatingComic(centerX, centerY - 28, txt);
     }
     this.damageNearbyIce(shelf.shelfIdx);
 
     // ⏰ 消除三連完售：自動獎勵時間 +2 秒（Combo 連擊時 +3 秒）
-    const bonusSec = this.combo > 1 ? 3 : 2;
+    const bonusSec = this.combo > 1 ? 4 : 3;
     this.addTimeBonus(bonusSec);
 
     const def = ITEM_DEFS.find(d => d.id === typeId) || ITEM_DEFS[0];
@@ -1803,7 +1803,7 @@ class GameApp {
       
       // 星級評價：依據剩餘時間比例（剩餘 >= 40% 為 3 星，>= 15% 為 2 星）
       const ratio = this.timeLeft / (this.maxTime || 90);
-      const stars = ratio >= 0.40 ? 3 : (ratio >= 0.15 ? 2 : 1);
+      const stars = ratio >= 0.25 ? 3 : (ratio >= 0.10 ? 2 : 1);
       GameState.stars[finishedLevel] = Math.max(GameState.stars[finishedLevel] || 0, stars);
       
       // 即時推進當前關卡至下一關，確保大廳與所有 HUD 毫秒級即時同步！
