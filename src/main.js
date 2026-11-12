@@ -75,6 +75,7 @@ class GameApp {
     this.currentView = 'view-lobby';
     this.isTransitioning = false;
     this.isLevelSettled = false;
+    this.isPaused = false;
     this.isDrawingGacha = false;
     this.fxNeedsClear = false;
 
@@ -213,11 +214,42 @@ class GameApp {
 
     const speechEl = document.getElementById('lobby-speech-text');
     if (speechEl && txt.lobbySpeech) speechEl.innerText = txt.lobbySpeech;
-    const sfxBtn = document.getElementById('btn-toggle-sfx');
-    if (sfxBtn) {
-      const sfxSpan = sfxBtn.querySelector('span:last-child');
-      if (sfxSpan) sfxSpan.innerText = SFX.enabled ? '音效: 開啟' : '音效: 關閉';
+    this.syncAudioButtons();
+  }
+
+  syncAudioButtons() {
+    const on = Boolean(SFX.enabled);
+    const b1 = document.getElementById('btn-toggle-sfx');
+    if (b1) {
+      const txt = b1.querySelector('span:last-child');
+      if (txt) txt.innerText = on ? '音效: 開啟' : '音效: 關閉';
+      b1.classList.toggle('opacity-60', !on);
     }
+    const b2 = document.getElementById('btn-hud-sfx');
+    if (b2) b2.classList.toggle('opacity-50', !on);
+    const b3 = document.getElementById('btn-hud-sfx-lobby');
+    if (b3) {
+      const txt = b3.querySelector('span:last-child');
+      if (txt) txt.innerText = on ? '音效: 開啟' : '音效: 關閉';
+      b3.classList.toggle('opacity-60', !on);
+    }
+    const pIcon = document.getElementById('pause-sfx-icon');
+    if (pIcon) pIcon.innerText = on ? '🔊' : '🔇';
+    const pText = document.getElementById('pause-sfx-text');
+    if (pText) pText.innerText = on ? '遊戲音效：開啟' : '遊戲音效：關閉';
+    const pBtn = document.getElementById('btn-pause-sfx');
+    if (pBtn) pBtn.classList.toggle('opacity-75', !on);
+    const bgmBtn = document.getElementById('btn-hud-bgm');
+    if (bgmBtn) bgmBtn.innerText = on ? '🎵' : '🔇';
+  }
+
+  toggleMasterAudio() {
+    const nextState = !SFX.enabled;
+    SFX.setEnabled(nextState);
+    BGM.setEnabled(nextState);
+    if (nextState) SFX.tap();
+    this.syncAudioButtons();
+    return nextState;
   }
 
   initMascots() {
@@ -393,6 +425,10 @@ class GameApp {
       if (targetEl) { targetEl.classList.remove('hidden'); targetEl.classList.add('flex'); }
       this.currentView = targetViewId;
       
+      this.isPaused = false;
+      const pauseModal = document.getElementById('modal-pause');
+      if (pauseModal) pauseModal.classList.add('hidden');
+
       const resBar = document.getElementById('top-resource-bar');
       if (resBar) {
         if (targetViewId === 'view-game') resBar.classList.add('hidden');
@@ -1031,6 +1067,9 @@ class GameApp {
   startLevel(lvId) {
     this.curLevel = lvId;
     this.isLevelSettled = false;
+    this.isPaused = false;
+    const pauseModal = document.getElementById('modal-pause');
+    if (pauseModal) pauseModal.classList.add('hidden');
     this.combo = 0;
     this.fever = 0;
     const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
@@ -1205,7 +1244,7 @@ class GameApp {
       if (document.visibilityState === 'hidden') {
         GameState.save();
         this.stopTimer();
-      } else if (this.currentView === 'view-game' && !this.isLevelSettled) {
+      } else if (this.currentView === 'view-game' && !this.isLevelSettled && !this.isPaused) {
         this.startTimer();
       }
     });
@@ -1238,33 +1277,67 @@ class GameApp {
       this.navigateTo('view-lobby');
     };
 
-    const updateSfxButtons = () => {
-      const on = SFX.enabled;
-      const b1 = document.getElementById('btn-toggle-sfx');
-      if (b1) {
-        const txt = b1.querySelector('span:last-child');
-        if (txt) txt.innerText = on ? '音效: 開啟' : '音效: 關閉';
-        b1.classList.toggle('opacity-60', !on);
-      }
-      const b2 = document.getElementById('btn-hud-sfx');
-      if (b2) b2.classList.toggle('opacity-50', !on);
-      const b3 = document.getElementById('btn-hud-sfx-lobby');
-      if (b3) b3.classList.toggle('opacity-50', !on);
-    };
-    document.getElementById('btn-toggle-sfx').onclick = () => { SFX.toggle(); updateSfxButtons(); };
-    document.getElementById('btn-hud-sfx').onclick    = () => { SFX.toggle(); updateSfxButtons(); };
+    const sfxTitle = document.getElementById('btn-toggle-sfx');
+    if (sfxTitle) sfxTitle.onclick = () => this.toggleMasterAudio();
+    const sfxHud = document.getElementById('btn-hud-sfx');
+    if (sfxHud) sfxHud.onclick = () => this.toggleMasterAudio();
     const sfxLobby = document.getElementById('btn-hud-sfx-lobby');
-    if (sfxLobby) sfxLobby.onclick = () => { SFX.toggle(); updateSfxButtons(); };
-
-    // 👇👇👇 新增的 BGM 與簽到事件 👇👇👇
+    if (sfxLobby) sfxLobby.onclick = () => this.toggleMasterAudio();
     const bgmBtn = document.getElementById('btn-hud-bgm');
-    if (bgmBtn) {
-      bgmBtn.onclick = () => {
-        const on = BGM.toggle();
-        bgmBtn.innerText = on ? '🎵' : '🔇';
+    if (bgmBtn) bgmBtn.onclick = () => this.toggleMasterAudio();
+
+    // ⏸ 遊戲暫停選單事件綁定
+    const btnPauseGame = document.getElementById('btn-pause-game');
+    if (btnPauseGame) {
+      btnPauseGame.onclick = () => {
+        if (this.isLevelSettled) return;
+        SFX.tap();
+        this.isPaused = true;
+        this.stopTimer();
+        this.syncAudioButtons();
+        const modalPause = document.getElementById('modal-pause');
+        if (modalPause) modalPause.classList.remove('hidden');
       };
-      bgmBtn.innerText = BGM.enabled ? '🎵' : '🔇';
     }
+    const btnPauseResume = document.getElementById('btn-pause-resume');
+    if (btnPauseResume) {
+      btnPauseResume.onclick = () => {
+        SFX.tap();
+        this.isPaused = false;
+        const modalPause = document.getElementById('modal-pause');
+        if (modalPause) modalPause.classList.add('hidden');
+        if (this.currentView === 'view-game' && !this.isLevelSettled) {
+          this.startTimer();
+        }
+      };
+    }
+    const btnPauseSfx = document.getElementById('btn-pause-sfx');
+    if (btnPauseSfx) {
+      btnPauseSfx.onclick = () => this.toggleMasterAudio();
+    }
+    const btnPauseRestart = document.getElementById('btn-pause-restart');
+    if (btnPauseRestart) {
+      btnPauseRestart.onclick = () => {
+        SFX.tap();
+        this.isPaused = false;
+        const modalPause = document.getElementById('modal-pause');
+        if (modalPause) modalPause.classList.add('hidden');
+        this.startLevel(this.curLevel || GameState.unlockedLevel || 1);
+      };
+    }
+    const btnPauseLobby = document.getElementById('btn-pause-lobby');
+    if (btnPauseLobby) {
+      btnPauseLobby.onclick = () => {
+        SFX.tap();
+        this.isPaused = false;
+        this.stopTimer();
+        const modalPause = document.getElementById('modal-pause');
+        if (modalPause) modalPause.classList.add('hidden');
+        this.navigateTo('view-lobby');
+      };
+    }
+
+    this.syncAudioButtons();
     
     document.getElementById('lobby-mascot-touch').onclick = () => {
       SFX.tap();
@@ -1325,7 +1398,7 @@ class GameApp {
     };
 
     this.canvas.addEventListener('pointerdown', (e) => {
-      if (this.dragging || this.isLevelSettled) return;
+      if (this.dragging || this.isLevelSettled || this.isPaused) return;
       const rect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - rect.left;
       const canvasY = e.clientY - rect.top;
@@ -1602,8 +1675,8 @@ class GameApp {
   startTimer() {
     this.stopTimer();
     this.timerId = setInterval(() => {
-      if (this.currentView !== 'view-game' || this.isLevelSettled || document.hidden) return;
-      this.timeLeft = Math.max(0, this.timeLeft - 1);
+      if (this.currentView !== 'view-game' || this.isLevelSettled || this.isPaused || document.hidden) return;
+      this.timeLeft = Math.max(0, Math.round(this.timeLeft - 1));
       this.updateTimerUI();
       if (this.timeLeft <= 10 && this.timeLeft > 0) {
         if (typeof SFX !== "undefined" && SFX.tick) SFX.tick();
@@ -1625,25 +1698,30 @@ class GameApp {
   updateTimerUI() {
     const el = document.getElementById('label-moves');
     const badge = document.getElementById('moves-badge');
+    const capsule = document.getElementById('hud-timer-capsule');
     if (!el) return;
-    const m = Math.floor(this.timeLeft / 60);
-    const s = this.timeLeft % 60;
+    const totalSec = Math.max(0, Math.round(this.timeLeft));
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
     el.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
-    if (this.timeLeft <= 10 && this.timeLeft > 0) {
+    if (totalSec <= 10 && totalSec > 0) {
       if (badge) badge.classList.add('animate-pulse', '!bg-[#FF3B30]');
-      if (this.timeLeft <= 5) {
+      if (capsule) capsule.classList.add('animate-pulse', '!border-[#E63946]');
+      if (totalSec <= 5) {
         SFX.tap();
       }
-      this.setMascotMood('worry', `「店長注意！只剩 ${this.timeLeft} 秒了💦 快快快！」`);
-    } else if (badge) {
-      badge.classList.remove('animate-pulse', '!bg-[#FF3B30]');
+      this.setMascotMood('worry', `「店長注意！只剩 ${totalSec} 秒了💦 快快快！」`);
+    } else {
+      if (badge) badge.classList.remove('animate-pulse', '!bg-[#FF3B30]');
+      if (capsule) capsule.classList.remove('animate-pulse', '!border-[#E63946]');
     }
   }
 
   addTimeBonus(sec) {
     if (this.isLevelSettled) return;
-    this.timeLeft = Math.min((this.maxTime || 90) + 30, this.timeLeft + sec);
+    const addSec = Math.round(sec);
+    this.timeLeft = Math.min((this.maxTime || 90) + 30, Math.round(this.timeLeft + addSec));
     this.updateTimerUI();
     const toast = document.getElementById('toast-time-bonus');
     if (toast) {
@@ -1843,11 +1921,15 @@ class GameApp {
 
       const clearedTier = getDifficultyTierInfo(finishedLevel);
       const orderAllDone = this.activeOrders.every(o => o.done >= o.req);
+      const isMilestone10 = (finishedLevel % 10 === 0);
       let baseCoins = (180 + finishedLevel * 20 + (orderAllDone ? 90 : 0)) * (clearedTier.rewardMult || 1);
       baseCoins = Math.round(baseCoins * (1 + this.getTotalCoinBonusPct() / 100));
+      if (isMilestone10) {
+        baseCoins = Math.round(baseCoins * 1.5);
+      }
       const baseDiam = GameState.direction === 'tycoon' ? 24 : 12;
       const diamReward = Math.round(baseDiam * (clearedTier.rewardMult || 1));
-      const voucherBonus = (finishedLevel > 200 && finishedLevel % 5 === 0) ? 2 : 1;
+      const voucherBonus = 1 + (isMilestone10 ? 1 : 0);
 
       GameState.coins += baseCoins;
       GameState.diamonds += diamReward;

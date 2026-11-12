@@ -9,11 +9,14 @@
 // ============================================================
 
 const SFX_STORAGE_KEY = 'hoshino_sfx_enabled';
+const BGM_STORAGE_KEY = 'hoshino_bgm_enabled';
 
 function loadInitialSfxState() {
   try {
     const saved = localStorage.getItem(SFX_STORAGE_KEY);
-    return saved === null ? true : saved === 'true';
+    if (saved !== null) return saved === 'true';
+    const bgmSaved = localStorage.getItem(BGM_STORAGE_KEY);
+    return bgmSaved === null ? true : bgmSaved === 'true';
   } catch (_) {
     return true;
   }
@@ -54,13 +57,22 @@ export const SFX = {
     }
   },
 
-  toggle() {
-    this.enabled = !this.enabled;
+  setEnabled(val) {
+    this.enabled = Boolean(val);
     try {
       localStorage.setItem(SFX_STORAGE_KEY, String(this.enabled));
+      localStorage.setItem(BGM_STORAGE_KEY, String(this.enabled));
     } catch (_) {}
-    if (this.enabled) this.resume();
+    if (this.enabled) {
+      this.resume();
+    } else if (this.ctx && this.ctx.state === 'running') {
+      this.ctx.suspend().catch(() => {});
+    }
     return this.enabled;
+  },
+
+  toggle() {
+    return this.setEnabled(!this.enabled);
   },
 
   // 基礎音調合成器（具平滑包絡線與自動斷開節點）

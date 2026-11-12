@@ -1,8 +1,20 @@
 const BGM_KEY = 'hoshino_bgm_enabled';
+const SFX_KEY = 'hoshino_sfx_enabled';
+
+function loadInitialBgmState() {
+  try {
+    const sfxSaved = localStorage.getItem(SFX_KEY);
+    if (sfxSaved !== null) return sfxSaved === 'true';
+    const bgmSaved = localStorage.getItem(BGM_KEY);
+    return bgmSaved === null ? true : bgmSaved === 'true';
+  } catch (_) {
+    return true;
+  }
+}
 
 export const BGM = {
   audio: null,
-  enabled: localStorage.getItem(BGM_KEY) !== 'false',
+  enabled: loadInitialBgmState(),
 
   init() {
     if (this.audio) return;
@@ -19,12 +31,30 @@ export const BGM = {
     });
   },
 
-  toggle() {
-    this.enabled = !this.enabled;
-    localStorage.setItem(BGM_KEY, String(this.enabled));
+  pause() {
+    if (this.audio) {
+      try {
+        this.audio.pause();
+      } catch (_) {}
+    }
+  },
+
+  setEnabled(val) {
+    this.enabled = Boolean(val);
+    try {
+      localStorage.setItem(BGM_KEY, String(this.enabled));
+      localStorage.setItem(SFX_KEY, String(this.enabled));
+    } catch (_) {}
     this.init();
-    if (this.enabled) this.audio.play().catch(() => {});
-    else this.audio.pause();
+    if (this.enabled) {
+      this.audio.play().catch(() => {});
+    } else {
+      this.pause();
+    }
     return this.enabled;
+  },
+
+  toggle() {
+    return this.setEnabled(!this.enabled);
   }
 };
