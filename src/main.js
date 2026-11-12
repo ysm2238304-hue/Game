@@ -121,7 +121,14 @@ class GameApp {
       './assets/mascot/aoi-happy.png',
       './assets/boss/boss-octopus.png',
       './assets/boss/boss-crab.png',
-      './assets/boss/boss-shark.png'
+      './assets/boss/boss-shark.png',
+      './assets/boss/boss-angler.png',
+      './assets/boss/boss-eel.png',
+      './assets/boss/boss-jellyfish.png',
+      './assets/boss/boss-urchin.png',
+      './assets/boss/boss-whale.png',
+      './assets/boss/boss-seahorse.png',
+      './assets/boss/boss-orca.png'
     ];
     this.preloadedBg = preloadAssets.map(url => {
       const img = new Image();
@@ -1923,7 +1930,30 @@ class GameApp {
     }
     this.playerHp = Math.max(0, this.playerHp - dmg);
     this.updateBossUI();
-    this.showTopToast('⚡ BOSS 震波襲擊!!', `${this.bossInfo?.name || '深海巨獸'}發動猛攻！`, '快湊三消反擊 ✦');
+    let frozeSlot = false;
+    if (this.bossInfo && this.bossInfo.freezeOnAttack) {
+      const candidates = [];
+      this.shelves.forEach(sh => sh.slots.forEach(sl => {
+        if (sl.queue.length > 0 && sl.iceHp === 0) candidates.push(sl);
+      }));
+      if (candidates.length > 0) {
+        const target = candidates[Math.floor(Math.random() * candidates.length)];
+        target.iceHp = 1;
+        this.jellyBounce(target);
+        frozeSlot = true;
+        const cRect = this.canvas.getBoundingClientRect();
+        const fxX = (cRect.left - appRect.left) + target.x + target.w / 2;
+        const fxY = (cRect.top - appRect.top) + target.y + target.h / 2;
+        this.spawnShockwave(fxX, fxY, '#90E0EF', 48, 300);
+        this.spawnParticles(fxX, fxY, '#A8E6CF', 12);
+        this.spawnFloatingComic(fxX, fxY - 12, '❄️ 結霜!');
+      }
+    }
+    this.showTopToast(
+      '⚡ BOSS 震波襲擊!!',
+      frozeSlot ? `${this.bossInfo?.name || '深海巨獸'}猛攻並凍結了貨架！` : `${this.bossInfo?.name || '深海巨獸'}發動猛攻！`,
+      '快湊三消反擊 ✦'
+    );
     if (this.playerHp <= 0) {
       this.onPlayerDefeatedByBoss();
     }
@@ -2226,8 +2256,8 @@ class GameApp {
       // 🔥 BOSS 戰模式：三消轉化為能量砲彈轟擊 BOSS，Combo >= 3 自動修復護盾並擊退 BOSS 蓄力！
       const dmg = Math.round(100 * (this.combo === 1 ? 1 : (this.combo === 2 ? 1.5 : 2.2)));
       if (this.combo >= 3) {
-        this.playerHp = Math.min(this.playerMaxHp, this.playerHp + 8);
-        this.bossAtkCharge = Math.max(0, this.bossAtkCharge - 20);
+        this.playerHp = Math.min(this.playerMaxHp, this.playerHp + 5);
+        this.bossAtkCharge = Math.max(0, this.bossAtkCharge - 15);
         this.updateBossUI();
         const pWrap = document.getElementById('player-hp-wrap');
         if (pWrap) {
@@ -2235,7 +2265,7 @@ class GameApp {
           const hx = (pRect.left - appRect.left) + pRect.width * 0.5;
           const hy = (pRect.top - appRect.top) + pRect.height * 0.5;
           this.spawnParticles(hx, hy, '#06D6A0', 14);
-          this.spawnFloatingComic(hx, hy - 14, '🛡️ +8 護盾!');
+          this.spawnFloatingComic(hx, hy - 14, '🛡️ +5 護盾!');
         }
       }
       this.spawnFloatingComic(centerX, centerY - 24, this.combo >= 2 ? '🔥 CRITICAL!' : '💥 HIT!');

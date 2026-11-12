@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v101-boss10-scale'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v102-boss10-hardmode'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -27,7 +27,14 @@ const PRECACHE_ASSETS = [
   './assets/mascot/tuxedocat-worry.png',
   './assets/boss/boss-octopus.png',
   './assets/boss/boss-crab.png',
-  './assets/boss/boss-shark.png'
+  './assets/boss/boss-shark.png',
+  './assets/boss/boss-angler.png',
+  './assets/boss/boss-eel.png',
+  './assets/boss/boss-jellyfish.png',
+  './assets/boss/boss-urchin.png',
+  './assets/boss/boss-whale.png',
+  './assets/boss/boss-seahorse.png',
+  './assets/boss/boss-orca.png'
 ];
 
 // 1. 安裝階段：容錯預載入資源
