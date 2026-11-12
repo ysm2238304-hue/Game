@@ -401,7 +401,7 @@ class GameApp {
     document.getElementById('combo-maintext').innerText = mainBadge;
     document.getElementById('combo-subtext').innerText  = subTitle;
     document.getElementById('combo-dish-name').innerText = dishLabel;
-    toastWrap.style.top = this.isBossLevel ? '238px' : '48px';
+    toastWrap.style.top = this.isBossLevel ? '216px' : '48px';
     toastWrap.classList.remove('hidden');
     toastBox.classList.remove('toast-banner-anim');
     void toastBox.offsetWidth;
@@ -534,21 +534,21 @@ class GameApp {
     const cols = 3;
     const rows = this.isBossLevel ? 3 : 4; // 🌟 BOSS 戰專屬 3 層寬敞大貨架，一般關卡 4 層大貨架！
     
-    // 1. BOSS 戰貨架適度放大，吃滿橫向寬度並保留足夠高度讓圖示等比例放大
-    const padX = this.isBossLevel ? 6 : 5;
+    // 1. BOSS 戰 3 層貨架黃金比例放大：橫向對齊滿版，單層高度放寬至 134px，視覺飽滿且上下不留多餘空隙
+    const padX = 5;
     const gapX = 6;
-    const gapY = this.isBossLevel ? 10 : 12;
+    const gapY = this.isBossLevel ? 9 : 12;
 
     // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
     // 3. 頂底留白
     this.topSceneH = 4;
-    this.bottomSceneH = this.isBossLevel ? 6 : 4;
+    this.bottomSceneH = 4;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const rawShelfH = Math.floor((availH - gapY * (rows - 1)) / rows);
-    const shelfH = this.isBossLevel ? Math.min(rawShelfH, 114) : rawShelfH;
+    const shelfH = this.isBossLevel ? Math.min(rawShelfH, 134) : rawShelfH;
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -2789,7 +2789,7 @@ class GameApp {
         }
         // 垂直對齊：以底層木板為基準，前排立正站立，後排微露其後
         const plankY = sh.y + sh.h - 8;
-        const foodCY = plankY - Math.min(48, Math.round(slot.h * 0.38));
+        const foodCY = plankY - Math.min(54, Math.round(slot.h * 0.39));
         const backFoodCY = foodCY - 16;
 
         // 🌟 平滑向前滑動插值 (Smooth Slide-Forward Tween)

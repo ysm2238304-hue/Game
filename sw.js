@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v108-no-reshuffle'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v109-boss-shelf-pro'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
