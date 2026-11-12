@@ -13,6 +13,7 @@ const SAVE_KEY = 'HoshinoWashoku_Save_v7';
 
 const DEFAULT_STATE = {
   unlockedLevel: 1,
+  lastSavedAt: 0,
   coins: 1200,
   diamonds: 200,
   vouchers: 8,
@@ -55,6 +56,7 @@ export const GameState = {
 
       // 1. 基本數值防呆校驗（防止 NaN 或負數導致畫面異常）
       this.unlockedLevel = safeInt(parsed.unlockedLevel, DEFAULT_STATE.unlockedLevel, 1);
+      this.lastSavedAt = safeInt(parsed.lastSavedAt, 0, 0);
       this.coins = safeInt(parsed.coins, DEFAULT_STATE.coins, 0);
       this.diamonds = safeInt(parsed.diamonds, DEFAULT_STATE.diamonds, 0);
       this.vouchers = safeInt(parsed.vouchers, DEFAULT_STATE.vouchers, 0);
@@ -132,22 +134,26 @@ export const GameState = {
     } catch (err) {
       console.warn('[GameState] 寫入存檔略過:', err);
     }
+  },
+
+  applyCloudData(cloudData) {
+    if (!cloudData || typeof cloudData !== 'object') return false;
+    const cloudLv = safeInt(cloudData.unlockedLevel, 1, 1);
+    const cloudTs = safeInt(cloudData.lastSavedAt, 0, 0);
+    const localLv = this.unlockedLevel || 1;
+    const localTs = this.lastSavedAt || 0;
+
+    // 雲端關卡更高，或同關卡但雲端存檔時間較新時才覆蓋
+    const shouldApply = (cloudLv > localLv) || (cloudLv === localLv && cloudTs > localTs);
+    if (!shouldApply) return false;
+
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(cloudData));
+      this.load();
+      return true;
+    } catch (err) {
+      console.warn('[GameState] 套用雲端存檔失敗:', err);
+      return false;
+    }
   }
 };
-
-// ==========================================
-// 🛡️ iOS / 行動端生命週期自動存檔防護
-// ==========================================
-if (typeof document !== 'undefined') {
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-      GameState.save();
-    }
-  });
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('pagehide', () => {
-    GameState.save();
-  });
-}

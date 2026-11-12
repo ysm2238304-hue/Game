@@ -179,30 +179,20 @@ class GameApp {
     this.startLevel(this.curLevel);
     this.startLoop();
 
-    // 👇 新增：監聽雲端存檔載入事件，並自動套用進度 👇
-    window.addEventListener('cloudSaveLoaded', (e) => {
-      const cloudData = e.detail;
+    // 監聽雲端存檔載入事件，並檢查是否已預先存在 window.cloudSaveData
+    const handleCloudSave = (cloudData) => {
       if (!cloudData) return;
-
-      console.log('☁️ 收到雲端存檔，準備覆蓋本地進度...', cloudData);
-      
-      // 為了避免新手玩家的進度被老玩家的雲端存檔覆蓋，可以比對一下等級
-      // 如果雲端進度大於等於本機，就直接套用雲端資料
-      if (cloudData.unlockedLevel >= GameState.unlockedLevel) {
-        Object.assign(GameState, cloudData); // 覆蓋本機狀態
-        
-        // 將遊戲切換到雲端的最新關卡，並重新渲染畫面
+      if (GameState.applyCloudData(cloudData)) {
         this.curLevel = GameState.unlockedLevel;
-        this.startLevel(this.curLevel); 
+        this.startLevel(this.curLevel);
         this.renderHUD();
         this.renderRoadmap();
         this.renderQuests();
-        
-        // 顯示同步成功提示
         this.showTopToast('☁️ 雲端存檔同步成功', '已為您載入最新遊戲進度', '歡迎回來店長 ✦');
       }
-    });
-    // 👆 新增結束 👆
+    };
+    window.addEventListener('cloudSaveLoaded', (e) => handleCloudSave(e.detail));
+    if (window.cloudSaveData) handleCloudSave(window.cloudSaveData);
   }
 
   applyThemeText() {
@@ -2942,9 +2932,7 @@ class GameApp {
   }
 }
 
-// 👇 新增這行：啟動 Firebase 監聽
-CloudAuth.init();
-
 FoodSpriteAtlas.init().then(() => {
   new GameApp();
+  CloudAuth.init();
 });
