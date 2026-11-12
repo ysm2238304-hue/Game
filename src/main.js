@@ -511,8 +511,8 @@ class GameApp {
     // 🛡️ 致命防禦：禁止 Math.min(0, winW) 算出 width = 0 的世紀大 Bug！
     const validW = cw > 0 ? cw : (appW > 0 ? Math.min(appW, winW) : winW);
     const validH = ch > 0 ? ch : (winH > 0 ? winH - 96 : 580);
-    this.width  = Math.max(280, validW || 360);
-    this.height = ch > 0 ? Math.max(240, ch) : Math.max(260, validH || (this.isBossLevel ? 400 : 520));
+    this.width  = Math.max(320, validW || 360);
+    this.height = validH > 0 ? Math.max(280, validH) : (this.isBossLevel ? 440 : 580);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
     this.canvas.width  = Math.round(this.width  * dpr);
@@ -1446,23 +1446,28 @@ class GameApp {
       document.getElementById('modal-direction').classList.add('hidden');
     };
 
+    const DRAG_VISUAL_OFFSET_Y = 12;
+
     const getAppCoords = (clientX, clientY) => {
-      const appRect = this.appRect || this.appEl.getBoundingClientRect();
+      const appRect = this.appEl.getBoundingClientRect();
+      this.appRect = appRect;
       return { appX: clientX - appRect.left, appY: clientY - appRect.top };
     };
 
     this.canvas.addEventListener('pointerdown', (e) => {
       if (this.dragging || this.isLevelSettled || this.isPaused) return;
+      if (e.cancelable) e.preventDefault();
+      try { this.canvas.setPointerCapture(e.pointerId); } catch (_) {}
+
       const rect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - rect.left;
       const canvasY = e.clientY - rect.top;
-
-      // Pass 1: 精準無邊距點擊判定 (Exact hit)
+      const pad = 8; // 寬容判定範圍 +8px 觸控優化
       for (const sh of this.shelves) {
         for (const slot of sh.slots) {
-          if (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
-              canvasY >= slot.y && canvasY <= slot.y + slot.h) {
-            if (!slot.queue.length) continue;
+          if (canvasX >= slot.x - pad && canvasX <= slot.x + slot.w + pad &&
+              canvasY >= slot.y - pad && canvasY <= slot.y + slot.h + pad) {
+            if (!slot.queue.length) return;
             if (slot.iceHp > 0) {
               SFX.iceCrack();
               this.jellyBounce(slot);
@@ -1483,65 +1488,34 @@ class GameApp {
           }
         }
       }
-
-      // Pass 2: 寬容觸控輔助判定 (pad = 10px，僅針對可拖曳商品，取中心距離最近者，絕不讓空位或冰塊吞掉觸控)
-      const pad = 10;
-      let bestSlot = null;
-      let bestShelf = null;
-      let minDistSq = Infinity;
-      for (const sh of this.shelves) {
-        for (const slot of sh.slots) {
-          if (!slot.queue.length || slot.iceHp > 0) continue;
-          if (canvasX >= slot.x - pad && canvasX <= slot.x + slot.w + pad &&
-              canvasY >= slot.y - pad && canvasY <= slot.y + slot.h + pad) {
-            const cx = slot.x + slot.w / 2;
-            const cy = slot.y + slot.h / 2;
-            const distSq = (canvasX - cx) * (canvasX - cx) + (canvasY - cy) * (canvasY - cy);
-            if (distSq < minDistSq) {
-              minDistSq = distSq;
-              bestSlot = slot;
-              bestShelf = sh;
-            }
-          }
-        }
-      }
-      if (bestSlot) {
-        const { appX, appY } = getAppCoords(e.clientX, e.clientY);
-        this.beginShelfDrag({
-          pointerId: e.pointerId,
-          slot: bestSlot,
-          shelf: bestShelf,
-          startX: e.clientX,
-          startY: e.clientY,
-          appX,
-          appY
-        });
-      }
     });
 
     window.addEventListener('pointermove', (e) => {
       if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
+      if (e.cancelable) e.preventDefault();
       const { appX, appY } = getAppCoords(e.clientX, e.clientY);
       this.dragPointer = { x: appX, y: appY, clientX: e.clientX, clientY: e.clientY };
 
       const cRect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - cRect.left;
-      const canvasY = e.clientY - cRect.top;
+      const canvasY = (e.clientY - DRAG_VISUAL_OFFSET_Y) - cRect.top;
       const nearest = this.findNearestAvailableSlot(canvasX, canvasY);
       if (nearest && nearest !== this.dragging.fromSlot && nearest.iceHp === 0) {
         this.hoverTargetSlot = nearest;
       } else {
         this.hoverTargetSlot = null;
       }
-    });
+    }, { passive: false });
 
     window.addEventListener('pointerup', (e) => {
       if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
+      try { this.canvas.releasePointerCapture(e.pointerId); } catch (_) {}
       this.handleDrop(e);
     });
 
     window.addEventListener('pointercancel', (e) => {
       if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
+      try { this.canvas.releasePointerCapture(e.pointerId); } catch (_) {}
       const drag = this.dragging;
       this.dragging = null;
       this.hoverTargetSlot = null;
@@ -1648,20 +1622,21 @@ class GameApp {
         const inside = (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
                         canvasY >= slot.y && canvasY <= slot.y + slot.h);
 
-        if (!slot.queue[0]) {
-          // 空位享超大磁吸半徑與優先吸附加成
-          const weighted = inside ? distSq * 0.25 : distSq;
-          if (weighted < radiusSq && weighted < minEmptyDistSq) {
-            minEmptyDistSq = weighted;
+        if (inside) {
+          if (!slot.queue[0]) return slot;
+          if (distSq < minOccupiedDistSq) {
+            minOccupiedDistSq = distSq;
+            directOccupiedSlot = slot;
+          }
+        } else if (!slot.queue[0]) {
+          if (distSq < radiusSq && distSq < minEmptyDistSq) {
+            minEmptyDistSq = distSq;
             bestEmptySlot = slot;
           }
-        } else if (inside && distSq < minOccupiedDistSq) {
-          minOccupiedDistSq = distSq;
-          directOccupiedSlot = slot;
         }
       }
     }
-    return bestEmptySlot || directOccupiedSlot;
+    return directOccupiedSlot || bestEmptySlot;
   }
 
   beginShelfDrag(cand) {
@@ -1702,19 +1677,20 @@ class GameApp {
     this.renderCartUI();
   }
 
-  handleDrop() {
+  handleDrop(e) {
     const drag = this.dragging;
-    const hoverSlot = this.hoverTargetSlot;
+    if (!drag) return;
     this.dragging = null;
     this.hoverTargetSlot = null;
-    const cx = this.dragPointer.clientX;
-    const cy = this.dragPointer.clientY;
+    const cx = (e && typeof e.clientX === 'number') ? e.clientX : this.dragPointer.clientX;
+    const cy = (e && typeof e.clientY === 'number') ? e.clientY : this.dragPointer.clientY;
 
     // 1. 檢查是否放入下方暫存槽位 (Cart slots)
     for (let i = 0; i < this.cartSlots.length; i++) {
       const el = document.querySelector(`[data-cart="${i}"]`);
       if (!el) continue;
       const rect = el.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) continue;
       if (cx >= rect.left - 10 && cx <= rect.right + 10 && cy >= rect.top - 10 && cy <= rect.bottom + 10) {
         if (drag.sourceType === 'cart' && drag.cartIdx === i) { this.cancelDragReturn(drag); return; }
         const targetCartItem = this.cartSlots[i];
@@ -1734,11 +1710,11 @@ class GameApp {
       }
     }
 
-    // 2. 智慧磁吸落點判定 (Smart Magnetic Snap)
+    // 2. 智慧磁吸落點判定 (Smart Magnetic Snap，對齊視覺中心 -12px)
     const cRect = this.canvas.getBoundingClientRect();
     const canvasX = cx - cRect.left;
-    const canvasY = cy - cRect.top;
-    let targetSlot = hoverSlot || this.findNearestAvailableSlot(canvasX, canvasY);
+    const canvasY = (cy - 12) - cRect.top;
+    const targetSlot = this.findNearestAvailableSlot(canvasX, canvasY);
 
     if (targetSlot) {
       if ((drag.sourceType === 'shelf' && targetSlot === drag.fromSlot) || targetSlot.iceHp > 0) {
@@ -2151,7 +2127,6 @@ class GameApp {
             s.queue[0] = frontPool[i];
             this.jellyBounce(s);
           });
-          this.moveHistory = [];
           SFX.swap();
           this.showTopToast('🌊 海流湧動・自動重整！', '貨架已自動騰出空位並重整排列！', '防死局保護 ✦');
         }

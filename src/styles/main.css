@@ -11,7 +11,7 @@
 --cream-bg: #FFFDF7;
 }
 
-{
+* {
 box-sizing: border-box;
 -webkit-touch-callout: none;
 -webkit-tap-highlight-color: transparent;
