@@ -1,14 +1,5 @@
 // ============================================================
-// 📦 src/logic/levelGen.js — 1~300 關每 10 關階梯難度 ＋ 第 10 關神魔之塔式 BOSS 戰系統
-// ============================================================
-//
-// 六大難度區間（每 10 關升 1 階，共 30 階，且每逢 10 的倍數關卡觸發 BOSS 戰）：
-//   - Steps 1~3   (Lv.1-30)   : 新手 1~3 階 (Beginner)
-//   - Steps 4~6   (Lv.31-60)  : 簡單 1~3 階 (Easy)
-//   - Steps 7~10  (Lv.61-100) : 普通 1~4 階 (Normal)
-//   - Steps 11~15 (Lv.101-150): 困難 1~5 階 (Hard)
-//   - Steps 16~22 (Lv.151-220): 更困難 1~7 階 (Very Hard)
-//   - Steps 23~30 (Lv.221-300): 地獄 1~8 階 (Hell)
+// 📦 src/logic/levelGen.js — 1~300 關每 10 關階梯難度 ＋ 每 5 關 10 大深海 BOSS 戰系統
 // ============================================================
 
 import { getActiveTheme } from '../themes/index.js';
@@ -109,6 +100,116 @@ export function getDifficultyTierInfo(levelId) {
   const lv = Math.max(1, Math.floor(Number(levelId) || 1));
   const tierStep = Math.min(30, Math.ceil(lv / 10));
   const isBoss = lv % 5 === 0;
+
+  if (tierStep <= 3) {
+    const sub = tierStep; // 1~3
+    return {
+      key: 'beginner',
+      tierStep,
+      isBoss,
+      label: isBoss ? `BOSS・新手${sub}階` : `新手 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・新手 ${sub} 階` : `✦ 新手 ${sub} 階`,
+      colorClass: 'bg-[#A8E6CF] text-[#1B4332] border-[#1B4332]',
+      rewardMult: Number((1.0 + (sub - 1) * 0.05).toFixed(2)),
+      baseBonusSec: 3.5,
+      comboBonusSec: 4.5
+    };
+  }
+  if (tierStep <= 6) {
+    const sub = tierStep - 3; // 1~3
+    return {
+      key: 'easy',
+      tierStep,
+      isBoss,
+      label: isBoss ? `BOSS・簡單${sub}階` : `簡單 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・簡單 ${sub} 階` : `✦ 簡單 ${sub} 階`,
+      colorClass: 'bg-[#90E0EF] text-[#03045E] border-[#03045E]',
+      rewardMult: Number((1.15 + (sub - 1) * 0.05).toFixed(2)),
+      baseBonusSec: 3,
+      comboBonusSec: 4
+    };
+  }
+  if (tierStep <= 10) {
+    const sub = tierStep - 6; // 1~4
+    return {
+      key: 'normal',
+      tierStep,
+      isBoss,
+      label: isBoss ? `BOSS・普通${sub}階` : `普通 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・普通 ${sub} 階` : `✦ 普通 ${sub} 階`,
+      colorClass: 'bg-[#FFE082] text-[#251408] border-[#251408]',
+      rewardMult: Number((1.3 + (sub - 1) * 0.05).toFixed(2)),
+      baseBonusSec: 2.5,
+      comboBonusSec: 3.5
+    };
+  }
+  if (tierStep <= 15) {
+    const sub = tierStep - 10; // 1~5
+    return {
+      key: 'hard',
+      tierStep,
+      isBoss,
+      label: isBoss ? `BOSS・困難${sub}階` : `困難 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・困難 ${sub} 階` : `✦ 困難 ${sub} 階`,
+      colorClass: 'bg-[#FFB703] text-[#251408] border-[#251408]',
+      rewardMult: Number((1.5 + (sub - 1) * 0.06).toFixed(2)),
+      baseBonusSec: 2.5,
+      comboBonusSec: 3.5
+    };
+  }
+  if (tierStep <= 22) {
+    const sub = tierStep - 15; // 1~7
+    return {
+      key: 'very_hard',
+      tierStep,
+      isBoss,
+      label: isBoss ? `BOSS・更困難${sub}階` : `更困難 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・更困難 ${sub} 階` : `✦ 更困難 ${sub} 階`,
+      colorClass: 'bg-[#FB8500] text-white border-[#251408]',
+      rewardMult: Number((1.8 + (sub - 1) * 0.06).toFixed(2)),
+      baseBonusSec: 2,
+      comboBonusSec: 3
+    };
+  }
+  const sub = tierStep - 22; // 1~8
+  return {
+    key: 'hell',
+    tierStep,
+    isBoss,
+    label: isBoss ? `BOSS・地獄${sub}階` : `地獄 ${sub}階`,
+    badgeText: isBoss ? `✦ BOSS 決戰・地獄 ${sub} 階` : `✦ 地獄 ${sub} 階`,
+    colorClass: 'bg-[#E63946] text-white border-[#FFE082]',
+    rewardMult: Number((2.2 + (sub - 1) * 0.08).toFixed(2)),
+    baseBonusSec: 1.5,
+    comboBonusSec: 2.5
+  };
+}
+
+export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
+  const safeLevelId = Math.max(1, Math.floor(Number(levelId) || 1));
+  const safeShelfLv = Math.max(1, Math.floor(Number(shelfUpgradeLevel) || 1));
+  const tierStep = Math.min(30, Math.ceil(safeLevelId / 10));
+  const isBossLevel = (safeLevelId % 5 === 0);
+  const tierInfo = getDifficultyTierInfo(safeLevelId);
+
+  const activeTheme = getActiveTheme();
+  const ITEM_DEFS = Array.isArray(activeTheme?.items) && activeTheme.items.length > 0
+    ? activeTheme.items
+    : [{ id: 'onigiri' }];
+
+  const rng = mulberry32(safeLevelId * 9137 + 101);
+  const cols = 3;
+  const rows = isBossLevel ? 3 : 4;
+  const shelfCount = isBossLevel ? 9 : 12;
+  const totalSlots = shelfCount * 3;
+
+  let depthPerSlot = 2;
+  let emptyBuffer = 8;
+  let frontEmptySlots = 4;
+  let varietyCount = 5;
+  let iceCount = 0;
+  let iceHp = 1;
+  let baseTimer = 135;
 
   if (tierStep <= 3) {
     // 🌱 Steps 1~3 (Lv.1-30)：新手 1~3 階（適度收緊，Lv.21 起出現結霜）
