@@ -139,6 +139,7 @@ class GameApp {
     this.particles = [];
     this.flyers = [];
     this.comics = [];
+    this.shockwaves = [];
     this.dragging = null;
     this.dragPointer = { x: 0, y: 0 };
     this.appRect = null;
@@ -535,21 +536,21 @@ class GameApp {
     const cols = 3;
     const rows = this.isBossLevel ? 3 : 4; // 🌟 BOSS 戰專屬 3 層寬敞大貨架，一般關卡 4 層大貨架！
     
-    // 1. 左右邊距 5px，木框間距 6px，最大化槽位橫向寬度
-    const padX = 5; 
-    const gapX = 6; 
-    const gapY = 12; 
+    // 1. BOSS 戰採用緊湊精緻貨架，釋放上方大舞台；一般關卡維持滿版寬敞貨架
+    const padX = this.isBossLevel ? 14 : 5;
+    const gapX = this.isBossLevel ? 7 : 6;
+    const gapY = this.isBossLevel ? 8 : 12;
 
-    // 2. 寬度基準：左右各留 10px，兩列間隙 6px，充分利用水平寬度
+    // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
-    // 3. 頂底留白輕盈
-    this.topSceneH = 4; 
-    this.bottomSceneH = 4;
+    // 3. 頂底留白
+    this.topSceneH = 4;
+    this.bottomSceneH = this.isBossLevel ? 8 : 4;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
-    // 4 層均勻劃分垂直可用高度：每層約 98px ~ 110px，垂直空間 100% 吃滿無浪費！
-    const shelfH = Math.floor((availH - gapY * (rows - 1)) / rows);
+    const rawShelfH = Math.floor((availH - gapY * (rows - 1)) / rows);
+    const shelfH = this.isBossLevel ? Math.min(rawShelfH, 92) : rawShelfH;
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -1273,6 +1274,10 @@ class GameApp {
     }
   }
 
+  spawnShockwave(x, y, color = '#FFE082', maxRadius = 72, duration = 340) {
+    this.shockwaves.push({ x, y, color, maxRadius, duration, startTime: performance.now() });
+  }
+
   spawnFlyer(typeId, sx, sy, tx, ty, onComplete, duration = 240) {
     this.flyers.push({ typeId, sx, sy, tx, ty, startTime: performance.now(), duration, onComplete });
   }
@@ -1834,32 +1839,41 @@ class GameApp {
   }
 
   updateBossUI() {
+    const bPct = Math.max(0, Math.min(100, (this.bossHp / Math.max(1, this.bossMaxHp)) * 100));
     const bossFill = document.getElementById('boss-hp-fill');
-    if (bossFill) {
-      const bPct = Math.max(0, Math.min(100, (this.bossHp / Math.max(1, this.bossMaxHp)) * 100));
-      bossFill.style.width = `${bPct}%`;
-    }
+    const bossTrail = document.getElementById('boss-hp-trail');
+    const bossWrap = document.getElementById('boss-hp-bar-wrap');
+    if (bossFill) bossFill.style.width = `${bPct}%`;
+    if (bossTrail) bossTrail.style.width = `${bPct}%`;
+    if (bossWrap) bossWrap.classList.toggle('animate-pulse', bPct > 0 && bPct <= 25);
+
+    const pPct = Math.max(0, Math.min(100, (this.playerHp / Math.max(1, this.playerMaxHp)) * 100));
     const playerFill = document.getElementById('player-hp-fill');
+    const playerTrail = document.getElementById('player-hp-trail');
+    if (playerTrail) playerTrail.style.width = `${pPct}%`;
     if (playerFill) {
-      const pPct = Math.max(0, Math.min(100, (this.playerHp / Math.max(1, this.playerMaxHp)) * 100));
       playerFill.style.width = `${pPct}%`;
       if (pPct > 50) {
-        playerFill.className = 'h-full bg-gradient-to-r from-[#06D6A0] via-[#52B788] to-[#A8E6CF] rounded-full transition-all duration-300';
+        playerFill.className = 'relative h-full bg-gradient-to-r from-[#06D6A0] via-[#52B788] to-[#A8E6CF] rounded-full transition-all duration-200';
       } else if (pPct >= 25) {
-        playerFill.className = 'h-full bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#FFE082] rounded-full transition-all duration-300';
+        playerFill.className = 'relative h-full bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#FFE082] rounded-full transition-all duration-200';
       } else {
-        playerFill.className = 'h-full bg-gradient-to-r from-[#D90429] via-[#E63946] to-[#FF4D6D] rounded-full transition-all duration-300 animate-pulse';
+        playerFill.className = 'relative h-full bg-gradient-to-r from-[#D90429] via-[#E63946] to-[#FF4D6D] rounded-full transition-all duration-200 animate-pulse';
       }
     }
+
+    const aPct = Math.max(0, Math.min(100, this.bossAtkCharge));
     const atkFill = document.getElementById('boss-atk-fill');
-    if (atkFill) {
-      const aPct = Math.max(0, Math.min(100, this.bossAtkCharge));
-      atkFill.style.height = `${aPct}%`;
-    }
+    if (atkFill) atkFill.style.width = `${aPct}%`;
     const atkGauge = document.getElementById('boss-atk-gauge');
     if (atkGauge) {
-      atkGauge.classList.toggle('border-[#E63946]', this.bossAtkCharge >= 80);
-      atkGauge.classList.toggle('animate-pulse', this.bossAtkCharge >= 80);
+      atkGauge.classList.toggle('border-[#FF4D6D]', aPct >= 75);
+      atkGauge.classList.toggle('animate-pulse', aPct >= 75);
+    }
+    const bossAura = document.getElementById('boss-aura-glow');
+    if (bossAura) {
+      bossAura.style.transform = aPct >= 75 ? 'scale(1.25)' : 'scale(1)';
+      bossAura.style.opacity = aPct >= 75 ? '1' : '0.7';
     }
   }
 
@@ -1871,8 +1885,8 @@ class GameApp {
     }
     const bossImg = document.getElementById('boss-sprite-img');
     if (bossImg) {
-      bossImg.classList.add('translate-y-3', 'scale-110');
-      setTimeout(() => bossImg.classList.remove('translate-y-3', 'scale-110'), 220);
+      bossImg.classList.add('translate-y-5', 'scale-125', 'brightness-125');
+      setTimeout(() => bossImg.classList.remove('translate-y-5', 'scale-125', 'brightness-125'), 240);
     }
     const flash = document.getElementById('boss-player-hit-flash');
     if (flash) {
@@ -1881,9 +1895,31 @@ class GameApp {
       setTimeout(() => {
         flash.classList.remove('opacity-100');
         flash.classList.add('opacity-0');
-      }, 180);
+      }, 240);
+    }
+    if (this.appEl) {
+      this.appEl.classList.remove('app-shake-lg');
+      void this.appEl.offsetWidth;
+      this.appEl.classList.add('app-shake-lg');
+      setTimeout(() => this.appEl.classList.remove('app-shake-lg'), 380);
+    }
+    const pWrap = document.getElementById('player-hp-wrap');
+    if (pWrap) {
+      pWrap.classList.remove('hp-hit-flash');
+      void pWrap.offsetWidth;
+      pWrap.classList.add('hp-hit-flash');
     }
     const dmg = (this.bossInfo && this.bossInfo.atkDamagePct) || 18;
+    const appRect = this.appEl.getBoundingClientRect();
+    if (pWrap) {
+      const pRect = pWrap.getBoundingClientRect();
+      const px = (pRect.left - appRect.left) + pRect.width * 0.5;
+      const py = (pRect.top - appRect.top) + pRect.height * 0.5;
+      this.spawnShockwave(px, py, '#FF4D6D', 110, 380);
+      this.spawnParticles(px, py, '#FF4D6D', 18);
+      this.spawnParticles(px, py, '#FFB703', 10);
+      this.spawnFloatingComic(px, py - 14, `⚡ -${dmg} HP!`);
+    }
     this.playerHp = Math.max(0, this.playerHp - dmg);
     this.updateBossUI();
     this.showTopToast('⚡ BOSS 震波襲擊!!', `${this.bossInfo?.name || '深海巨獸'}發動猛攻！`, '快湊三消反擊 ✦');
@@ -2192,8 +2228,16 @@ class GameApp {
         this.playerHp = Math.min(this.playerMaxHp, this.playerHp + 8);
         this.bossAtkCharge = Math.max(0, this.bossAtkCharge - 20);
         this.updateBossUI();
+        const pWrap = document.getElementById('player-hp-wrap');
+        if (pWrap) {
+          const pRect = pWrap.getBoundingClientRect();
+          const hx = (pRect.left - appRect.left) + pRect.width * 0.5;
+          const hy = (pRect.top - appRect.top) + pRect.height * 0.5;
+          this.spawnParticles(hx, hy, '#06D6A0', 14);
+          this.spawnFloatingComic(hx, hy - 14, '🛡️ +8 護盾!');
+        }
       }
-      this.spawnFloatingComic(centerX, centerY - 24, this.combo >= 2 ? `🔥 CRITICAL!` : `💥 HIT!`);
+      this.spawnFloatingComic(centerX, centerY - 24, this.combo >= 2 ? '🔥 CRITICAL!' : '💥 HIT!');
       this.showTopToast(
         `COMBO ×${this.combo}`,
         this.combo >= 3 ? '✨ 護盾修復 ＋ 擊退 BOSS 蓄力！' : '💥 能量砲彈直擊深海 BOSS！',
@@ -2201,21 +2245,44 @@ class GameApp {
       );
 
       const bossImg = document.getElementById('boss-sprite-img');
+      const bossWrap = document.getElementById('boss-sprite-wrap');
       const bRect = bossImg ? bossImg.getBoundingClientRect() : null;
       const bossTx = (bRect && bRect.width > 0) ? (bRect.left - appRect.left) + bRect.width / 2 : appRect.width / 2;
-      const bossTy = (bRect && bRect.height > 0) ? (bRect.top - appRect.top) + bRect.height / 2 : 76;
+      const bossTy = (bRect && bRect.height > 0) ? (bRect.top - appRect.top) + bRect.height / 2 : 120;
 
       setTimeout(() => {
         this.spawnParticles(centerX, centerY, '#FF85A1', 16);
+        this.spawnShockwave(centerX, centerY, '#FF85A1', 56, 260);
         this.spawnFlyer(typeId, centerX, centerY, bossTx, bossTy, () => {
           const mult = 1 + this.getTotalCoinBonusPct() / 100;
           GameState.coins += Math.round(18 * this.combo * mult) + feverBonusCoins;
           this.bossHp = Math.max(0, this.bossHp - dmg);
           this.updateBossUI();
-          this.spawnParticles(bossTx, bossTy, '#FFE082', 20);
-          if (bossImg) {
-            bossImg.classList.add('scale-110', 'brightness-150', '-translate-y-1');
-            setTimeout(() => bossImg.classList.remove('scale-110', 'brightness-150', '-translate-y-1'), 170);
+
+          // 多層命中衝擊波 + 粒子爆發 + 傷害飄字
+          this.spawnShockwave(bossTx, bossTy, this.combo >= 2 ? '#FF4D6D' : '#FFE082', this.combo >= 2 ? 96 : 74, 340);
+          this.spawnParticles(bossTx, bossTy, '#FFE082', 22);
+          this.spawnParticles(bossTx, bossTy, '#FF4D6D', 14);
+          this.spawnParticles(bossTx, bossTy, '#FF85A1', 10);
+          this.spawnFloatingComic(bossTx, bossTy - 26, this.combo >= 2 ? `🔥 -${dmg}!` : `💥 -${dmg}`);
+
+          const hpWrap = document.getElementById('boss-hp-bar-wrap');
+          if (hpWrap) {
+            hpWrap.classList.remove('hp-hit-flash');
+            void hpWrap.offsetWidth;
+            hpWrap.classList.add('hp-hit-flash');
+          }
+          if (bossWrap) {
+            bossWrap.classList.remove('boss-hit-shake');
+            void bossWrap.offsetWidth;
+            bossWrap.classList.add('boss-hit-shake');
+            setTimeout(() => bossWrap.classList.remove('boss-hit-shake'), 360);
+          }
+          if (this.combo >= 2 && this.appEl) {
+            this.appEl.classList.remove('app-shake-sm');
+            void this.appEl.offsetWidth;
+            this.appEl.classList.add('app-shake-sm');
+            setTimeout(() => this.appEl.classList.remove('app-shake-sm'), 240);
           }
           this.renderHUD();
           if (this.bossHp <= 0) {
@@ -2670,7 +2737,7 @@ class GameApp {
   startLoop() {
     const loop = (now) => {
       const isGameView = this.currentView === 'view-game';
-      const hasFX = this.flyers.length > 0 || this.particles.length > 0 || Boolean(this.dragging);
+      const hasFX = this.flyers.length > 0 || this.particles.length > 0 || this.comics.length > 0 || this.shockwaves.length > 0 || Boolean(this.dragging);
       if (isGameView) {
         this.drawShelvesCanvas(now);
       }
@@ -2812,6 +2879,23 @@ class GameApp {
       
       this.fxCtx.fillStyle = '#FFE082';
       this.fxCtx.fillText(cm.text, 0, 0);
+      this.fxCtx.restore();
+    }
+
+    for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+      const sw = this.shockwaves[i];
+      const p = Math.min(1, (now - sw.startTime) / sw.duration);
+      if (p >= 1) { this.shockwaves.splice(i, 1); continue; }
+      const ease = 1 - Math.pow(1 - p, 3);
+      const r = 10 + sw.maxRadius * ease;
+      const alpha = (1 - p) * 0.9;
+      this.fxCtx.save();
+      this.fxCtx.globalAlpha = alpha;
+      this.fxCtx.strokeStyle = sw.color;
+      this.fxCtx.lineWidth = Math.max(1.5, 6 * (1 - p));
+      this.fxCtx.beginPath();
+      this.fxCtx.arc(sw.x, sw.y, r, 0, Math.PI * 2);
+      this.fxCtx.stroke();
       this.fxCtx.restore();
     }
 

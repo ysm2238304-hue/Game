@@ -394,12 +394,12 @@
       <span id="label-cart-capacity" class="hidden"></span>
     </div>
 
-    <!-- 🔥 神魔之塔風格 BOSS 戰頂部決戰舞台（id="boss-battle-hud"，每 10 關自動切換顯示） 🔥 -->
-    <div id="boss-battle-hud" class="hidden h-[158px] px-3 pt-2 pb-1.5 bg-gradient-to-b from-[#1A051D]/90 via-[#001D3D]/85 to-transparent border-b-2 border-[#FF4D6D]/50 flex-col justify-between relative z-20 shrink-0 shadow-[0_6px_20px_rgba(0,0,0,0.65)]">
-      <!-- 受擊紅光閃爍遮罩 -->
-      <div id="boss-player-hit-flash" class="pointer-events-none fixed inset-0 z-40 bg-[#E63946]/45 opacity-0 transition-opacity duration-150"></div>
+    <!-- 🔥 神魔之塔風格 BOSS 戰頂部決戰舞台（擴大舞台＋精簡元素＋強化血條與受擊特效） 🔥 -->
+    <div id="boss-battle-hud" class="hidden h-[256px] sm:h-[272px] px-3 pt-2 pb-1.5 bg-gradient-to-b from-[#1A051D]/92 via-[#001D3D]/85 to-transparent border-b-2 border-[#FF4D6D]/50 flex-col justify-between relative z-20 shrink-0 shadow-[0_6px_20px_rgba(0,0,0,0.65)]">
+      <!-- 受擊紅光閃爍遮罩（含內陰影警戒光暈） -->
+      <div id="boss-player-hit-flash" class="pointer-events-none fixed inset-0 z-40 bg-[#E63946]/50 shadow-[inset_0_0_70px_rgba(255,0,40,0.9)] opacity-0 transition-opacity duration-150"></div>
 
-      <!-- 1. 頂部列：BOSS 關卡標籤 + 名稱 + 右側暫停鍵 + 純視覺分段血條 -->
+      <!-- 1. 頂部列：BOSS 關卡標籤 + 名稱 + 暫停鍵 + 雙層殘影分段血條 + 簡潔蓄力條 -->
       <div class="w-full flex flex-col gap-1 z-10">
         <div class="w-full flex items-center justify-between gap-2">
           <div class="flex items-center gap-1.5 min-w-0">
@@ -411,9 +411,12 @@
           </button>
         </div>
 
-        <!-- 純視覺 5 分段 BOSS 巨型血條（置於 BOSS 頭頂上方、無數字干擾） -->
-        <div id="boss-hp-bar-wrap" class="w-full h-4 bg-black/80 rounded-full p-0.5 border-2 border-[#FFE082] shadow-[0_0_12px_rgba(255,77,109,0.6)] relative overflow-hidden">
-          <div id="boss-hp-fill" class="bg-gradient-to-r from-[#FF0055] via-[#FF4D6D] to-[#FF9E00] h-full w-full rounded-full transition-all duration-300"></div>
+        <!-- 5 分段 BOSS 巨型血條（含延遲白金殘影條與高光） -->
+        <div id="boss-hp-bar-wrap" class="w-full h-4 bg-black/85 rounded-full p-0.5 border-2 border-[#FFE082] shadow-[0_0_12px_rgba(255,77,109,0.6)] relative overflow-hidden">
+          <div id="boss-hp-trail" class="absolute inset-y-0.5 left-0.5 bg-[#FFF3B0]/85 rounded-full transition-all duration-700 ease-out" style="width: 100%"></div>
+          <div id="boss-hp-fill" class="relative bg-gradient-to-r from-[#FF0055] via-[#FF4D6D] to-[#FF9E00] h-full w-full rounded-full transition-all duration-200">
+            <div class="absolute inset-x-1 top-0.5 h-1 bg-white/35 rounded-full"></div>
+          </div>
           <div class="pointer-events-none absolute inset-0 grid grid-cols-5">
             <div class="border-r border-black/45"></div>
             <div class="border-r border-black/45"></div>
@@ -422,29 +425,29 @@
             <div></div>
           </div>
         </div>
+
+        <!-- 簡潔橫向 BOSS 攻擊蓄力條（取代原本右側笨重的直立電量框） -->
+        <div id="boss-atk-gauge" class="w-full h-1.5 bg-black/70 rounded-full overflow-hidden border border-white/15">
+          <div id="boss-atk-fill" class="h-full bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#FF0055] rounded-full transition-all duration-150" style="width: 0%"></div>
+        </div>
       </div>
 
-      <!-- 2. 中央 BOSS 立繪舞台 ＋ 右側純視覺攻擊蓄力環 -->
+      <!-- 2. 中央大型 BOSS 立繪舞台（置中放大，無多餘遮擋元素） -->
       <div class="flex-1 flex items-center justify-center relative min-h-0 my-0.5">
         <div id="boss-sprite-wrap" class="relative flex items-center justify-center">
-          <div class="absolute w-24 h-24 rounded-full bg-gradient-to-b from-[#FF4D6D]/30 to-transparent blur-md pointer-events-none"></div>
-          <img id="boss-sprite-img" src="./assets/boss/boss-octopus.png" class="h-[78px] w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.85)] transition-transform duration-150 select-none" alt="BOSS" draggable="false">
-        </div>
-
-        <!-- 純視覺 BOSS 攻擊蓄力槽（無數字） -->
-        <div id="boss-atk-gauge" class=" ml-3 flex flex-col items-center gap-1 bg-black/65 px-2 py-1 rounded-xl border border-[#FFE082]/60 shadow-md" title="BOSS 攻擊蓄力">
-          <span class="text-xs leading-none animate-pulse">⚡</span>
-          <div class="w-2.5 h-10 bg-black/80 rounded-full p-0.5 border border-white/30 flex flex-col justify-end overflow-hidden">
-            <div id="boss-atk-fill" class="w-full bg-gradient-to-t from-[#FFB703] via-[#FB8500] to-[#E63946] rounded-full transition-all duration-150" style="height: 0%"></div>
-          </div>
+          <div id="boss-aura-glow" class="absolute w-40 h-40 rounded-full bg-gradient-to-b from-[#FF4D6D]/35 via-[#FFB703]/15 to-transparent blur-xl pointer-events-none transition-all duration-200"></div>
+          <img id="boss-sprite-img" src="./assets/boss/boss-octopus.png" class="boss-float h-[142px] sm:h-[156px] w-auto object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.9)] transition-transform duration-150 select-none" alt="BOSS" draggable="false">
         </div>
       </div>
 
-      <!-- 3. 底部：玩家（賓士貓店長）純視覺護盾血條（緊貼貨架上方） -->
-      <div class="w-full flex items-center gap-2 bg-black/65 px-2.5 py-1 rounded-xl border border-[#A8E6CF]/60 shadow-md z-10">
+      <!-- 3. 底部：玩家護盾血條（含延遲扣血殘影與受擊/回血閃爍） -->
+      <div id="player-hp-wrap" class="w-full flex items-center gap-2 bg-black/70 px-2.5 py-1 rounded-xl border border-[#A8E6CF]/60 shadow-md z-10 transition-all duration-150">
         <img src="./assets/mascot/tuxedocat-happy.png" class="w-5 h-5 object-contain rounded-full bg-[#003566] border border-[#FFE082] shrink-0" alt="店長">
-        <div class="w-full h-3 bg-black/80 rounded-full p-0.5 border border-[#251408] relative overflow-hidden">
-          <div id="player-hp-fill" class="h-full w-full bg-gradient-to-r from-[#06D6A0] via-[#52B788] to-[#A8E6CF] rounded-full transition-all duration-300"></div>
+        <div class="w-full h-3.5 bg-black/85 rounded-full p-0.5 border border-[#251408] relative overflow-hidden">
+          <div id="player-hp-trail" class="absolute inset-y-0.5 left-0.5 bg-white/80 rounded-full transition-all duration-700 ease-out" style="width: 100%"></div>
+          <div id="player-hp-fill" class="relative h-full w-full bg-gradient-to-r from-[#06D6A0] via-[#52B788] to-[#A8E6CF] rounded-full transition-all duration-200">
+            <div class="absolute inset-x-1 top-0.5 h-0.5 bg-white/40 rounded-full"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -461,7 +464,7 @@
     </div>
 
     <!-- 🛒 超市大貨架畫布舞台區（佔據全螢幕 88% 以上極大化視野） -->
-    <div id="shelves-stage-container" class="relative z-10 w-full flex-1 overflow-hidden flex items-center justify-center min-h-0" style="min-height: 280px; width: 100%; height: 100%; touch-action: none;">
+    <div id="shelves-stage-container" class="relative z-10 w-full flex-1 overflow-hidden flex items-center justify-center min-h-0" style="min-height: 220px; width: 100%; height: 100%; touch-action: none;">
       <canvas id="shelf-canvas" class="block" style="width: 100%; height: 100%;"></canvas>
     </div>
 

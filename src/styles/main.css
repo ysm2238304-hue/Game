@@ -294,3 +294,53 @@ padding: 6px 10px;
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .allow-scroll-y { touch-action: pan-y; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
 .allow-scroll-x { touch-action: pan-x; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+
+@keyframes bossFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%      { transform: translateY(-5px) scale(1.02); }
+}
+.boss-float {
+  animation: bossFloat 2.6s ease-in-out infinite;
+}
+
+@keyframes bossHitShake {
+  0%   { transform: translate(0, 0) scale(1); filter: brightness(2.2) saturate(1.4); }
+  20%  { transform: translate(-8px, -3px) scale(1.08) rotate(-3deg); filter: brightness(1.8); }
+  45%  { transform: translate(8px, 2px) scale(0.96) rotate(3deg); filter: brightness(1.4); }
+  70%  { transform: translate(-5px, 1px) scale(1.03) rotate(-1.5deg); }
+  100% { transform: translate(0, 0) scale(1); filter: brightness(1); }
+}
+.boss-hit-shake {
+  animation: bossHitShake 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes appShakeSm {
+  0%, 100% { transform: translate(0, 0); }
+  25%      { transform: translate(-3px, 2px); }
+  50%      { transform: translate(3px, -2px); }
+  75%      { transform: translate(-2px, -1px); }
+}
+.app-shake-sm {
+  animation: appShakeSm 0.22s ease-out;
+}
+
+@keyframes appShakeLg {
+  0%, 100% { transform: translate(0, 0); }
+  15%      { transform: translate(-7px, 5px); }
+  30%      { transform: translate(7px, -5px); }
+  45%      { transform: translate(-6px, -4px); }
+  60%      { transform: translate(6px, 4px); }
+  80%      { transform: translate(-3px, 2px); }
+}
+.app-shake-lg {
+  animation: appShakeLg 0.36s ease-out;
+}
+
+@keyframes hpFlash {
+  0%   { box-shadow: 0 0 0 rgba(255,255,255,0); }
+  35%  { box-shadow: 0 0 18px rgba(255,224,130,0.95), inset 0 0 10px rgba(255,255,255,0.85); filter: brightness(1.35); }
+  100% { box-shadow: 0 0 12px rgba(255,77,109,0.6); filter: brightness(1); }
+}
+.hp-hit-flash {
+  animation: hpFlash 0.3s ease-out;
+}
