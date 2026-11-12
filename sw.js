@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v97-smooth-drag-polished-ui'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v98-boss-battle-mode'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,7 +24,10 @@ const PRECACHE_ASSETS = [
   './assets/icons/icon-hint-jellyfish.png',
   './assets/mascot/tuxedocat-happy.png',
   './assets/mascot/tuxedocat-star.png',
-  './assets/mascot/tuxedocat-worry.png'
+  './assets/mascot/tuxedocat-worry.png',
+  './assets/boss/boss-octopus.png',
+  './assets/boss/boss-crab.png',
+  './assets/boss/boss-shark.png'
 ];
 
 // 1. 安裝階段：容錯預載入資源

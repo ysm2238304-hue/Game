@@ -1,8 +1,8 @@
 // ============================================================
-// 📦 src/logic/levelGen.js — 1~300 關每 10 關階梯式平滑難度平衡系統 (30 階)
+// 📦 src/logic/levelGen.js — 1~300 關每 10 關階梯難度 ＋ 第 10 關神魔之塔式 BOSS 戰系統
 // ============================================================
 //
-// 六大難度區間（每 10 關升 1 階，共 30 階）：
+// 六大難度區間（每 10 關升 1 階，共 30 階，且每逢 10 的倍數關卡觸發 BOSS 戰）：
 //   - Steps 1~3   (Lv.1-30)   : 新手 1~3 階 (Beginner)
 //   - Steps 4~6   (Lv.31-60)  : 簡單 1~3 階 (Easy)
 //   - Steps 7~10  (Lv.61-100) : 普通 1~4 階 (Normal)
@@ -22,17 +22,43 @@ function mulberry32(a) {
   };
 }
 
+export const BOSS_ROSTER = [
+  {
+    id: 'octopus',
+    name: '章魚海盜船長・歐克托',
+    sprite: './assets/boss/boss-octopus.png',
+    atkIntervalMs: 8500,
+    atkDamagePct: 18
+  },
+  {
+    id: 'crab',
+    name: '重甲帝王蟹將軍・克勞',
+    sprite: './assets/boss/boss-crab.png',
+    atkIntervalMs: 9000,
+    atkDamagePct: 22
+  },
+  {
+    id: 'shark',
+    name: '深海幽靈鯊王・夏克',
+    sprite: './assets/boss/boss-shark.png',
+    atkIntervalMs: 7800,
+    atkDamagePct: 24
+  }
+];
+
 export function getDifficultyTierInfo(levelId) {
   const lv = Math.max(1, Math.floor(Number(levelId) || 1));
   const tierStep = Math.min(30, Math.ceil(lv / 10));
+  const isBoss = lv % 10 === 0;
 
   if (tierStep <= 3) {
     const sub = tierStep; // 1~3
     return {
       key: 'beginner',
       tierStep,
-      label: `新手 ${sub}階`,
-      badgeText: `✦ 新手 ${sub} 階`,
+      isBoss,
+      label: isBoss ? `BOSS・新手${sub}階` : `新手 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・新手 ${sub} 階` : `✦ 新手 ${sub} 階`,
       colorClass: 'bg-[#A8E6CF] text-[#1B4332] border-[#1B4332]',
       rewardMult: Number((1.0 + (sub - 1) * 0.05).toFixed(2)),
       baseBonusSec: 4,
@@ -44,8 +70,9 @@ export function getDifficultyTierInfo(levelId) {
     return {
       key: 'easy',
       tierStep,
-      label: `簡單 ${sub}階`,
-      badgeText: `✦ 簡單 ${sub} 階`,
+      isBoss,
+      label: isBoss ? `BOSS・簡單${sub}階` : `簡單 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・簡單 ${sub} 階` : `✦ 簡單 ${sub} 階`,
       colorClass: 'bg-[#90E0EF] text-[#03045E] border-[#03045E]',
       rewardMult: Number((1.15 + (sub - 1) * 0.05).toFixed(2)),
       baseBonusSec: 3.5,
@@ -57,8 +84,9 @@ export function getDifficultyTierInfo(levelId) {
     return {
       key: 'normal',
       tierStep,
-      label: `普通 ${sub}階`,
-      badgeText: `✦ 普通 ${sub} 階`,
+      isBoss,
+      label: isBoss ? `BOSS・普通${sub}階` : `普通 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・普通 ${sub} 階` : `✦ 普通 ${sub} 階`,
       colorClass: 'bg-[#FFE082] text-[#251408] border-[#251408]',
       rewardMult: Number((1.3 + (sub - 1) * 0.05).toFixed(2)),
       baseBonusSec: 3,
@@ -70,8 +98,9 @@ export function getDifficultyTierInfo(levelId) {
     return {
       key: 'hard',
       tierStep,
-      label: `困難 ${sub}階`,
-      badgeText: `✦ 困難 ${sub} 階`,
+      isBoss,
+      label: isBoss ? `BOSS・困難${sub}階` : `困難 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・困難 ${sub} 階` : `✦ 困難 ${sub} 階`,
       colorClass: 'bg-[#FFB703] text-[#251408] border-[#251408]',
       rewardMult: Number((1.5 + (sub - 1) * 0.06).toFixed(2)),
       baseBonusSec: 3,
@@ -83,8 +112,9 @@ export function getDifficultyTierInfo(levelId) {
     return {
       key: 'very_hard',
       tierStep,
-      label: `更困難 ${sub}階`,
-      badgeText: `✦ 更困難 ${sub} 階`,
+      isBoss,
+      label: isBoss ? `BOSS・更困難${sub}階` : `更困難 ${sub}階`,
+      badgeText: isBoss ? `✦ BOSS 決戰・更困難 ${sub} 階` : `✦ 更困難 ${sub} 階`,
       colorClass: 'bg-[#FB8500] text-white border-[#251408]',
       rewardMult: Number((1.8 + (sub - 1) * 0.06).toFixed(2)),
       baseBonusSec: 2.5,
@@ -95,8 +125,9 @@ export function getDifficultyTierInfo(levelId) {
   return {
     key: 'hell',
     tierStep,
-    label: `地獄 ${sub}階`,
-    badgeText: `✦ 地獄 ${sub} 階`,
+    isBoss,
+    label: isBoss ? `BOSS・地獄${sub}階` : `地獄 ${sub}階`,
+    badgeText: isBoss ? `✦ BOSS 決戰・地獄 ${sub} 階` : `✦ 地獄 ${sub} 階`,
     colorClass: 'bg-[#E63946] text-white border-[#FFE082]',
     rewardMult: Number((2.2 + (sub - 1) * 0.08).toFixed(2)),
     baseBonusSec: 2,
@@ -108,6 +139,7 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const safeLevelId = Math.max(1, Math.floor(Number(levelId) || 1));
   const safeShelfLv = Math.max(1, Math.floor(Number(shelfUpgradeLevel) || 1));
   const tierStep = Math.min(30, Math.ceil(safeLevelId / 10));
+  const isBossLevel = (safeLevelId % 10 === 0);
   const tierInfo = getDifficultyTierInfo(safeLevelId);
 
   const activeTheme = getActiveTheme();
@@ -117,9 +149,9 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
 
   const rng = mulberry32(safeLevelId * 9137 + 101);
   const cols = 3;
-  const rows = 4;
-  const shelfCount = 12;
-  const totalSlots = shelfCount * 3; // 36 格
+  const rows = isBossLevel ? 3 : 4;
+  const shelfCount = isBossLevel ? 9 : 12;
+  const totalSlots = shelfCount * 3; // BOSS 關 27 格，一般關 36 格
 
   let depthPerSlot = 2;
   let emptyBuffer = 9;
@@ -131,64 +163,82 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
 
   if (tierStep <= 3) {
     // 🌱 Steps 1~3 (Lv.1-30)：新手 1~3 階
-    const p = (tierStep - 1) / 2; // 0, 0.5, 1
+    const p = (tierStep - 1) / 2;
     depthPerSlot = 2;
     emptyBuffer = 9;
     frontEmptySlots = 5;
     varietyCount = tierStep === 1 ? 4 : 5;
     iceCount = 0;
     iceHp = 1;
-    baseTimer = Math.round(150 - p * 14); // 150s -> 136s
+    baseTimer = Math.round(150 - p * 14);
   } else if (tierStep <= 6) {
     // 🍀 Steps 4~6 (Lv.31-60)：簡單 1~3 階
-    const p = (tierStep - 4) / 2; // 0, 0.5, 1
-    depthPerSlot = tierStep === 4 ? 2 : 3; // Lv.31-40 為 2 層，Lv.41-60 為 3 層
+    const p = (tierStep - 4) / 2;
+    depthPerSlot = tierStep === 4 ? 2 : 3;
     emptyBuffer = 9;
     frontEmptySlots = 4;
     varietyCount = tierStep <= 5 ? 5 : 6;
     iceCount = tierStep === 4 ? 1 : 2;
     iceHp = 1;
-    baseTimer = Math.round(132 - p * 10); // 132s -> 122s
+    baseTimer = Math.round(132 - p * 10);
   } else if (tierStep <= 10) {
     // ⚓ Steps 7~10 (Lv.61-100)：普通 1~4 階
-    const p = (tierStep - 7) / 3; // 0 ~ 1
+    const p = (tierStep - 7) / 3;
     depthPerSlot = 3;
     emptyBuffer = 6;
     frontEmptySlots = tierStep <= 8 ? 4 : 3;
     varietyCount = tierStep <= 8 ? 6 : 7;
     iceCount = tierStep <= 8 ? 2 : 3;
     iceHp = 1;
-    baseTimer = Math.round(120 - p * 12); // 120s -> 108s
+    baseTimer = Math.round(120 - p * 12);
   } else if (tierStep <= 15) {
     // 🔥 Steps 11~15 (Lv.101-150)：困難 1~5 階
-    const p = (tierStep - 11) / 4; // 0 ~ 1
-    depthPerSlot = tierStep <= 13 ? 3 : 4; // Lv.101-130 為 3 層，Lv.131-150 為 4 層
+    const p = (tierStep - 11) / 4;
+    depthPerSlot = tierStep <= 13 ? 3 : 4;
     emptyBuffer = 6;
     frontEmptySlots = 3;
     varietyCount = tierStep <= 12 ? 7 : 8;
     iceCount = tierStep <= 12 ? 3 : 4;
     iceHp = 1;
-    baseTimer = Math.round(105 - p * 10); // 105s -> 95s
+    baseTimer = Math.round(105 - p * 10);
   } else if (tierStep <= 22) {
     // ⚡ Steps 16~22 (Lv.151-220)：更困難 1~7 階
-    const p = (tierStep - 16) / 6; // 0 ~ 1
+    const p = (tierStep - 16) / 6;
     depthPerSlot = 4;
     emptyBuffer = 6;
     frontEmptySlots = 3;
     varietyCount = tierStep <= 18 ? 8 : 9;
-    iceCount = 4 + Math.round(p * 2); // 4 ~ 6 格
+    iceCount = 4 + Math.round(p * 2);
     iceHp = 2;
-    baseTimer = Math.round(94 - p * 10); // 94s -> 84s
+    baseTimer = Math.round(94 - p * 10);
   } else {
     // 🏴‍☠️ Steps 23~30 (Lv.221-300)：地獄 1~8 階
-    const p = Math.min(1, (tierStep - 23) / 7); // 0 ~ 1
+    const p = Math.min(1, (tierStep - 23) / 7);
     depthPerSlot = 4;
     emptyBuffer = 3;
     frontEmptySlots = 2;
     varietyCount = tierStep <= 25 ? 9 : 10;
-    iceCount = 6 + Math.round(p * 2); // 6 ~ 8 格
+    iceCount = 6 + Math.round(p * 2);
     iceHp = 2;
-    baseTimer = Math.round(82 - p * 12); // 82s -> 70s
+    baseTimer = Math.round(82 - p * 12);
+  }
+
+  let bossInfo = null;
+  if (isBossLevel) {
+    // BOSS 戰專屬 3 層寬敞貨架配置，確保充足周轉空間與持續爽快連擊
+    depthPerSlot = Math.max(3, depthPerSlot);
+    emptyBuffer = 6;
+    frontEmptySlots = 4;
+    iceCount = Math.min(2, iceCount);
+    const bossIdx = Math.floor(safeLevelId / 10 - 1) % BOSS_ROSTER.length;
+    const baseBoss = BOSS_ROSTER[bossIdx];
+    const matchesNeeded = 12 + Math.min(18, Math.floor(tierStep * 0.6));
+    const bossMaxHp = matchesNeeded * 100;
+    bossInfo = {
+      ...baseBoss,
+      maxHp: bossMaxHp,
+      matchesNeeded
+    };
   }
 
   varietyCount = Math.min(ITEM_DEFS.length, varietyCount);
@@ -226,12 +276,15 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   return {
     levelId: safeLevelId,
     tierStep,
+    isBoss: isBossLevel,
+    bossInfo,
     tierInfo,
     rows,
     cols,
     shelfCount,
     depthPerSlot,
     frontEmptySlots,
+    varietyCount,
     itemPool,
     totalItems,
     iceCount,

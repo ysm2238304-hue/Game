@@ -76,6 +76,15 @@ class GameApp {
     this.isTransitioning = false;
     this.isLevelSettled = false;
     this.isPaused = false;
+    this.isBossLevel = false;
+    this.bossInfo = null;
+    this.bossMaxHp = 1200;
+    this.bossHp = 1200;
+    this.playerMaxHp = 100;
+    this.playerHp = 100;
+    this.bossAtkCharge = 0;
+    this.bossAtkInterval = 8500;
+    this.bossTimerId = null;
     this.hoverTargetSlot = null;
     this.isDrawingGacha = false;
     this.fxNeedsClear = false;
@@ -109,7 +118,10 @@ class GameApp {
       './assets/bg-map.jpg',
       './assets/bg-transition.jpg',
       './assets/gacha-machine.png',
-      './assets/mascot/aoi-happy.png'
+      './assets/mascot/aoi-happy.png',
+      './assets/boss/boss-octopus.png',
+      './assets/boss/boss-crab.png',
+      './assets/boss/boss-shark.png'
     ];
     this.preloadedBg = preloadAssets.map(url => {
       const img = new Image();
@@ -500,7 +512,7 @@ class GameApp {
     const validW = cw > 0 ? cw : (appW > 0 ? Math.min(appW, winW) : winW);
     const validH = ch > 0 ? ch : (winH > 0 ? winH - 96 : 580);
     this.width  = Math.max(320, validW || 360);
-    this.height = Math.max(480, validH || 580);
+    this.height = Math.max(this.isBossLevel ? 340 : 440, validH || (this.isBossLevel ? 440 : 580));
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.dpr = dpr;
     this.canvas.width  = Math.round(this.width  * dpr);
@@ -521,7 +533,7 @@ class GameApp {
   recalcShelvesLayout() {
     if (!this.shelves.length) return;
     const cols = 3;
-    const rows = 4; // 🌟 升級為 4 層深海整合型大貨架（看齊家樂福/萬家福）！
+    const rows = this.isBossLevel ? 3 : 4; // 🌟 BOSS 戰專屬 3 層寬敞大貨架，一般關卡 4 層大貨架！
     
     // 1. 左右邊距 5px，木框間距 6px，最大化槽位橫向寬度
     const padX = 5; 
@@ -587,7 +599,7 @@ class GameApp {
   paintSupermarketShelfUnit(ctx) {
     if (!this.shelves.length) return;
     const cols = 3;
-    const rows = 4;
+    const rows = this.isBossLevel ? 3 : 4;
     const LINE = '#251408';
 
     const firstSh = this.shelves[0];
@@ -1081,13 +1093,45 @@ class GameApp {
     if (pauseModal) pauseModal.classList.add('hidden');
     this.combo = 0;
     this.fever = 0;
+    this.moveHistory = [];
     const cfg = generateLevelConfig(lvId, GameState.upgrades.shelf);
     this.levelCfg = cfg;
+    this.isBossLevel = Boolean(cfg.isBoss);
+    this.bossInfo = cfg.bossInfo || null;
     this.moves = cfg.moves || 999;
     this.totalLevelItems = cfg.totalItems;
     this.activeOrders = cfg.orders;
 
-    // ⏰ 倒數計時系統初始化
+    // 🔥 切換一般關卡 HUD 與 BOSS 戰決戰舞台 HUD
+    const normalHud = document.getElementById('normal-game-hud');
+    const bossHud   = document.getElementById('boss-battle-hud');
+    const bottomBar = document.getElementById('bottom-booster-bar');
+    if (this.isBossLevel && this.bossInfo) {
+      if (normalHud) { normalHud.classList.add('hidden'); normalHud.classList.remove('flex'); }
+      if (bossHud)   { bossHud.classList.remove('hidden'); bossHud.classList.add('flex'); }
+      if (bottomBar) { bottomBar.classList.add('hidden'); bottomBar.classList.remove('flex'); }
+
+      this.bossMaxHp = this.bossInfo.maxHp || 1200;
+      this.bossHp = this.bossMaxHp;
+      this.playerMaxHp = 100;
+      this.playerHp = 100;
+      this.bossAtkCharge = 0;
+      this.bossAtkInterval = this.bossInfo.atkIntervalMs || 8500;
+
+      const bTag = document.getElementById('boss-lv-tag');
+      if (bTag) bTag.innerText = `BOSS • 第 ${lvId} 關`;
+      const bName = document.getElementById('boss-name-label');
+      if (bName) bName.innerText = this.bossInfo.name;
+      const bImg = document.getElementById('boss-sprite-img');
+      if (bImg) bImg.src = this.bossInfo.sprite;
+      this.updateBossUI();
+    } else {
+      if (normalHud) { normalHud.classList.remove('hidden'); normalHud.classList.add('flex'); }
+      if (bossHud)   { bossHud.classList.add('hidden'); bossHud.classList.remove('flex'); }
+      if (bottomBar) { bottomBar.classList.remove('hidden'); bottomBar.classList.add('flex'); }
+    }
+
+    // ⏰ 倒數計時系統或 BOSS 蓄力計時系統初始化
     this.timeLeft = cfg.timeLimit || 90;
     this.maxTime = this.timeLeft;
     this.stopTimer();
@@ -1295,19 +1339,20 @@ class GameApp {
     const bgmBtn = document.getElementById('btn-hud-bgm');
     if (bgmBtn) bgmBtn.onclick = () => this.toggleMasterAudio();
 
-    // ⏸ 遊戲暫停選單事件綁定
+    // ⏸ 遊戲暫停選單事件綁定（同時支援一般關與 BOSS 關暫停鈕）
+    const openPauseModal = () => {
+      if (this.isLevelSettled) return;
+      SFX.tap();
+      this.isPaused = true;
+      this.stopTimer();
+      this.syncAudioButtons();
+      const modalPause = document.getElementById('modal-pause');
+      if (modalPause) modalPause.classList.remove('hidden');
+    };
     const btnPauseGame = document.getElementById('btn-pause-game');
-    if (btnPauseGame) {
-      btnPauseGame.onclick = () => {
-        if (this.isLevelSettled) return;
-        SFX.tap();
-        this.isPaused = true;
-        this.stopTimer();
-        this.syncAudioButtons();
-        const modalPause = document.getElementById('modal-pause');
-        if (modalPause) modalPause.classList.remove('hidden');
-      };
-    }
+    if (btnPauseGame) btnPauseGame.onclick = openPauseModal;
+    const btnPauseBoss = document.getElementById('btn-pause-boss');
+    if (btnPauseBoss) btnPauseBoss.onclick = openPauseModal;
     const btnPauseResume = document.getElementById('btn-pause-resume');
     if (btnPauseResume) {
       btnPauseResume.onclick = () => {
@@ -1546,34 +1591,41 @@ class GameApp {
 
   findNearestAvailableSlot(canvasX, canvasY, maxRadius = null) {
     if (!this.shelves || !this.shelves.length) return null;
-    let bestSlot = null;
-    let minDistanceSq = Infinity;
-    const defaultRadius = (this.shelves[0]?.slots[0]?.w || 50) * 1.45;
-    const effectiveRadius = maxRadius || Math.max(95, defaultRadius);
+    let bestEmptySlot = null;
+    let minEmptyDistSq = Infinity;
+    let directOccupiedSlot = null;
+    let minOccupiedDistSq = Infinity;
+
+    const sampleSlot = this.shelves[0]?.slots[0];
+    const baseSize = sampleSlot ? Math.max(sampleSlot.w || 50, sampleSlot.h || 70) : 72;
+    const effectiveRadius = maxRadius || Math.max(105, baseSize * 1.45);
     const radiusSq = effectiveRadius * effectiveRadius;
 
     for (const sh of this.shelves) {
       for (const slot of sh.slots) {
-        // 僅允許無結霜的槽位作為磁吸落點
         if (slot.iceHp > 0) continue;
         const centerX = slot.x + slot.w / 2;
         const centerY = slot.y + slot.h / 2;
         const dx = canvasX - centerX;
         const dy = canvasY - centerY;
         const distSq = dx * dx + dy * dy;
-
-        // 若直接在槽位邊界內，優先權最高
         const inside = (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
                         canvasY >= slot.y && canvasY <= slot.y + slot.h);
-        const adjustedDistSq = inside ? (distSq * 0.45) : distSq;
 
-        if (adjustedDistSq < radiusSq && adjustedDistSq < minDistanceSq) {
-          minDistanceSq = adjustedDistSq;
-          bestSlot = slot;
+        if (!slot.queue[0]) {
+          // 空位享超大磁吸半徑與優先吸附加成
+          const weighted = inside ? distSq * 0.25 : distSq;
+          if (weighted < radiusSq && weighted < minEmptyDistSq) {
+            minEmptyDistSq = weighted;
+            bestEmptySlot = slot;
+          }
+        } else if (inside && distSq < minOccupiedDistSq) {
+          minOccupiedDistSq = distSq;
+          directOccupiedSlot = slot;
         }
       }
     }
-    return bestSlot;
+    return bestEmptySlot || directOccupiedSlot;
   }
 
   beginShelfDrag(cand) {
@@ -1730,6 +1782,20 @@ class GameApp {
 
   startTimer() {
     this.stopTimer();
+    if (this.isBossLevel) {
+      // 🔥 BOSS 戰模式：無時間倒數限制，改為每 200ms 更新 BOSS 攻擊蓄力條
+      this.bossTimerId = setInterval(() => {
+        if (this.currentView !== 'view-game' || this.isLevelSettled || this.isPaused || document.hidden) return;
+        const step = (200 / Math.max(2000, this.bossAtkInterval || 8500)) * 100;
+        this.bossAtkCharge = Math.min(100, this.bossAtkCharge + step);
+        this.updateBossUI();
+        if (this.bossAtkCharge >= 100) {
+          this.bossAtkCharge = 0;
+          this.triggerBossAttack();
+        }
+      }, 200);
+      return;
+    }
     this.timerId = setInterval(() => {
       if (this.currentView !== 'view-game' || this.isLevelSettled || this.isPaused || document.hidden) return;
       this.timeLeft = Math.max(0, Math.round(this.timeLeft - 1));
@@ -1749,6 +1815,175 @@ class GameApp {
       clearInterval(this.timerId);
       this.timerId = null;
     }
+    if (this.bossTimerId) {
+      clearInterval(this.bossTimerId);
+      this.bossTimerId = null;
+    }
+  }
+
+  updateBossUI() {
+    const bossFill = document.getElementById('boss-hp-fill');
+    if (bossFill) {
+      const bPct = Math.max(0, Math.min(100, (this.bossHp / Math.max(1, this.bossMaxHp)) * 100));
+      bossFill.style.width = `${bPct}%`;
+    }
+    const playerFill = document.getElementById('player-hp-fill');
+    if (playerFill) {
+      const pPct = Math.max(0, Math.min(100, (this.playerHp / Math.max(1, this.playerMaxHp)) * 100));
+      playerFill.style.width = `${pPct}%`;
+      if (pPct > 50) {
+        playerFill.className = 'h-full bg-gradient-to-r from-[#06D6A0] via-[#52B788] to-[#A8E6CF] rounded-full transition-all duration-300';
+      } else if (pPct >= 25) {
+        playerFill.className = 'h-full bg-gradient-to-r from-[#FFB703] via-[#FB8500] to-[#FFE082] rounded-full transition-all duration-300';
+      } else {
+        playerFill.className = 'h-full bg-gradient-to-r from-[#D90429] via-[#E63946] to-[#FF4D6D] rounded-full transition-all duration-300 animate-pulse';
+      }
+    }
+    const atkFill = document.getElementById('boss-atk-fill');
+    if (atkFill) {
+      const aPct = Math.max(0, Math.min(100, this.bossAtkCharge));
+      atkFill.style.height = `${aPct}%`;
+    }
+    const atkGauge = document.getElementById('boss-atk-gauge');
+    if (atkGauge) {
+      atkGauge.classList.toggle('border-[#E63946]', this.bossAtkCharge >= 80);
+      atkGauge.classList.toggle('animate-pulse', this.bossAtkCharge >= 80);
+    }
+  }
+
+  triggerBossAttack() {
+    if (this.isLevelSettled || !this.isBossLevel || this.bossHp <= 0) return;
+    SFX.iceCrack();
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate([40, 60, 80]);
+    }
+    const bossImg = document.getElementById('boss-sprite-img');
+    if (bossImg) {
+      bossImg.classList.add('translate-y-3', 'scale-110');
+      setTimeout(() => bossImg.classList.remove('translate-y-3', 'scale-110'), 220);
+    }
+    const flash = document.getElementById('boss-player-hit-flash');
+    if (flash) {
+      flash.classList.remove('opacity-0');
+      flash.classList.add('opacity-100');
+      setTimeout(() => {
+        flash.classList.remove('opacity-100');
+        flash.classList.add('opacity-0');
+      }, 180);
+    }
+    const dmg = (this.bossInfo && this.bossInfo.atkDamagePct) || 18;
+    this.playerHp = Math.max(0, this.playerHp - dmg);
+    this.updateBossUI();
+    this.showTopToast('⚡ BOSS 震波襲擊!!', `${this.bossInfo?.name || '深海巨獸'}發動猛攻！`, '快湊三消反擊 ✦');
+    if (this.playerHp <= 0) {
+      this.onPlayerDefeatedByBoss();
+    }
+  }
+
+  onPlayerDefeatedByBoss() {
+    if (this.isLevelSettled) return;
+    this.isLevelSettled = true;
+    this.stopTimer();
+    SFX.fail();
+    document.getElementById('settle-badge').innerText = '✦ BOSS 決戰惜敗 ✦';
+    document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('worry', false);
+    document.getElementById('settle-title').innerText = '店長護盾耗盡 ⚡';
+    document.getElementById('settle-stars').innerText = '☆☆☆';
+    document.getElementById('settle-desc').innerText = '別氣餒店長！在 BOSS 關卡達成 3 連擊以上可自動修復護盾並延緩 BOSS 蓄力，再挑戰一次吧！';
+    document.getElementById('settle-coin-text').innerText = '🪙 +50 (作戰津貼)';
+    document.getElementById('settle-diam-text').innerText = '💎 +0';
+    GameState.coins += 50;
+    GameState.save();
+    this.renderHUD();
+    document.getElementById('btn-settle-action').innerText = '立即重戰 BOSS ↻';
+    document.getElementById('modal-settle').classList.remove('hidden');
+  }
+
+  winBossLevel() {
+    if (this.isLevelSettled) return;
+    this.isLevelSettled = true;
+    this.stopTimer();
+    SFX.win();
+
+    const finishedLevel = this.curLevel;
+    const nextLevel = finishedLevel + 1;
+    GameState.unlockedLevel = Math.max(GameState.unlockedLevel, nextLevel);
+    const stars = this.playerHp >= 60 ? 3 : (this.playerHp >= 30 ? 2 : 1);
+    GameState.stars[finishedLevel] = Math.max(GameState.stars[finishedLevel] || 0, stars);
+    this.curLevel = GameState.unlockedLevel;
+
+    const clearedTier = getDifficultyTierInfo(finishedLevel);
+    let baseCoins = (220 + finishedLevel * 25) * (clearedTier.rewardMult || 1);
+    baseCoins = Math.round(baseCoins * (1 + this.getTotalCoinBonusPct() / 100) * 1.5);
+    const baseDiam = GameState.direction === 'tycoon' ? 30 : 18;
+    const diamReward = Math.round(baseDiam * (clearedTier.rewardMult || 1));
+    const voucherBonus = 2; // 每 10 關 BOSS 擊破固定獎勵 2 張抽獎券
+
+    GameState.coins += baseCoins;
+    GameState.diamonds += diamReward;
+    GameState.vouchers = (GameState.vouchers || 0) + voucherBonus;
+    GameState.stampCount = Math.min(5, (GameState.stampCount || 0) + 1);
+    if (GameState.quests[0]) GameState.quests[0].cur += 1;
+    GameState.save();
+
+    this.renderHUD();
+    this.renderRoadmap();
+    this.renderQuests();
+    this.showTopToast('🏆 BOSS 完美擊破!!', `成功擊退${this.bossInfo?.name || '深海巨獸'}！`, '榮獲雙倍秘寶券 🎊');
+
+    setTimeout(() => {
+      document.getElementById('settle-badge').innerText = '✦ 第 10 關里程碑 BOSS 討伐成功 ✦';
+      document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('star', false);
+      document.getElementById('settle-title').innerText = `大捷！擊破${this.bossInfo?.name || '深海首領'}！`;
+      document.getElementById('settle-stars').innerText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+      document.getElementById('settle-desc').innerText = '店長神乎其技的理貨連擊徹底擊退深海首領！獲得 1.5 倍金幣與 +2 張沉船抽獎券！';
+      document.getElementById('settle-coin-text').innerHTML = `<img src="./assets/icons/icon-gold-coin.png" class="w-4 h-4 object-contain inline-block mr-1"> +${baseCoins}`;
+      document.getElementById('settle-diam-text').innerHTML = `<img src="./assets/icons/icon-pearl.png" class="w-4 h-4 object-contain inline-block mr-1"> +${diamReward}`;
+      document.getElementById('btn-settle-action').innerText = '前往下一關 ➔';
+      document.getElementById('modal-settle').classList.remove('hidden');
+    }, 380);
+  }
+
+  restockBossShelves() {
+    if (!this.isBossLevel || this.isLevelSettled || this.bossHp <= 0) return;
+    const allSlots = [];
+    this.shelves.forEach(sh => sh.slots.forEach(sl => allSlots.push(sl)));
+    const varCount = Math.min(ITEM_DEFS.length, (this.levelCfg && this.levelCfg.varietyCount) || 5);
+    const tripletCount = 5; // 補充 5 組三消 (15 件商品)
+    const newItems = [];
+    for (let i = 0; i < tripletCount; i++) {
+      const def = ITEM_DEFS[(this.curLevel + i + Math.floor(Math.random() * varCount)) % varCount];
+      newItems.push(def.id, def.id, def.id);
+    }
+    for (let i = newItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newItems[i], newItems[j]] = [newItems[j], newItems[i]];
+    }
+
+    // 保留至少 4 個前排空位供玩家流暢移動
+    const sortedSlots = [...allSlots].sort((a, b) => a.queue.length - b.queue.length);
+    const fillableSlots = sortedSlots.slice(0, Math.max(6, allSlots.length - 4));
+    newItems.forEach((itemId, idx) => {
+      const target = fillableSlots[idx % fillableSlots.length];
+      target.queue.push(itemId);
+      this.jellyBounce(target);
+    });
+
+    // 避免補貨後同櫃前排直接湊齊三消
+    this.shelves.forEach(sh => {
+      const [a, b, c] = sh.slots;
+      if (a.queue[0] && a.queue[0] === b.queue[0] && b.queue[0] === c.queue[0]) {
+        const swapSlot = allSlots.find(s => s.queue[0] && s.queue[0] !== a.queue[0]);
+        if (swapSlot) {
+          const tmp = c.queue[0];
+          c.queue[0] = swapSlot.queue[0];
+          swapSlot.queue[0] = tmp;
+        }
+      }
+    });
+
+    this.totalLevelItems = Math.max(this.totalLevelItems, this.updateClearProgress());
+    this.showTopToast('📦 超商緊急補貨！', '新一批深海點心已擺上貨架！', '繼續連擊輸出 ✦');
   }
 
   updateTimerUI() {
@@ -1846,7 +2081,46 @@ class GameApp {
         return;
       }
     }
-    this.updateClearProgress();
+
+    const remain = this.updateClearProgress();
+
+    // 🔥 BOSS 戰自動補貨保護：若場上剩餘商品少於 12 件且 BOSS 尚未擊敗，自動補充新一波商品
+    if (this.isBossLevel && this.bossHp > 0 && remain < 12) {
+      this.restockBossShelves();
+    }
+
+    // 🛡️ 防死局自動重整保護 (Anti-Deadlock Auto-Shuffle)：若前排 0 空位則自動騰出空間並洗牌
+    if (remain > 0 && !this.isLevelSettled) {
+      const allSlots = [];
+      this.shelves.forEach(sh => sh.slots.forEach(sl => allSlots.push(sl)));
+      const emptyUniced = allSlots.filter(s => !s.queue[0] && s.iceHp === 0);
+      if (emptyUniced.length === 0) {
+        allSlots.forEach(s => { if (s.iceHp > 0) s.iceHp = 0; });
+        const occupied = allSlots.filter(s => s.queue.length > 0);
+        if (occupied.length >= 2) {
+          // 將前 2 格的前排商品推入其他格後排，騰出 2 個前排空位，並打亂前排
+          const donorA = occupied[0];
+          const donorB = occupied[1];
+          const receiverA = occupied[occupied.length - 1];
+          const receiverB = occupied[occupied.length - 2];
+          if (donorA !== receiverA && donorA.queue.length > 0) {
+            receiverA.queue.push(donorA.queue.shift());
+          }
+          if (donorB !== receiverB && donorB.queue.length > 0) {
+            receiverB.queue.push(donorB.queue.shift());
+          }
+          const stillOccupied = allSlots.filter(s => s.queue.length > 0);
+          const frontPool = stillOccupied.map(s => s.queue[0]).sort(() => Math.random() - 0.5);
+          stillOccupied.forEach((s, i) => {
+            s.queue[0] = frontPool[i];
+            this.jellyBounce(s);
+          });
+          SFX.swap();
+          this.showTopToast('🌊 海流湧動・自動重整！', '貨架已自動騰出空位並重整排列！', '防死局保護 ✦');
+        }
+      }
+    }
+
     this.checkWinOrLose();
   }
 
@@ -1889,21 +2163,7 @@ class GameApp {
       this.jellyBounce(slot);
     });
 
-    // ⏰ 依據六大難度階梯動態計算消除加時（高連擊 Combo >= 3 額外續命 +1s）
-    const tierInfo = (this.levelCfg && this.levelCfg.tierInfo) || getDifficultyTierInfo(this.curLevel);
-    const baseBonus = tierInfo.baseBonusSec || 3;
-    const comboBonus = tierInfo.comboBonusSec || 4;
-    const bonusSec = this.combo >= 3 ? (comboBonus + 1) : (this.combo === 2 ? comboBonus : baseBonus);
-
-    // 💬 連擊美漫讚賞浮動標籤 (Comic Floating Text)
-    if (this.combo >= 2) {
-      const praiseTexts = [`🫧 GOOD! +${bonusSec}s`, `✦ GREAT! +${bonusSec}s`, `🌟 AMAZING! +${bonusSec}s`, `🔥 MEOW FEVER! +${bonusSec}s`];
-      const txt = praiseTexts[Math.min(this.combo - 2, praiseTexts.length - 1)];
-      this.spawnFloatingComic(centerX, centerY - 28, txt);
-    }
     this.damageNearbyIce(shelf.shelfIdx);
-    this.addTimeBonus(bonusSec);
-
     const def = ITEM_DEFS.find(d => d.id === typeId) || ITEM_DEFS[0];
     let feverBonusCoins = 0;
     if (this.fever >= 100) {
@@ -1911,25 +2171,81 @@ class GameApp {
       if (feverBar) setTimeout(() => { feverBar.style.width = '0%'; }, 450);
       feverBonusCoins = 80;
       this.spawnParticles(appRect.width * 0.5, appRect.height * 0.45, '#FFD166', 24);
-      this.showTopToast('🔥 大繁盛 FEVER!!', '全店顧客歡呼打賞 +80 金幣!!', `${def.name} ✦`);
-    } else {
-      const cheers = ['✦ 絕品三連完售!!', '✦ 手作旬味大好評!!', '✦ 商店街大繁盛!!', '✦ 顧客大滿足!!'];
-      this.showTopToast(`COMBO ×${this.combo}`, cheers[(this.combo - 1) % cheers.length], `${def.name} ✦`);
     }
-    this.setMascotMood('star', `「太棒了店長！『${def.label}』達成 ${this.combo} 連擊完售✦」`);
 
-    setTimeout(() => {
-      this.spawnParticles(centerX, centerY, '#FFF3B0', 16);
-      const coinBox = document.getElementById('hud-coin-box').getBoundingClientRect();
-      const tx = (coinBox.left - appRect.left) + coinBox.width / 2;
-      const ty = (coinBox.top  - appRect.top)  + coinBox.height / 2;
-      this.spawnFlyer(typeId, centerX, centerY, tx, ty, () => {
-        const mult = 1 + this.getTotalCoinBonusPct() / 100;
-        const bonusCoin = Math.round(18 * this.combo * mult) + feverBonusCoins;
-        GameState.coins += bonusCoin;
-        this.renderHUD();
-      }, 280);
-    }, 120);
+    if (this.isBossLevel) {
+      // 🔥 BOSS 戰模式：三消轉化為能量砲彈轟擊 BOSS，Combo >= 3 自動修復護盾並擊退 BOSS 蓄力！
+      const dmg = Math.round(100 * (this.combo === 1 ? 1 : (this.combo === 2 ? 1.5 : 2.2)));
+      if (this.combo >= 3) {
+        this.playerHp = Math.min(this.playerMaxHp, this.playerHp + 8);
+        this.bossAtkCharge = Math.max(0, this.bossAtkCharge - 20);
+        this.updateBossUI();
+      }
+      this.spawnFloatingComic(centerX, centerY - 24, this.combo >= 2 ? `🔥 CRITICAL!` : `💥 HIT!`);
+      this.showTopToast(
+        `COMBO ×${this.combo}`,
+        this.combo >= 3 ? '✨ 護盾修復 ＋ 擊退 BOSS 蓄力！' : '💥 能量砲彈直擊深海 BOSS！',
+        `${def.name} ✦`
+      );
+
+      const bossImg = document.getElementById('boss-sprite-img');
+      const bRect = bossImg ? bossImg.getBoundingClientRect() : null;
+      const bossTx = (bRect && bRect.width > 0) ? (bRect.left - appRect.left) + bRect.width / 2 : appRect.width / 2;
+      const bossTy = (bRect && bRect.height > 0) ? (bRect.top - appRect.top) + bRect.height / 2 : 76;
+
+      setTimeout(() => {
+        this.spawnParticles(centerX, centerY, '#FF85A1', 16);
+        this.spawnFlyer(typeId, centerX, centerY, bossTx, bossTy, () => {
+          const mult = 1 + this.getTotalCoinBonusPct() / 100;
+          GameState.coins += Math.round(18 * this.combo * mult) + feverBonusCoins;
+          this.bossHp = Math.max(0, this.bossHp - dmg);
+          this.updateBossUI();
+          this.spawnParticles(bossTx, bossTy, '#FFE082', 20);
+          if (bossImg) {
+            bossImg.classList.add('scale-110', 'brightness-150', '-translate-y-1');
+            setTimeout(() => bossImg.classList.remove('scale-110', 'brightness-150', '-translate-y-1'), 170);
+          }
+          this.renderHUD();
+          if (this.bossHp <= 0) {
+            this.winBossLevel();
+          }
+        }, 230);
+      }, 100);
+    } else {
+      // ⏰ 一般關卡：依據六大難度階梯動態計算消除加時（高連擊 Combo >= 3 額外續命 +1s）
+      const tierInfo = (this.levelCfg && this.levelCfg.tierInfo) || getDifficultyTierInfo(this.curLevel);
+      const baseBonus = tierInfo.baseBonusSec || 3;
+      const comboBonus = tierInfo.comboBonusSec || 4;
+      const bonusSec = Math.round(this.combo >= 3 ? (comboBonus + 1) : (this.combo === 2 ? comboBonus : baseBonus));
+
+      if (this.combo >= 2) {
+        const praiseTexts = [`🫧 GOOD! +${bonusSec}s`, `✦ GREAT! +${bonusSec}s`, `🌟 AMAZING! +${bonusSec}s`, `🔥 MEOW FEVER! +${bonusSec}s`];
+        const txt = praiseTexts[Math.min(this.combo - 2, praiseTexts.length - 1)];
+        this.spawnFloatingComic(centerX, centerY - 28, txt);
+      }
+      this.addTimeBonus(bonusSec);
+
+      if (feverBonusCoins > 0) {
+        this.showTopToast('🔥 大繁盛 FEVER!!', '全店顧客歡呼打賞 +80 金幣!!', `${def.name} ✦`);
+      } else {
+        const cheers = ['✦ 絕品三連完售!!', '✦ 手作旬味大好評!!', '✦ 商店街大繁盛!!', '✦ 顧客大滿足!!'];
+        this.showTopToast(`COMBO ×${this.combo}`, cheers[(this.combo - 1) % cheers.length], `${def.name} ✦`);
+      }
+      this.setMascotMood('star', `「太棒了店長！『${def.label}』達成 ${this.combo} 連擊完售✦」`);
+
+      setTimeout(() => {
+        this.spawnParticles(centerX, centerY, '#FFF3B0', 16);
+        const coinBox = document.getElementById('hud-coin-box').getBoundingClientRect();
+        const tx = (coinBox.left - appRect.left) + coinBox.width / 2;
+        const ty = (coinBox.top  - appRect.top)  + coinBox.height / 2;
+        this.spawnFlyer(typeId, centerX, centerY, tx, ty, () => {
+          const mult = 1 + this.getTotalCoinBonusPct() / 100;
+          const bonusCoin = Math.round(18 * this.combo * mult) + feverBonusCoins;
+          GameState.coins += bonusCoin;
+          this.renderHUD();
+        }, 280);
+      }, 120);
+    }
 
     const ord = this.activeOrders.find(o => o.id === typeId);
     if (ord && ord.done < ord.req) { ord.done += 3; this.renderOrders(); }
@@ -1958,6 +2274,14 @@ class GameApp {
 
   checkWinOrLose() {
     if (this.isLevelSettled) return;
+    if (this.isBossLevel) {
+      if (this.bossHp <= 0) {
+        this.winBossLevel();
+      } else if (this.updateClearProgress() < 12) {
+        this.restockBossShelves();
+      }
+      return;
+    }
     const remainingItems = this.updateClearProgress();
     if (remainingItems === 0) {
       this.isLevelSettled = true;
