@@ -878,6 +878,68 @@
 
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261112_v104_unblock"></script>
+  <script>
+    (function () {
+      function showBootError(msg) {
+        if (document.getElementById('boot-err-banner')) return;
+        var div = document.createElement('div');
+        div.id = 'boot-err-banner';
+        div.style.cssText = 'position:fixed;left:12px;right:12px;bottom:14px;z-index:99999;background:rgba(37,20,8,0.94);color:#FFE082;border:2px solid #FFB703;border-radius:14px;padding:10px 12px;font-size:12px;font-weight:700;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,0.5);';
+        div.innerHTML = '<div>⚠️ 程式載入異常：' + String(msg).replace(/</g, '&lt;') + '</div>'
+          + '<button id="btn-fix-sw-reload" style="margin-top:8px;padding:6px 12px;background:#FFB703;color:#251408;border:none;border-radius:8px;font-weight:900;font-size:12px;">點此清除快取並重新載入</button>';
+        document.body.appendChild(div);
+        var btn = document.getElementById('btn-fix-sw-reload');
+        if (btn) {
+          btn.onclick = function () {
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function (regs) {
+                return Promise.all(regs.map(function (r) { return r.unregister(); }));
+              }).finally(function () {
+                if (window.caches) {
+                  caches.keys().then(function (ks) {
+                    return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+                  }).finally(function () { location.reload(true); });
+                } else {
+                  location.reload(true);
+                }
+              });
+            } else {
+              location.reload(true);
+            }
+          };
+        }
+      }
+      window.addEventListener('error', function (e) {
+        if (!window.__GAME_BOOTED__) showBootError(e.message || 'Script error');
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        if (!window.__GAME_BOOTED__) showBootError((e.reason && e.reason.message) || e.reason || 'Promise rejected');
+      });
+      // 保底內嵌事件：即使外部 JS 模組仍在載入或快取異常，「進入大廳」與「音效」按鈕也 100% 立即有反應！
+      var enterBtn = document.getElementById('btn-enter-lobby');
+      if (enterBtn) {
+        enterBtn.addEventListener('click', function () {
+          var titleEl = document.getElementById('view-title');
+          if (titleEl) titleEl.classList.add('hidden');
+          if (window.gameApp && typeof window.gameApp.navigateTo === 'function') {
+            window.gameApp.navigateTo('view-lobby');
+          } else {
+            var lobbyEl = document.getElementById('view-lobby');
+            if (lobbyEl) {
+              lobbyEl.classList.remove('hidden');
+              lobbyEl.classList.add('flex');
+            }
+          }
+        });
+      }
+
+      setTimeout(function () {
+        if (!window.__GAME_BOOTED__) {
+          showBootError('主程式超過 3.5 秒未啟動（可能是舊版快取或部分檔案未同步上傳）');
+        }
+      }, 3500);
+    })();
+  </script>
+  <script type="module" src="./src/main.js?v=20261112_v106_fullzip"></script>
 </body>
 </html>

@@ -176,8 +176,8 @@ class GameApp {
     try { this.renderHUD(); } catch (e) { console.warn(e); }
     try { this.renderRoadmap(); } catch (e) { console.warn(e); }
     try { this.renderQuests(); } catch (e) { console.warn(e); }
-    this.startLevel(this.curLevel);
-    this.startLoop();
+    try { this.startLevel(this.curLevel); } catch (e) { console.warn('startLevel init warning:', e); }
+    try { this.startLoop(); } catch (e) { console.warn('startLoop init warning:', e); }
 
     // 監聽雲端存檔載入事件，並檢查是否已預先存在 window.cloudSaveData
     const handleCloudSave = (cloudData) => {
@@ -2932,9 +2932,15 @@ class GameApp {
   }
 }
 
+window.__GAME_BOOTED__ = true;
+const gameApp = new GameApp();
+window.gameApp = gameApp;
+window.CloudAuth = CloudAuth;
+CloudAuth.init();
 FoodSpriteAtlas.init()
-  .catch((err) => console.warn('FoodSpriteAtlas init warning:', err))
-  .finally(() => {
-    new GameApp();
-    CloudAuth.init();
-  });
+  .then(() => {
+    if (gameApp && gameApp.currentView === 'view-game') {
+      gameApp.drawShelvesCanvas();
+    }
+  })
+  .catch((err) => console.warn('FoodSpriteAtlas init warning:', err));

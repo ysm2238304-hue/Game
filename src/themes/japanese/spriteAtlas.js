@@ -31,11 +31,15 @@ export const FoodSpriteAtlas = {
     const entries = Object.entries(FOOD_IMAGES);
     await Promise.all(entries.map(([id, src]) =>
       new Promise(resolve => {
+        let settled = false;
+        const done = () => { if (!settled) { settled = true; resolve(); } };
+        const timer = setTimeout(done, 2500);
         const img = new Image();
-        img.onload = () => { this.cache[id] = img; resolve(); };
+        img.onload = () => { clearTimeout(timer); this.cache[id] = img; done(); };
         img.onerror = () => {
+          clearTimeout(timer);
           console.warn('⚠️ 缺圖:', id, src);
-          resolve();
+          done();
         };
         img.src = src;
       })
