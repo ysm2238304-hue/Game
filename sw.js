@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v96-pause-centered-timer-10step'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v97-smooth-drag-polished-ui'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

@@ -76,6 +76,7 @@ class GameApp {
     this.isTransitioning = false;
     this.isLevelSettled = false;
     this.isPaused = false;
+    this.hoverTargetSlot = null;
     this.isDrawingGacha = false;
     this.fxNeedsClear = false;
 
@@ -243,6 +244,14 @@ class GameApp {
     if (bgmBtn) bgmBtn.innerText = on ? '🎵' : '🔇';
   }
 
+  // 音效切換與 UI 同步別名（支援 v96 規範命名）
+  toggleAudioMaster() {
+    return this.toggleMasterAudio();
+  }
+
+  updateAllAudioButtonsUI() {
+    this.syncAudioButtons();
+  }
   toggleMasterAudio() {
     const nextState = !SFX.enabled;
     SFX.setEnabled(nextState);
@@ -1402,10 +1411,11 @@ class GameApp {
       const rect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - rect.left;
       const canvasY = e.clientY - rect.top;
+      const pad = 8; // 寬容判定範圍 +8px 觸控優化
       for (const sh of this.shelves) {
         for (const slot of sh.slots) {
-          if (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
-              canvasY >= slot.y && canvasY <= slot.y + slot.h) {
+          if (canvasX >= slot.x - pad && canvasX <= slot.x + slot.w + pad &&
+              canvasY >= slot.y - pad && canvasY <= slot.y + slot.h + pad) {
             if (!slot.queue.length) return;
             if (slot.iceHp > 0) {
               SFX.iceCrack();
@@ -1433,6 +1443,16 @@ class GameApp {
       if (!this.dragging || (this.dragging.pointerId !== undefined && e.pointerId !== this.dragging.pointerId)) return;
       const { appX, appY } = getAppCoords(e.clientX, e.clientY);
       this.dragPointer = { x: appX, y: appY, clientX: e.clientX, clientY: e.clientY };
+
+      const cRect = this.canvas.getBoundingClientRect();
+      const canvasX = e.clientX - cRect.left;
+      const canvasY = e.clientY - cRect.top;
+      const nearest = this.findNearestAvailableSlot(canvasX, canvasY);
+      if (nearest && nearest !== this.dragging.fromSlot && nearest.iceHp === 0) {
+        this.hoverTargetSlot = nearest;
+      } else {
+        this.hoverTargetSlot = null;
+      }
     });
 
     window.addEventListener('pointerup', (e) => {
@@ -1524,6 +1544,38 @@ class GameApp {
     document.getElementById('btn-up-cold').onclick     = () => this.buyUpgrade('cold', 500);
   }
 
+  findNearestAvailableSlot(canvasX, canvasY, maxRadius = null) {
+    if (!this.shelves || !this.shelves.length) return null;
+    let bestSlot = null;
+    let minDistanceSq = Infinity;
+    const defaultRadius = (this.shelves[0]?.slots[0]?.w || 50) * 1.45;
+    const effectiveRadius = maxRadius || Math.max(95, defaultRadius);
+    const radiusSq = effectiveRadius * effectiveRadius;
+
+    for (const sh of this.shelves) {
+      for (const slot of sh.slots) {
+        // 僅允許無結霜的槽位作為磁吸落點
+        if (slot.iceHp > 0) continue;
+        const centerX = slot.x + slot.w / 2;
+        const centerY = slot.y + slot.h / 2;
+        const dx = canvasX - centerX;
+        const dy = canvasY - centerY;
+        const distSq = dx * dx + dy * dy;
+
+        // 若直接在槽位邊界內，優先權最高
+        const inside = (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
+                        canvasY >= slot.y && canvasY <= slot.y + slot.h);
+        const adjustedDistSq = inside ? (distSq * 0.45) : distSq;
+
+        if (adjustedDistSq < radiusSq && adjustedDistSq < minDistanceSq) {
+          minDistanceSq = adjustedDistSq;
+          bestSlot = slot;
+        }
+      }
+    }
+    return bestSlot;
+  }
+
   beginShelfDrag(cand) {
     SFX.pick();
     const cRect = this.canvas.getBoundingClientRect();
@@ -1564,14 +1616,18 @@ class GameApp {
 
   handleDrop() {
     const drag = this.dragging;
+    const hoverSlot = this.hoverTargetSlot;
     this.dragging = null;
+    this.hoverTargetSlot = null;
     const cx = this.dragPointer.clientX;
     const cy = this.dragPointer.clientY;
+
+    // 1. 檢查是否放入下方暫存槽位 (Cart slots)
     for (let i = 0; i < this.cartSlots.length; i++) {
       const el = document.querySelector(`[data-cart="${i}"]`);
       if (!el) continue;
       const rect = el.getBoundingClientRect();
-      if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom) {
+      if (cx >= rect.left - 10 && cx <= rect.right + 10 && cy >= rect.top - 10 && cy <= rect.bottom + 10) {
         if (drag.sourceType === 'cart' && drag.cartIdx === i) { this.cancelDragReturn(drag); return; }
         const targetCartItem = this.cartSlots[i];
         this.cartSlots[i] = drag.typeId;
@@ -1589,50 +1645,50 @@ class GameApp {
         return;
       }
     }
+
+    // 2. 智慧磁吸落點判定 (Smart Magnetic Snap)
     const cRect = this.canvas.getBoundingClientRect();
     const canvasX = cx - cRect.left;
     const canvasY = cy - cRect.top;
-    for (const sh of this.shelves) {
-      for (const slot of sh.slots) {
-        if (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
-            canvasY >= slot.y && canvasY <= slot.y + slot.h) {
-          if ((drag.sourceType === 'shelf' && slot === drag.fromSlot) || slot.iceHp > 0) {
-            if (slot.iceHp > 0) {
-              SFX.iceCrack();
-              this.setMascotMood('worry', '「結霜中的木櫃格位要先融霜才能擺放料理喔！」');
-            }
-            this.cancelDragReturn(drag);
-            return;
-          }
-          this.consumeMove();
-          const displacedItem = slot.queue.length > 0 ? slot.queue[0] : null;
-          if (drag.sourceType === 'shelf') {
-            this.moveHistory = this.moveHistory || [];
-            this.moveHistory.push({
-              fromSlot: drag.fromSlot,
-              toSlot: slot,
-              movedItem: drag.typeId,
-              displacedItem: displacedItem
-            });
-          }
-          if (displacedItem) slot.queue[0] = drag.typeId;
-          else slot.queue.unshift(drag.typeId);
-          this.jellyBounce(slot);
-          if (drag.sourceType === 'shelf') {
-            if (displacedItem) drag.fromSlot.queue[0] = displacedItem;
-            else drag.fromSlot.queue.shift();
-            this.jellyBounce(drag.fromSlot);
-          } else if (drag.sourceType === 'cart') {
-            this.cartSlots[drag.cartIdx] = displacedItem;
-            this.renderCartUI();
-          }
-          SFX.swap();
-          if ('vibrate' in navigator) navigator.vibrate(15);
-          this.checkMatches();
-          return;
+    let targetSlot = hoverSlot || this.findNearestAvailableSlot(canvasX, canvasY);
+
+    if (targetSlot) {
+      if ((drag.sourceType === 'shelf' && targetSlot === drag.fromSlot) || targetSlot.iceHp > 0) {
+        if (targetSlot.iceHp > 0) {
+          SFX.iceCrack();
+          this.setMascotMood('worry', '「結霜中的木櫃格位要先融霜才能擺放料理喔！」');
         }
+        this.cancelDragReturn(drag);
+        return;
       }
+      this.consumeMove();
+      const displacedItem = targetSlot.queue.length > 0 ? targetSlot.queue[0] : null;
+      if (drag.sourceType === 'shelf') {
+        this.moveHistory = this.moveHistory || [];
+        this.moveHistory.push({
+          fromSlot: drag.fromSlot,
+          toSlot: targetSlot,
+          movedItem: drag.typeId,
+          displacedItem: displacedItem
+        });
+      }
+      if (displacedItem) targetSlot.queue[0] = drag.typeId;
+      else targetSlot.queue.unshift(drag.typeId);
+      this.jellyBounce(targetSlot);
+      if (drag.sourceType === 'shelf') {
+        if (displacedItem) drag.fromSlot.queue[0] = displacedItem;
+        else drag.fromSlot.queue.shift();
+        this.jellyBounce(drag.fromSlot);
+      } else if (drag.sourceType === 'cart') {
+        this.cartSlots[drag.cartIdx] = displacedItem;
+        this.renderCartUI();
+      }
+      SFX.swap();
+      if ('vibrate' in navigator) navigator.vibrate(15);
+      this.checkMatches();
+      return;
     }
+
     this.cancelDragReturn(drag);
   }
 
@@ -2350,34 +2406,23 @@ class GameApp {
   }
 
   paintDropIndicator() {
-    const cRect = this.canvas.getBoundingClientRect();
-    const canvasX = this.dragPointer.clientX - cRect.left;
-    const canvasY = this.dragPointer.clientY - cRect.top;
-    for (const sh of this.shelves) {
-      for (const slot of sh.slots) {
-        if (canvasX >= slot.x && canvasX <= slot.x + slot.w &&
-            canvasY >= slot.y && canvasY <= slot.y + slot.h) {
-          const ctx = this.ctx;
-          ctx.save();
-          if (slot.iceHp > 0) {
-            ctx.strokeStyle = 'rgba(220,90,90,0.85)';
-            ctx.fillStyle = 'rgba(220,90,90,0.14)';
-          } else {
-            ctx.strokeStyle = '#FF85A1';
-            ctx.fillStyle = 'rgba(255,133,161,0.16)';
-          }
-          ctx.lineWidth = 2.5;
-          ctx.setLineDash([6, 4]);
-          ctx.beginPath();
-          ctx.roundRect(slot.x + 1, slot.y + 1, slot.w - 2, slot.h - 2, 6);
-          ctx.fill();
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.restore();
-          return;
-        }
-      }
-    }
+    const slot = this.hoverTargetSlot;
+    if (!slot) return;
+    const ctx = this.ctx;
+    ctx.save();
+    // 🌟 柔和金色光暈與動態高亮邊框 (Golden Magnetic Snap Halo)
+    ctx.shadowColor = 'rgba(255, 224, 130, 0.85)';
+    ctx.shadowBlur = 14;
+    ctx.strokeStyle = '#FFE082';
+    ctx.fillStyle = 'rgba(255, 224, 130, 0.22)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.roundRect(slot.x + 1, slot.y + 1, slot.w - 2, slot.h - 2, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
   }
 
   drawFXCanvas(now) {

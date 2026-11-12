@@ -81,6 +81,7 @@
       display: block;
       width: 100%;
       height: 100%;
+      touch-action: none;
     }
     /* 🎨 美式 3D 卡通立體按鈕全局規範 */
     .pop-btn {
@@ -344,18 +345,18 @@
       <div class="absolute inset-0 bg-gradient-to-b from-[#0096C7]/15 via-transparent to-[#03045E]/30 pointer-events-none"></div>
     </div>
 
-    <!-- 🌟 極簡頂部 HUD（左：精簡關卡徽章 ｜ 中：巨型置中倒數計時器 ｜ 右：卡通 3D 暫停鍵） -->
-    <div class="relative z-20 w-full px-3 py-2 bg-black/50 backdrop-blur-md border-b-2 border-white/20 shrink-0 shadow-md flex items-center justify-between min-h-[54px]">
-      <!-- 左側：僅保留精簡關卡與難度標籤 -->
-      <div class="flex items-center gap-1.5 z-10">
+    <!-- 🌟 極簡頂部 HUD（左：極簡第 X 關標籤 ｜ 中：巨型置中倒數計時器 ｜ 右：卡通 3D 方形暫停鍵） -->
+    <div class="relative z-20 w-full px-3 py-2 bg-black/55 backdrop-blur-md border-b-2 border-white/20 shrink-0 shadow-md flex items-center justify-between min-h-[60px]">
+      <!-- 左側：極簡關卡標籤 (寬度僅 ~68px，完全不擠壓中央倒數) -->
+      <div class="flex items-center gap-1.5 z-10 shrink-0">
         <span class="px-2.5 py-1 bg-gradient-to-r from-[#0077B6] to-[#023E8A] text-white text-xs font-black rounded-xl border border-white/30 shadow-xs flex items-center gap-1">
-          <span>第 <span id="label-level">1</span> 關</span><span id="hud-diff-badge" class="ml-1 px-1.5 py-0.5 text-[9px] font-black rounded bg-[#A8E6CF] text-[#1B4332]">新手 1階</span>
+          <span>第 <span id="label-level">1</span> 關</span>
         </span>
       </div>
 
-      <!-- 中間：巨型置中倒數計時器 -->
-      <div id="hud-timer-capsule" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3.5 py-1 bg-black/65 rounded-2xl border-2 border-[#FFE082]/70 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-        <svg class="w-6 h-6 shrink-0 drop-shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 中間：巨型置中倒數計時器 (大氣寬敞無拘束) -->
+      <div id="hud-timer-capsule" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-1.5 rounded-2xl bg-black/80 border-2 border-[#FFE082]/75 shadow-[0_0_20px_rgba(255,224,130,0.35)]">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 shrink-0 drop-shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="13" y="3" width="6" height="4" rx="1.5" fill="#FFCA28" stroke="#251408" stroke-width="2"/>
           <circle cx="16" cy="18" r="11" fill="#FFF8E7" stroke="#251408" stroke-width="2.5"/>
           <circle cx="16" cy="18" r="9" stroke="#FFCA28" stroke-width="1.5"/>
@@ -363,19 +364,20 @@
           <line x1="16" y1="18" x2="16" y2="11" stroke="#251408" stroke-width="2.2" stroke-linecap="round"/>
           <line x1="16" y1="18" x2="21" y2="18" stroke="#E63946" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <span id="label-moves" class="text-2xl sm:text-3xl font-black text-[#FFE082] font-mono tracking-wider leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">02:30</span>
+        <span id="label-moves" class="text-3xl sm:text-4xl font-black text-[#FFE082] font-mono tracking-wider leading-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]">02:30</span>
         <div id="toast-time-bonus" class="pointer-events-none absolute -bottom-5 right-0 px-2 py-0.5 rounded-full bg-[#A8E6CF] text-[#1B4332] border border-[#1B4332] text-[10px] font-black shadow-md opacity-0 transition-opacity duration-200">+4s ⏰</div>
       </div>
 
-      <!-- 右側：單一卡通 3D 暫停按鈕 -->
-      <div class="flex items-center gap-1.5 z-10">
-        <button id="btn-pause-game" class="pop-btn px-3 py-1.5 rounded-xl bg-[#FFB703] text-[#251408] text-xs font-black flex items-center justify-center gap-1 active:scale-95 transition-transform" title="暫停遊戲">
-          <span>⏸ 暫停</span>
+      <!-- 右側：俐落卡通 3D 方形暫停圖示按鈕 (節省橫向空間) -->
+      <div class="flex items-center gap-1.5 z-10 shrink-0">
+        <button id="btn-pause-game" class="pop-btn w-10 h-10 rounded-xl bg-[#FFB703] text-[#251408] text-base font-black flex items-center justify-center active:scale-95 transition-transform shadow-md" title="暫停遊戲">
+          <span>⏸</span>
         </button>
       </div>
 
       <!-- 隱藏保留 DOM 元素供 JS 存取避免報錯 -->
       <div class="hidden" style="display:none!important">
+        <span id="hud-diff-badge"></span>
         <span id="hud-lobby-dot"></span>
         <button id="btn-hud-sfx"></button>
         <button id="btn-toggle-fullscreen"></button>
@@ -408,27 +410,27 @@
       <canvas id="shelf-canvas" class="block" style="width: 100%; height: 100%;"></canvas>
     </div>
 
-    <!-- 🌟 底部極簡休閒三道具列（無框 3D 時光海螺、深海大漩渦、水母探照燈自然融入） 🌟 -->
-    <div class="relative z-20 w-full px-4 py-2 safe-bottom bg-[#001D3D]/85 backdrop-blur-xl border-t-2 border-[#48CAE4]/40 shrink-0 flex items-center justify-center gap-5 shadow-[0_-4px_20px_rgba(0,0,0,0.6)]">
+    <!-- 🌟 底部極簡休閒三道具列（3D 圓角方鈕 ＋ 右上角浮動徽章 ＋ 單行標籤絕不折字） 🌟 -->
+    <div class="relative z-20 w-full px-4 py-2 safe-bottom bg-[#001D3D]/90 backdrop-blur-xl border-t-2 border-[#48CAE4]/40 shrink-0 flex items-center justify-center gap-5 shadow-[0_-4px_20px_rgba(0,0,0,0.6)]">
       <!-- 道具 1: 撤銷 (時光海螺) -->
-      <button id="btn-tool-undo" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#48CAE4] to-[#0096C7] text-white active:scale-95" title="上一步：撤銷剛才的移動">
-        <img src="./assets/icons/icon-undo-shell.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="撤銷">
-        <span class="text-xs font-black leading-none drop-shadow-sm">撤銷</span>
-        <span id="cnt-tool-undo" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
+      <button id="btn-tool-undo" class="pop-btn relative w-[76px] h-[54px] rounded-2xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#48CAE4] to-[#0096C7] text-white active:scale-95" title="上一步：撤銷剛才的移動">
+        <img src="./assets/icons/icon-undo-shell.png" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="撤銷">
+        <span class="text-[11px] font-black leading-none tracking-wide whitespace-nowrap drop-shadow-sm">撤銷</span>
+        <span id="cnt-tool-undo" class="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 rounded-full bg-[#FFE082] text-[#251408] text-[11px] font-black border-2 border-[#251408] flex items-center justify-center shadow-md">3</span>
       </button>
 
       <!-- 道具 2: 洗牌 (深海大漩渦) -->
-      <button id="btn-tool-shuffle" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#00B4D8] to-[#0077B6] text-white active:scale-95" title="洗牌：重新打亂前排商品">
-        <img src="./assets/icons/icon-shuffle-swirl.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="洗牌">
-        <span class="text-xs font-black leading-none drop-shadow-sm">洗牌</span>
-        <span id="cnt-tool-shuffle" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
+      <button id="btn-tool-shuffle" class="pop-btn relative w-[76px] h-[54px] rounded-2xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#00B4D8] to-[#0077B6] text-white active:scale-95" title="洗牌：重新打亂前排商品">
+        <img src="./assets/icons/icon-shuffle-swirl.png" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="洗牌">
+        <span class="text-[11px] font-black leading-none tracking-wide whitespace-nowrap drop-shadow-sm">洗牌</span>
+        <span id="cnt-tool-shuffle" class="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 rounded-full bg-[#FFE082] text-[#251408] text-[11px] font-black border-2 border-[#251408] flex items-center justify-center shadow-md">3</span>
       </button>
 
       <!-- 道具 3: 提示 (水母探照燈) -->
-      <button id="btn-tool-magnet" class="pop-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] text-white active:scale-95" title="提示：自動吸附集齊三消">
-        <img src="./assets/icons/icon-hint-jellyfish.png" class="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] shrink-0" alt="提示">
-        <span class="text-xs font-black leading-none drop-shadow-sm">提示</span>
-        <span id="cnt-tool-magnet" class="bg-[#FFE082] text-[#001D3D] text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black/40">3</span>
+      <button id="btn-tool-magnet" class="pop-btn relative w-[76px] h-[54px] rounded-2xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#9C27B0] to-[#7B1FA2] text-white active:scale-95" title="提示：自動吸附集齊三消">
+        <img src="./assets/icons/icon-hint-jellyfish.png" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="提示">
+        <span class="text-[11px] font-black leading-none tracking-wide whitespace-nowrap drop-shadow-sm">提示</span>
+        <span id="cnt-tool-magnet" class="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 rounded-full bg-[#FFE082] text-[#251408] text-[11px] font-black border-2 border-[#251408] flex items-center justify-center shadow-md">3</span>
       </button>
     </div>
   </section>
@@ -821,6 +823,6 @@
 
   </div> <!-- 這是 #app 的結尾 -->
 
-  <script type="module" src="./src/main.js?v=20261112_pause_centered_timer_10step_v96"></script>
+  <script type="module" src="./src/main.js?v=20261112_smooth_drag_polished_ui_v97"></script>
 </body>
 </html>
