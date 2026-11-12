@@ -2932,7 +2932,9 @@ class GameApp {
   }
 }
 
-FoodSpriteAtlas.init().then(() => {
-  new GameApp();
-  CloudAuth.init();
-});
+FoodSpriteAtlas.init()
+  .catch((err) => console.warn('FoodSpriteAtlas init warning:', err))
+  .finally(() => {
+    new GameApp();
+    CloudAuth.init();
+  });

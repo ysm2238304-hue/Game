@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meowmart-v103-auth-ios-fix'; // 遞增版號以強制更新手機端的舊 SW
+const CACHE_NAME = 'meowmart-v104-unblock-title'; // 遞增版號以強制更新手機端的舊 SW
 
 const PRECACHE_ASSETS = [
   './',

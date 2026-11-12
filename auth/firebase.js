@@ -1,16 +1,4 @@
-// src/auth/firebase.js (v10.8.0 終極整合版：支援 iOS Safari / PWA Redirect 備援)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+// auth/firebase.js (非阻塞動態載入版：CDN 異常時絕不卡死遊戲主程式)
 const firebaseConfig = {
   apiKey: "AIzaSyDUwnKiTdmlJaSLADPxwt4OdLqUpfod0Ck",
   authDomain: "hoshino-game.firebaseapp.com",
@@ -21,27 +9,53 @@ const firebaseConfig = {
   measurementId: "G-Q7FH95E3Z7"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
+let sdkPromise = null;
+let fbCtx = null;
 let currentUser = null;
 let isLoggingIn = false;
 let authInitialized = false;
 
+async function ensureFirebase() {
+  if (fbCtx) return fbCtx;
+  if (!sdkPromise) {
+    sdkPromise = Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"),
+      import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js")
+    ]).then(([appMod, authMod, fsMod]) => {
+      const app = appMod.initializeApp(firebaseConfig);
+      const auth = authMod.getAuth(app);
+      const db = fsMod.getFirestore(app);
+      fbCtx = { app, auth, db, authMod, fsMod };
+      return fbCtx;
+    }).catch((err) => {
+      console.warn("⚠️ Firebase SDK 載入失敗（將以本機離線模式運行）:", err);
+      sdkPromise = null;
+      return null;
+    });
+  }
+  return sdkPromise;
+}
+
 export const CloudAuth = {
-  init() {
+  async init() {
     if (authInitialized) return;
     authInitialized = true;
 
-    // 處理從 Google 登入頁面跳轉 (Redirect) 回來後的結果
-    getRedirectResult(auth).catch((err) => {
+    const ctx = await ensureFirebase();
+    if (!ctx) {
+      authInitialized = false;
+      return;
+    }
+
+    const { auth, authMod } = ctx;
+    authMod.getRedirectResult(auth).catch((err) => {
       if (err && err.code !== 'auth/null-user') {
         console.warn('Redirect 登入結果異常:', err.code, err.message);
       }
     });
 
-    onAuthStateChanged(auth, async (user) => {
+    authMod.onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         const userData = await CloudAuth.loadFromCloud();
@@ -78,7 +92,6 @@ export const CloudAuth = {
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
-
     if (isLoggingIn) return;
 
     const ua = navigator.userAgent || '';
@@ -88,48 +101,53 @@ export const CloudAuth = {
     }
 
     isLoggingIn = true;
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-
-    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
     try {
-      // iOS 主畫面 PWA 模式優先採用 Redirect，避免彈窗失聯
-      if (isIOS && isStandalone) {
-        await signInWithRedirect(auth, provider);
-        return;
-      }
-      await signInWithPopup(auth, provider);
-    } catch (err) {
-      console.error('登入失敗詳細資訊:', err);
-
-      if (err.code === 'auth/popup-closed-by-user') {
+      const ctx = await ensureFirebase();
+      if (!ctx) {
+        alert('目前無法連線至 Google 登入服務（可能受網路或阻擋器影響），可先點擊「進入大廳」使用本機存檔遊玩！');
         return;
       }
 
-      // 若彈窗被 Safari 攔截或環境不支援，自動改用跳轉登入
-      if (
-        err.code === 'auth/popup-blocked' ||
-        err.code === 'auth/operation-not-supported-in-this-environment' ||
-        (isIOS && err.code === 'auth/network-request-failed')
-      ) {
-        try {
-          await signInWithRedirect(auth, provider);
+      const { auth, authMod } = ctx;
+      const provider = new authMod.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+      try {
+        if (isIOS && isStandalone) {
+          await authMod.signInWithRedirect(auth, provider);
           return;
-        } catch (redirErr) {
-          console.error('Redirect 備援登入失敗:', redirErr);
         }
-      }
+        await authMod.signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error('登入失敗詳細資訊:', err);
 
-      if (err.code === 'auth/unauthorized-domain') {
-        alert(`登入失敗！\n代碼: ${err.code}\n請至 Firebase 後台 Authorized domains 將「${window.location.hostname}」加入授權清單。`);
-      } else if (err.code === 'auth/popup-blocked') {
-        alert('登入視窗被瀏覽器攔截！請允許彈出式視窗，或改用 Safari 瀏覽器開啟後再試一次。');
-      } else if (err.code === 'auth/network-request-failed') {
-        alert(`網路請求失敗 (${err.code})！\n1. 請確認已重新整理網頁更新快取\n2. 請檢查網路連線或暫時關閉阻擋追蹤器。`);
-      } else {
-        alert(`登入失敗！\n代碼: ${err.code}\n訊息: ${err.message}`);
+        if (err.code === 'auth/popup-closed-by-user') return;
+
+        if (
+          err.code === 'auth/popup-blocked' ||
+          err.code === 'auth/operation-not-supported-in-this-environment' ||
+          (isIOS && err.code === 'auth/network-request-failed')
+        ) {
+          try {
+            await authMod.signInWithRedirect(auth, provider);
+            return;
+          } catch (redirErr) {
+            console.error('Redirect 備援登入失敗:', redirErr);
+          }
+        }
+
+        if (err.code === 'auth/unauthorized-domain') {
+          alert(`登入失敗！\n代碼: ${err.code}\n請至 Firebase 後台 Authorized domains 將「${window.location.hostname}」加入授權清單。`);
+        } else if (err.code === 'auth/popup-blocked') {
+          alert('登入視窗被瀏覽器攔截！請允許彈出式視窗，或改用 Safari 瀏覽器開啟後再試一次。');
+        } else if (err.code === 'auth/network-request-failed') {
+          alert(`網路請求失敗 (${err.code})！\n1. 請確認已重新整理網頁更新快取\n2. 請檢查網路連線或暫時關閉阻擋追蹤器。`);
+        } else {
+          alert(`登入失敗！\n代碼: ${err.code}\n訊息: ${err.message}`);
+        }
       }
     } finally {
       isLoggingIn = false;
@@ -138,16 +156,19 @@ export const CloudAuth = {
 
   async logout() {
     try {
-      await signOut(auth);
+      const ctx = await ensureFirebase();
+      if (!ctx) return;
+      await ctx.authMod.signOut(ctx.auth);
     } catch (e) {
       console.error('登出失敗:', e);
     }
   },
 
   async saveToCloud(dataToSave) {
-    if (!currentUser) return;
+    if (!currentUser || !fbCtx) return;
     try {
-      await setDoc(doc(db, 'saves', currentUser.uid), dataToSave);
+      const { db, fsMod } = fbCtx;
+      await fsMod.setDoc(fsMod.doc(db, 'saves', currentUser.uid), dataToSave);
       console.log('☁️ 雲端存檔成功');
     } catch (e) {
       console.error('❌ 雲端存檔失敗 (請檢查 Firestore 規則):', e);
@@ -155,9 +176,10 @@ export const CloudAuth = {
   },
 
   async loadFromCloud() {
-    if (!currentUser) return null;
+    if (!currentUser || !fbCtx) return null;
     try {
-      const docSnap = await getDoc(doc(db, 'saves', currentUser.uid));
+      const { db, fsMod } = fbCtx;
+      const docSnap = await fsMod.getDoc(fsMod.doc(db, 'saves', currentUser.uid));
       if (docSnap.exists()) return docSnap.data();
       return null;
     } catch (e) {
