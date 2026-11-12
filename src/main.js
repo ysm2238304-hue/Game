@@ -1177,14 +1177,13 @@ class GameApp {
     const allSlots = [];
     this.shelves.forEach(sh => sh.slots.forEach(sl => allSlots.push(sl)));
     const frontEmpty = cfg.frontEmptySlots || 3;
+    const maxFillIdx = Math.max(1, allSlots.length - frontEmpty);
     let poolIdx = 0;
     for (let layer = 0; layer < cfg.depthPerSlot; layer++) {
-      for (let i = 0; i < allSlots.length; i++) {
-        if (layer === 0 && i >= allSlots.length - frontEmpty) continue;
+      for (let i = 0; i < maxFillIdx; i++) {
         if (poolIdx < cfg.itemPool.length) allSlots[i].queue.push(cfg.itemPool[poolIdx++]);
       }
     }
-    const maxFillIdx = Math.max(1, allSlots.length - frontEmpty);
     while (poolIdx < cfg.itemPool.length) {
       const target = allSlots[poolIdx % maxFillIdx];
       target.queue.push(cfg.itemPool[poolIdx++]);
@@ -2166,26 +2165,22 @@ class GameApp {
       if (emptyUniced.length === 0) {
         allSlots.forEach(s => { if (s.iceHp > 0) s.iceHp = 0; });
         const occupied = allSlots.filter(s => s.queue.length > 0);
-        if (occupied.length >= 2) {
-          // 將前 2 格的前排商品推入其他格後排，騰出 2 個前排空位，並打亂前排
-          const donorA = occupied[0];
-          const donorB = occupied[1];
-          const receiverA = occupied[occupied.length - 1];
-          const receiverB = occupied[occupied.length - 2];
-          if (donorA !== receiverA && donorA.queue.length > 0) {
-            receiverA.queue.push(donorA.queue.shift());
+        if (occupied.length >= 3) {
+          // 將最後 2 格的整疊商品併入前段槽位後排，真正騰出 2 個空槽位，且不打亂玩家目前已排好的前排商品
+          const donorA = occupied[occupied.length - 1];
+          const donorB = occupied[occupied.length - 2];
+          const receiverA = occupied[0];
+          const receiverB = occupied[1];
+          if (donorA !== receiverA) {
+            while (donorA.queue.length > 0) receiverA.queue.push(donorA.queue.shift());
+            this.jellyBounce(receiverA);
           }
-          if (donorB !== receiverB && donorB.queue.length > 0) {
-            receiverB.queue.push(donorB.queue.shift());
+          if (donorB !== receiverB) {
+            while (donorB.queue.length > 0) receiverB.queue.push(donorB.queue.shift());
+            this.jellyBounce(receiverB);
           }
-          const stillOccupied = allSlots.filter(s => s.queue.length > 0);
-          const frontPool = stillOccupied.map(s => s.queue[0]).sort(() => Math.random() - 0.5);
-          stillOccupied.forEach((s, i) => {
-            s.queue[0] = frontPool[i];
-            this.jellyBounce(s);
-          });
           SFX.swap();
-          this.showTopToast('🌊 海流湧動・自動重整！', '貨架已自動騰出空位並重整排列！', '防死局保護 ✦');
+          this.showTopToast('🌊 海流湧動・騰出空位！', '已自動將 2 格商品疊往後排，騰出周轉空間！', '防死局保護 ✦');
         }
       }
     }
