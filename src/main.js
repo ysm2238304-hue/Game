@@ -404,6 +404,7 @@ class GameApp {
     document.getElementById('combo-maintext').innerText = mainBadge;
     document.getElementById('combo-subtext').innerText  = subTitle;
     document.getElementById('combo-dish-name').innerText = dishLabel;
+    toastWrap.style.top = this.isBossLevel ? '238px' : '48px';
     toastWrap.classList.remove('hidden');
     toastBox.classList.remove('toast-banner-anim');
     void toastBox.offsetWidth;
@@ -536,21 +537,21 @@ class GameApp {
     const cols = 3;
     const rows = this.isBossLevel ? 3 : 4; // 🌟 BOSS 戰專屬 3 層寬敞大貨架，一般關卡 4 層大貨架！
     
-    // 1. BOSS 戰採用緊湊精緻貨架，釋放上方大舞台；一般關卡維持滿版寬敞貨架
-    const padX = this.isBossLevel ? 14 : 5;
-    const gapX = this.isBossLevel ? 7 : 6;
-    const gapY = this.isBossLevel ? 8 : 12;
+    // 1. BOSS 戰貨架適度放大，吃滿橫向寬度並保留足夠高度讓圖示等比例放大
+    const padX = this.isBossLevel ? 6 : 5;
+    const gapX = 6;
+    const gapY = this.isBossLevel ? 10 : 12;
 
     // 2. 寬度基準
     const shelfW = (this.width - padX * 2 - gapX * (cols - 1)) / cols;
 
     // 3. 頂底留白
     this.topSceneH = 4;
-    this.bottomSceneH = this.isBossLevel ? 8 : 4;
+    this.bottomSceneH = this.isBossLevel ? 6 : 4;
 
     const availH = this.height - this.topSceneH - this.bottomSceneH;
     const rawShelfH = Math.floor((availH - gapY * (rows - 1)) / rows);
-    const shelfH = this.isBossLevel ? Math.min(rawShelfH, 92) : rawShelfH;
+    const shelfH = this.isBossLevel ? Math.min(rawShelfH, 114) : rawShelfH;
 
     const totalGridH = rows * shelfH + (rows - 1) * gapY;
     const freeMidH = this.height - this.topSceneH - this.bottomSceneH;
@@ -1124,7 +1125,7 @@ class GameApp {
       const bName = document.getElementById('boss-name-label');
       if (bName) bName.innerText = this.bossInfo.name;
       const bImg = document.getElementById('boss-sprite-img');
-      if (bImg) bImg.src = this.bossInfo.sprite;
+      if (bImg) { bImg.src = this.bossInfo.sprite; bImg.style.filter = this.bossInfo.filter || ''; }
       this.updateBossUI();
     } else {
       if (normalHud) { normalHud.classList.remove('hidden'); normalHud.classList.add('flex'); }
@@ -1980,7 +1981,7 @@ class GameApp {
     this.showTopToast('🏆 BOSS 完美擊破!!', `成功擊退${this.bossInfo?.name || '深海巨獸'}！`, '榮獲雙倍秘寶券 🎊');
 
     setTimeout(() => {
-      document.getElementById('settle-badge').innerText = '✦ 第 10 關里程碑 BOSS 討伐成功 ✦';
+      document.getElementById('settle-badge').innerText = `✦ 第 ${this.curLevel} 關 BOSS 討伐成功 ✦`;
       document.getElementById('settle-mascot').innerHTML = AnimeMascot.renderSVG('star', false);
       document.getElementById('settle-title').innerText = `大捷！擊破${this.bossInfo?.name || '深海首領'}！`;
       document.getElementById('settle-stars').innerText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
@@ -2773,7 +2774,7 @@ class GameApp {
         }
         // 垂直對齊：以底層木板為基準，前排立正站立，後排微露其後
         const plankY = sh.y + sh.h - 8;
-        const foodCY = plankY - Math.min(42, Math.round(slot.h * 0.34));
+        const foodCY = plankY - Math.min(48, Math.round(slot.h * 0.38));
         const backFoodCY = foodCY - 16;
 
         // 🌟 平滑向前滑動插值 (Smooth Slide-Forward Tween)
@@ -2903,7 +2904,7 @@ class GameApp {
       const px = this.dragPointer.x;
       const py = this.dragPointer.y;
       this.fxCtx.save();
-      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 102, 102, {
+      CozyFoodRenderer.drawFood(this.fxCtx, this.dragging.typeId, px, py - 12, 112, 112, {
         isBack: false, scaleX: 1.15, scaleY: 1.15, lift: 14
       });
       this.fxCtx.restore();

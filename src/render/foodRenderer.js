@@ -67,7 +67,7 @@ export class CozyFoodRenderer {
     const slotH = Math.max(60, h);
     
     const maxW = Math.round(slotW * 0.96);
-    const maxH = Math.round(slotH * 0.72);
+    const maxH = Math.round(slotH * 0.84);
 
     const imgRatio = (sprite.width || 1) / (sprite.height || 1);
     let drawW, drawH;

@@ -27,6 +27,7 @@ export const BOSS_ROSTER = [
     id: 'octopus',
     name: '章魚海盜船長・歐克托',
     sprite: './assets/boss/boss-octopus.png',
+    filter: '',
     atkIntervalMs: 8500,
     atkDamagePct: 18
   },
@@ -34,22 +35,80 @@ export const BOSS_ROSTER = [
     id: 'crab',
     name: '重甲帝王蟹將軍・克勞',
     sprite: './assets/boss/boss-crab.png',
+    filter: '',
     atkIntervalMs: 9000,
-    atkDamagePct: 22
+    atkDamagePct: 20
   },
   {
     id: 'shark',
     name: '深海幽靈鯊王・夏克',
     sprite: './assets/boss/boss-shark.png',
-    atkIntervalMs: 7800,
+    filter: '',
+    atkIntervalMs: 8000,
+    atkDamagePct: 21
+  },
+  {
+    id: 'kraken_violet',
+    name: '紫電深淵巨章・維奧拉',
+    sprite: './assets/boss/boss-octopus.png',
+    filter: 'hue-rotate(255deg) saturate(1.25)',
+    atkIntervalMs: 8200,
+    atkDamagePct: 20
+  },
+  {
+    id: 'crab_gold',
+    name: '黃金聖甲蟹皇・奧魯斯',
+    sprite: './assets/boss/boss-crab.png',
+    filter: 'hue-rotate(42deg) saturate(1.4) brightness(1.08)',
+    atkIntervalMs: 8600,
+    atkDamagePct: 22
+  },
+  {
+    id: 'shark_crimson',
+    name: '血月狂鯊統領・克里姆',
+    sprite: './assets/boss/boss-shark.png',
+    filter: 'hue-rotate(155deg) saturate(1.45)',
+    atkIntervalMs: 7600,
     atkDamagePct: 24
+  },
+  {
+    id: 'octopus_jade',
+    name: '翡翠毒霧海妖・傑德',
+    sprite: './assets/boss/boss-octopus.png',
+    filter: 'hue-rotate(115deg) saturate(1.25)',
+    atkIntervalMs: 7800,
+    atkDamagePct: 22
+  },
+  {
+    id: 'crab_ice',
+    name: '極地冰晶蟹王・弗洛斯',
+    sprite: './assets/boss/boss-crab.png',
+    filter: 'hue-rotate(185deg) saturate(1.3) brightness(1.1)',
+    atkIntervalMs: 8200,
+    atkDamagePct: 24
+  },
+  {
+    id: 'shark_void',
+    name: '虛空暗影鯊帝・諾克斯',
+    sprite: './assets/boss/boss-shark.png',
+    filter: 'hue-rotate(280deg) saturate(1.35) brightness(0.95)',
+    atkIntervalMs: 7200,
+    atkDamagePct: 26
+  },
+  {
+    id: 'kraken_abyss',
+    name: '深海終焉海皇・阿比斯',
+    sprite: './assets/boss/boss-octopus.png',
+    filter: 'hue-rotate(315deg) saturate(1.5) contrast(1.08)',
+    atkIntervalMs: 6800,
+    atkDamagePct: 28
   }
 ];
 
 export function getDifficultyTierInfo(levelId) {
   const lv = Math.max(1, Math.floor(Number(levelId) || 1));
   const tierStep = Math.min(30, Math.ceil(lv / 10));
-  const isBoss = lv % 10 === 0;
+  const isBoss = lv % 5 === 0;
 
   if (tierStep <= 3) {
     const sub = tierStep; // 1~3
@@ -139,7 +198,7 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
   const safeLevelId = Math.max(1, Math.floor(Number(levelId) || 1));
   const safeShelfLv = Math.max(1, Math.floor(Number(shelfUpgradeLevel) || 1));
   const tierStep = Math.min(30, Math.ceil(safeLevelId / 10));
-  const isBossLevel = (safeLevelId % 10 === 0);
+  const isBossLevel = (safeLevelId % 5 === 0);
   const tierInfo = getDifficultyTierInfo(safeLevelId);
 
   const activeTheme = getActiveTheme();
@@ -230,7 +289,7 @@ export function generateLevelConfig(levelId, shelfUpgradeLevel = 1) {
     emptyBuffer = 6;
     frontEmptySlots = 4;
     iceCount = Math.min(2, iceCount);
-    const bossIdx = Math.floor(safeLevelId / 10 - 1) % BOSS_ROSTER.length;
+    const bossIdx = Math.floor(safeLevelId / 5 - 1) % BOSS_ROSTER.length;
     const baseBoss = BOSS_ROSTER[bossIdx];
     const matchesNeeded = 12 + Math.min(18, Math.floor(tierStep * 0.6));
     const bossMaxHp = matchesNeeded * 100;

@@ -395,7 +395,7 @@
     </div>
 
     <!-- 🔥 神魔之塔風格 BOSS 戰頂部決戰舞台（擴大舞台＋精簡元素＋強化血條與受擊特效） 🔥 -->
-    <div id="boss-battle-hud" class="hidden h-[256px] sm:h-[272px] px-3 pt-2 pb-1.5 bg-gradient-to-b from-[#1A051D]/92 via-[#001D3D]/85 to-transparent border-b-2 border-[#FF4D6D]/50 flex-col justify-between relative z-20 shrink-0 shadow-[0_6px_20px_rgba(0,0,0,0.65)]">
+    <div id="boss-battle-hud" class="hidden h-[234px] sm:h-[248px] px-3 pt-2 pb-1.5 bg-gradient-to-b from-[#1A051D]/92 via-[#001D3D]/85 to-transparent border-b-2 border-[#FF4D6D]/50 flex-col justify-between relative z-20 shrink-0 shadow-[0_6px_20px_rgba(0,0,0,0.65)]">
       <!-- 受擊紅光閃爍遮罩（含內陰影警戒光暈） -->
       <div id="boss-player-hit-flash" class="pointer-events-none fixed inset-0 z-40 bg-[#E63946]/50 shadow-[inset_0_0_70px_rgba(255,0,40,0.9)] opacity-0 transition-opacity duration-150"></div>
 
@@ -436,7 +436,7 @@
       <div class="flex-1 flex items-center justify-center relative min-h-0 my-0.5">
         <div id="boss-sprite-wrap" class="relative flex items-center justify-center">
           <div id="boss-aura-glow" class="absolute w-40 h-40 rounded-full bg-gradient-to-b from-[#FF4D6D]/35 via-[#FFB703]/15 to-transparent blur-xl pointer-events-none transition-all duration-200"></div>
-          <img id="boss-sprite-img" src="./assets/boss/boss-octopus.png" class="boss-float h-[142px] sm:h-[156px] w-auto object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.9)] transition-transform duration-150 select-none" alt="BOSS" draggable="false">
+          <img id="boss-sprite-img" src="./assets/boss/boss-octopus.png" class="boss-float h-[126px] sm:h-[140px] w-auto object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.9)] transition-transform duration-150 select-none" alt="BOSS" draggable="false">
         </div>
       </div>
 
@@ -790,19 +790,16 @@
       </div>
     </div>
 
-    <div id="modal-settle" class="fixed inset-0 z-50 bg-[#4A3326]/25 hidden flex flex-col justify-between p-3.5 safe-top safe-bottom pointer-events-auto">
-      <div class="w-full max-w-sm mx-auto mt-10 anime-panel rounded-2xl py-2.5 px-4 bg-gradient-to-r from-[#FFF3B0] via-[#FFE5EC] to-[#FFF3B0] flex items-center justify-between shadow-lg">
-        <span class="text-xl">🎊</span>
-        <div class="text-center">
-          <div id="settle-badge" class="text-[10px] font-black text-[#D94E67]">✦ 本日營業圓滿達成 ✦</div>
-          <div id="settle-title" class="text-base font-black text-[#4A3326]">大繁盛！全櫃完售！</div>
-        </div>
-        <span class="text-xl">🎊</span>
-      </div>
-
-      <div class="flex-1 pointer-events-none"></div>
-
+    <div id="modal-settle" class="fixed inset-0 z-50 bg-[#4A3326]/25 hidden flex flex-col justify-end p-3.5 safe-top safe-bottom pointer-events-auto">
       <div class="w-full max-w-sm mx-auto anime-panel rounded-3xl p-4 flex flex-col items-center text-center shadow-2xl mb-1">
+        <div class="w-full rounded-2xl py-2 px-3 mb-3 bg-gradient-to-r from-[#FFF3B0] via-[#FFE5EC] to-[#FFF3B0] border-2 border-[#4A3326] flex items-center justify-between shadow-sm">
+          <span class="text-lg">🎊</span>
+          <div class="text-center min-w-0 px-1">
+            <div id="settle-badge" class="text-[10px] font-black text-[#D94E67] truncate">✦ 本日營業圓滿達成 ✦</div>
+            <div id="settle-title" class="text-sm font-black text-[#4A3326] truncate">大繁盛！全櫃完售！</div>
+          </div>
+          <span class="text-lg">🎊</span>
+        </div>
         <div class="flex items-center gap-3 w-full mb-2.5">
           <div id="settle-mascot" class="w-20 h-20 shrink-0"></div>
           <div class="flex flex-col items-start text-left flex-1">
